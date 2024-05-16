@@ -1,43 +1,54 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
+﻿
+using Microsoft.Xna.Framework;
 
 namespace TestMonoGamesProject.Engine.Physics;
 
-public class PhysicsManager : IPhysicsManager
+public class PhysicsManager : nkast.Aether.Physics2D.Dynamics.World
 {
-    private List<ICollider> colliders = new();
-
-    public void AddColliders(IEnumerable<ICollider> colliders)
+    public PhysicsManager(Vector2 gravity) : base(gravity)
     {
-        this.colliders.AddRange(colliders);
     }
 
-    public bool CheckCollision(ICollider collider)
-    {
-        foreach (var c in colliders.Where(c => !c.Equals(collider)))
-        {
-            if (c.IntersectsWith(collider))
-            {
-                return true;
-            }
-        }
+    public PhysicsManager() : base() { }
 
-        return false;
-    }
+    //private List<ICollider> colliders = new();
 
-    public Vector2 GetCollisionNormal(ICollider collider)
-    {
-        foreach (var c in colliders.Where(c => !c.Equals(collider)))
-        {
-            if (c.IntersectsWith(collider))
-            {
-                return new Vector2(collider.BoundingBox.Location.X - c.BoundingBox.Location.X, collider.BoundingBox.Location.Y - c.BoundingBox.Location.Y);
-            }
-        }
 
-        return Vector2.Zero;
-    }
+    //public void Update(GameTime gameTime)
+    //{
+    //    _physicsWorld.Step(gameTime.ElapsedGameTime);
+    //}
 
-    public void Clear() => colliders.Clear();
+    //public void AddColliders(IEnumerable<ICollider> colliders)
+    //{
+    //    this.colliders.AddRange(colliders);
+    //}
+
+    //public bool CheckCollision(ICollider collider)
+    //{
+    //    foreach (var c in colliders.Where(c => !c.Equals(collider)))
+    //    {
+    //        if (c.IntersectsWith(collider))
+    //        {
+    //            return true;
+    //        }
+    //    }
+
+    //    return false;
+    //}
+
+    //public Vector2 GetCollisionNormal(ICollider collider)
+    //{
+    //    foreach (var c in colliders.Where(c => !c.Equals(collider)))
+    //    {
+    //        if (c.IntersectsWith(collider))
+    //        {
+    //            return new Vector2(collider.BoundingBox.Location.X - c.BoundingBox.Location.X, collider.BoundingBox.Location.Y - c.BoundingBox.Location.Y);
+    //        }
+    //    }
+
+    //    return Vector2.Zero;
+    //}
+
+    //public void Clear() => colliders.Clear();
 }

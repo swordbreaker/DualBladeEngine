@@ -16,7 +16,7 @@ namespace TestMonoGamesProject.Engine.Components
             this.Texture = texture;
             if(updateOrigin)
             {
-                Origin = new Vector2(texture.Width / 2, texture.Height / 2);
+                Origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
             }
         }
     }

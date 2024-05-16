@@ -15,7 +15,7 @@ namespace TestMonoGamesProject.Engine.Worlds
                 Content = game.Content,
                 GraphicsDeviceManager = graphicsDeviceManager,
                 InputManager = _serviceProvider.GetRequiredService<InputManager>(),
-                PhysicsManager = _serviceProvider.GetRequiredService<IPhysicsManager>(),
+                PhysicsManager = _serviceProvider.GetRequiredService<PhysicsManager>(),
             };
         }
     }

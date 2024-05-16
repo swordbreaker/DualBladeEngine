@@ -7,7 +7,7 @@ namespace TestMonoGamesProject.Engine.Worlds
 {
     public record GameEngine : IGameEngine
     {
-        public required IPhysicsManager PhysicsManager { get; init; }
+        public required PhysicsManager PhysicsManager { get; init; }
         public required GraphicsDeviceManager GraphicsDeviceManager { get; init; }
         public required InputManager InputManager { get; init; }
         public required ContentManager Content { get; init; }

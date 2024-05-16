@@ -153,6 +153,8 @@ namespace TestMonoGamesProject.Engine.World
             {
                 system.Update(gameTime, _gameEngine);
             }
+
+            _gameEngine.PhysicsManager.Step(gameTime.ElapsedGameTime);
         }
 
         public void Draw(GameTime gameTime)
