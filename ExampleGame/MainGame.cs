@@ -46,7 +46,7 @@ public class MainGame : BaseGame
         GameWorld.AddEntity(left);
         GameWorld.AddEntity(right);
 
-        GameWorld.AddSystem<BallSystem>();
+        GameWorld.AddSystem(new BallSystem(GameEngine.CameraService) { World = GameWorld });
         GameWorld.AddSystem<SpawnSystem>();
     }
 

@@ -26,6 +26,7 @@ namespace TestMonoGamesProject.Engine.World
         IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : IEntity;
 
         void AddSystems(params ISystem[] systems);
+        void AddSystem(ISystem system);
         void AddSystem<TSystem>() where TSystem : ISystemWithWorld, new();
         void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent;
     }

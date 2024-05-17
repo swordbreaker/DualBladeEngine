@@ -32,6 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="FunctionalMonads">
+      <HintPath>..\Libs\FunctionalMonads.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Content\Menu.xmmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -32,6 +32,11 @@ namespace TestMonoGamesProject.Engine.World
             _systems.UnionWith(systems);
         }
 
+        public void AddSystem(ISystem system)
+        {
+            _systems.Add(system);
+        }
+
         public void AddEntities(params IEntity[] entities)
         {
             foreach (var entity in entities)

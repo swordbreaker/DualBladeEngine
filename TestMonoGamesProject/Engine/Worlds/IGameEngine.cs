@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TestMonoGamesProject.Engine.Physics;
+using TestMonoGamesProject.Engine.Services;
 
 namespace TestMonoGamesProject.Engine.Worlds
 {
@@ -30,6 +31,7 @@ namespace TestMonoGamesProject.Engine.Worlds
         /// Get the window game size.
         /// </summary>
         Vector2 GameSize { get; }
+        CameraService CameraService { get; init; }
 
         /// <summary>
         /// Begins the draw.

@@ -3,9 +3,10 @@ using Microsoft.Xna.Framework.Input;
 using TestMonoGamesProject.Engine.Systems;
 using TestMonoGamesProject.Engine.Worlds;
 using ExampleGame.Entities;
+using TestMonoGamesProject.Engine.Services;
 
 namespace ExampleGame.Systems;
-public class BallSystem : EntitySystem<BallEntity>
+public class BallSystem(CameraService cameraService) : EntitySystem<BallEntity>
 {
     private const float G = 9.81f * 10;
     private static readonly Vector2 Gravity = new(0, G);
@@ -41,6 +42,8 @@ public class BallSystem : EntitySystem<BallEntity>
         //velocity *= (float)gameTime.ElapsedGameTime.TotalSeconds;
         //var x = Math.Clamp(velocity.X, -100, 100);
         body.LinearVelocity = moveVelocity + entity.KinematicComponent.VerticalVelocity;
+
+        cameraService.Position = entity.Transform.Position;
     }
 }
  

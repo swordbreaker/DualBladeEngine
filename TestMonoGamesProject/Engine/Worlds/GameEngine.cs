@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using TestMonoGamesProject.Engine.Physics;
+using TestMonoGamesProject.Engine.Services;
 
 namespace TestMonoGamesProject.Engine.Worlds
 {
@@ -12,6 +13,8 @@ namespace TestMonoGamesProject.Engine.Worlds
         public required InputManager InputManager { get; init; }
         public required ContentManager Content { get; init; }
         public SpriteBatch SpriteBatch { get; private set; }
+        
+        public CameraService CameraService { get; init; }
 
         public Vector2 GameSize => 
             new(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
@@ -21,7 +24,8 @@ namespace TestMonoGamesProject.Engine.Worlds
             SpriteBatch = new SpriteBatch(GraphicsDeviceManager.GraphicsDevice);
         }
 
-        public void BeginDraw() => SpriteBatch.Begin();
+        public void BeginDraw() =>
+            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: CameraService.TransformMatrix);
 
         public void Draw(
             Texture2D texture,

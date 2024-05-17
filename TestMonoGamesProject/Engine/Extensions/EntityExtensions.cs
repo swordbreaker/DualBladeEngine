@@ -6,6 +6,7 @@ using TestMonoGamesProject.Engine.Components;
 using TestMonoGamesProject.Engine.Entities;
 
 namespace TestMonoGamesProject.Engine.Extensions;
+
 public static class EntityExtensions
 {
     public static IMaybe<TComponent> GetComponent<TComponent>(this IEntity entity) where TComponent : IComponent
