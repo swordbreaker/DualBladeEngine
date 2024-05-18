@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameEngine.Engine.Components;
+using MonoGameEngine.Engine.Entities;
+using MonoGameEngine.Engine.Systems;
+using MonoGameEngine.Engine.Worlds;
 using nkast.Aether.Physics2D.Dynamics;
-using TestMonoGamesProject.Engine.Components;
-using TestMonoGamesProject.Engine.Entities;
-using TestMonoGamesProject.Engine.Systems;
-using TestMonoGamesProject.Engine.Worlds;
 
 namespace ExampleGame.Systems;
 internal class SpawnSystem : BaseSystem

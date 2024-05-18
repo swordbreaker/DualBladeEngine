@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using TestMonoGamesProject.Engine.Systems;
-using TestMonoGamesProject.Engine.Worlds;
 using ExampleGame.Entities;
-using TestMonoGamesProject.Engine.Services;
+using MonoGameEngine.Engine.Systems;
+using MonoGameEngine.Engine.Worlds;
+using MonoGameEngine.Engine.Services;
 
 namespace ExampleGame.Systems;
 public class BallSystem(CameraService cameraService) : EntitySystem<BallEntity>
