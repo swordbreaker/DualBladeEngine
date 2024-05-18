@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Components;
+﻿using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Worlds;
 
 namespace MonoGameEngine.Engine.Systems;

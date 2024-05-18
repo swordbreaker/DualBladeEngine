@@ -9,7 +9,7 @@ namespace ExampleGame;
 
 public class MainGame : BaseGame
 {
-    public MainGame(WorldFactory worldFactory, IGameEngineFactory gameEngineFactory) : base(worldFactory, gameEngineFactory)
+    public MainGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory) : base(worldFactory, gameEngineFactory)
     {
         Content.RootDirectory = "Content";
     }
@@ -56,6 +56,6 @@ public class MainGame : BaseGame
     {
         string data = File.ReadAllText("Content/Menu.xmmp");
         var project = Project.LoadFromXml(data);
-        Desktop.Root = project.Root;
+        Desktop!.Root = project.Root;
     }
 }

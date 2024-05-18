@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Worlds;
+﻿using MonoGameEngine.Engine.Worlds;
 
 namespace MonoGameEngine.Engine.Systems;
 public class BaseSystem : ISystemWithWorld

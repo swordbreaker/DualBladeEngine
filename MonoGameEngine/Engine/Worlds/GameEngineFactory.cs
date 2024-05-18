@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xna.Framework;
 using MonoGameEngine.Engine.Physics;
 using MonoGameEngine.Engine.Services;
 using System;

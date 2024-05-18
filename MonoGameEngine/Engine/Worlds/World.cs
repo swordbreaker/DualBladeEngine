@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Components;
+﻿using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Systems;
 using System;
@@ -13,6 +12,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
     private readonly HashSet<ISystem> _systems = [];
     private readonly Dictionary<Type, HashSet<IComponent>> _components = [];
     private readonly Dictionary<Type, HashSet<IEntity>> _entities = [];
+    private bool isInitialized = false;
 
     public IEnumerable<IComponent> Components => _components.Values.SelectMany(x => x);
     public IEnumerable<ISystem> Systems => _systems;
@@ -20,20 +20,40 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
 
     public void Initialize()
     {
+        if (isInitialized)
+        {
+            throw new InvalidOperationException("World already initialized");
+        }
+
         foreach (var system in _systems)
         {
             system.Initialize(_gameEngine);
         }
+
+        isInitialized = true;
     }
 
     public void AddSystems(params ISystem[] systems)
     {
         _systems.UnionWith(systems);
+
+        if(isInitialized)
+        {
+            foreach (var system in systems)
+            {
+                system.Initialize(_gameEngine);
+            }
+        }
     }
 
     public void AddSystem(ISystem system)
     {
         _systems.Add(system);
+
+        if(isInitialized)
+        {
+            system.Initialize(_gameEngine);
+        }
     }
 
     public void AddEntities(params IEntity[] entities)

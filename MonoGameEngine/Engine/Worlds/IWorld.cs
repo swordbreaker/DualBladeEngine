@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Components;
+﻿using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Systems;
 using System.Collections.Generic;
@@ -29,4 +28,5 @@ public interface IWorld
     void AddSystem(ISystem system);
     void AddSystem<TSystem>() where TSystem : ISystemWithWorld, new();
     void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent;
+    void Initialize();
 }

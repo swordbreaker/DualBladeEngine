@@ -21,7 +21,6 @@ public class EntityExtensionsTests
         var expectedComponent = Substitute.For<IComponent>();
         _entity.Components.Returns(new List<IComponent> { expectedComponent });
 
-
         // act
         var component = _entity.GetComponent<IComponent>();
 
@@ -54,8 +53,8 @@ public class EntityExtensionsTests
     public void GetChildrenTest()
     {
         // arrange
-        var parentComponent = new TransformComponent();
-        var childComponent = new TransformComponent();
+        var parentComponent = new TransformComponent() { Entity = Substitute.For<IEntity>() };
+        var childComponent = new TransformComponent() { Entity = Substitute.For<IEntity>() };
         parentComponent.AddChild(childComponent);
 
         var parentEntity = new TransformEntity { World = Substitute.For<IWorld>() };
@@ -74,8 +73,8 @@ public class EntityExtensionsTests
     public void AddChildTest()
     {
         // arrange
-        var parentEntity = new Entity { World = Substitute.For<IWorld>() };
-        var childEntity = new Entity { World = Substitute.For<IWorld>() };
+        var parentEntity = new TransformEntity { World = Substitute.For<IWorld>() };
+        var childEntity = new TransformEntity { World = Substitute.For<IWorld>() };
 
         // act
         parentEntity.AddChild(childEntity);

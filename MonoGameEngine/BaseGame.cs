@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Entities;
+﻿using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Systems;
 using MonoGameEngine.Engine.Worlds;
 using Myra;
@@ -12,10 +11,10 @@ public abstract class BaseGame : Game
 {
     protected IGameEngine GameEngine;
     protected IWorld GameWorld;
-    protected Desktop Desktop;
+    protected Desktop? Desktop;
     protected Color BackgroundColor = Color.CornflowerBlue;
 
-    public BaseGame(WorldFactory worldFactory, IGameEngineFactory gameEngineFactory)
+    public BaseGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory)
     {
         GameEngine = gameEngineFactory.Create(this);
         GameWorld = worldFactory.Create(GameEngine);
@@ -26,9 +25,10 @@ public abstract class BaseGame : Game
     {
         GameEngine.Initialize();
         InitializeSystems();
-
         MyraEnvironment.Game = this;
         Desktop = new Desktop();
+
+        GameWorld.Initialize();
         base.Initialize();
     }
 
@@ -50,13 +50,12 @@ public abstract class BaseGame : Game
         GraphicsDevice.Clear(BackgroundColor);
         GameWorld.Draw(gameTime);
 
-        Desktop.Render();
+        Desktop!.Render();
         base.Draw(gameTime);
     }
 
     protected void AddEntity<TEntity>(TEntity entity) where TEntity : Entity
     {
         GameWorld.AddEntity(entity);
-    }
-
+    }    
 }

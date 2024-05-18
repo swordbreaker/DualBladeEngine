@@ -22,7 +22,9 @@ public class GroundEntity : SpriteEntity
         Transform.Position = pos;
 
         PhysicsBody = gameEngine.PhysicsManager.CreateBody(pos, bodyType: BodyType.Static);
+        PhysicsBody.Tag = this;
         var fixture = PhysicsBody.CreateRectangle(size.X, size.Y, 1f, Vector2.Zero);
+        fixture.Tag = this;
         fixture.Restitution = 0.3f;
         fixture.Friction = 0.5f;
     }

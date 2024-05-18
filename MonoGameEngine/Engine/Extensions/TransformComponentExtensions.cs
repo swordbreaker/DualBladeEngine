@@ -1,5 +1,4 @@
 ﻿using FunctionalMonads.Monads.MaybeMonad;
-using Microsoft.Xna.Framework;
 using MonoGameEngine.Engine.Components;
 
 namespace MonoGameEngine.Engine.Extensions;

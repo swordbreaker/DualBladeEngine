@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using MonoGameEngine.Engine.Physics;
 using MonoGameEngine.Engine.Services;
+using System;
 
 namespace MonoGameEngine.Engine.Worlds;
 
@@ -12,9 +12,9 @@ public record GameEngine : IGameEngine
     public required GraphicsDeviceManager GraphicsDeviceManager { get; init; }
     public required InputManager InputManager { get; init; }
     public required ContentManager Content { get; init; }
-    public SpriteBatch SpriteBatch { get; private set; }
+    public required CameraService CameraService { get; init; }
 
-    public CameraService CameraService { get; init; }
+    public SpriteBatch? SpriteBatch { get; private set; }
 
     public Vector2 GameSize =>
         new(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
@@ -24,8 +24,13 @@ public record GameEngine : IGameEngine
         SpriteBatch = new SpriteBatch(GraphicsDeviceManager.GraphicsDevice);
     }
 
-    public void BeginDraw() =>
+    public void BeginDraw()
+    {
+        if (SpriteBatch is null)
+            throw new InvalidOperationException("SpriteBatch is not initialized");
+
         SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: CameraService.TransformMatrix);
+    }
 
     public void Draw(
         Texture2D texture,
@@ -42,6 +47,9 @@ public record GameEngine : IGameEngine
         origin ??= new Vector2(texture.Width / 2, texture.Height / 2);
         scale ??= Vector2.One;
 
+        if (SpriteBatch is null)
+            throw new InvalidOperationException("SpriteBatch is not initialized");
+
         SpriteBatch.Draw(
                 texture,
                 position,
@@ -54,7 +62,13 @@ public record GameEngine : IGameEngine
                 layerDepth: layerDepth);
     }
 
-    public void EndDraw() => SpriteBatch.End();
+    public void EndDraw()
+    {
+        if (SpriteBatch is null)
+            throw new InvalidOperationException("SpriteBatch is not initialized");
+
+        SpriteBatch.End();
+    }
 
     public T Load<T>(string assetName) =>
         Content.Load<T>(assetName);

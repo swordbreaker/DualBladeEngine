@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace MonoGameEngine.Engine.Worlds;
+﻿namespace MonoGameEngine.Engine.Worlds;
 
 public interface IGameEngineFactory
 {

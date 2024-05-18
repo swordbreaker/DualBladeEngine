@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using nkast.Aether.Physics2D.Collision;
+﻿using nkast.Aether.Physics2D.Collision;
 using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Controllers;
 using nkast.Aether.Physics2D.Dynamics;
@@ -255,7 +254,6 @@ public interface IPhysicsManager
     //     Thrown when the world is Locked/Stepping.
     public void Step(float dt);
 
-
     //
     // Summary:
     //     Take a time step. This performs collision detection, integration, and consraint
@@ -333,7 +331,6 @@ public interface IPhysicsManager
     Fixture TestPoint(Vector2 point);
 
     void ShiftOrigin(Vector2 newOrigin);
-
 
     //
     // Summary:

@@ -9,7 +9,7 @@ var host = new HostBuilder()
     {
         services.AddSingleton<MainGame>();
     })
-    .Build();
+    .Build(); 
 
 var game = host.Services.GetRequiredService<MainGame>();
 game.Run();

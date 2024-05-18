@@ -32,7 +32,7 @@ internal class SpawnSystem : BaseSystem
 
         renderer.SetTexture(gameEngine.Load<Texture2D>("ball"));
         kinematic.PhysicsBody = gameEngine.PhysicsManager.CreateBody(pos, bodyType: BodyType.Dynamic);
-        kinematic.PhysicsBody.CreateCircle(renderer.Texture.Width / 2f, 1);
+        kinematic.PhysicsBody.CreateCircle(renderer.Texture!.Width / 2f, 1);
 
         entity.Transform.Position = pos;
 

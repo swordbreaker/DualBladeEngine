@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using nkast.Aether.Physics2D.Dynamics;
+﻿using nkast.Aether.Physics2D.Dynamics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MonoGameEngine.Engine.Physics;
 
+[ExcludeFromCodeCoverage(Justification = "External library")]
 public class PhysicsManager : World, IPhysicsManager
 {
     object IPhysicsManager.Tag { get => this.Tag; set => this.Tag = value; }

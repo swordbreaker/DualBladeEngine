@@ -1,9 +1,10 @@
 ﻿using FunctionalMonads.Monads.MaybeMonad;
-using Microsoft.Xna.Framework;
 using MonoGameEngine.Engine.Entities;
 using System.Collections.Generic;
 
 namespace MonoGameEngine.Engine.Components;
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 public class TransformComponent : IComponent
 {
