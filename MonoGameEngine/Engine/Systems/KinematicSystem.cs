@@ -16,5 +16,6 @@ public class KinematicSystem : ComponentSystem<KinematicComponent>
                 throw new Exception($"A Entity with a {nameof(KinematicComponent)} must have a {nameof(TransformComponent)}"));
 
         transform.Position = component.PhysicsBody.Position;
+        transform.Rotation = component.PhysicsBody.Rotation;
     }
 }

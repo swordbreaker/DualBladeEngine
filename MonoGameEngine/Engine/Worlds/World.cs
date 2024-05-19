@@ -173,12 +173,12 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
 
     public void Update(GameTime gameTime)
     {
+        _gameEngine.PhysicsManager.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
+
         foreach (var system in _systems)
         {
             system.Update(gameTime, _gameEngine);
         }
-
-        _gameEngine.PhysicsManager.Step(gameTime.ElapsedGameTime);
     }
 
     public void Draw(GameTime gameTime)

@@ -9,15 +9,16 @@ namespace MonoGameEngine.Engine.Worlds;
 public record GameEngine : IGameEngine
 {
     public required IPhysicsManager PhysicsManager { get; init; }
+    public required IWorldToPixelConverter WorldToPixelConverter { get; init; }
     public required GraphicsDeviceManager GraphicsDeviceManager { get; init; }
     public required InputManager InputManager { get; init; }
     public required ContentManager Content { get; init; }
     public required CameraService CameraService { get; init; }
-
     public SpriteBatch? SpriteBatch { get; private set; }
 
     public Vector2 GameSize =>
-        new(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
+        WorldToPixelConverter.PixelSizeToWorld(
+            new(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight));
 
     public void Initialize()
     {
@@ -49,6 +50,10 @@ public record GameEngine : IGameEngine
 
         if (SpriteBatch is null)
             throw new InvalidOperationException("SpriteBatch is not initialized");
+
+        position = WorldToPixelConverter.WorldPointToPixel(position);
+        origin = WorldToPixelConverter.WorldSizeToPixel(origin.Value);
+        scale = WorldToPixelConverter.WorldSizeToPixel(scale.Value);
 
         SpriteBatch.Draw(
                 texture,

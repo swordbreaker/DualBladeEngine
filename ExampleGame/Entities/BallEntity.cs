@@ -26,6 +26,8 @@ public class BallEntity : SpriteEntity
         var body = gameEngine.PhysicsManager.CreateBody(Transform.Position, bodyType: BodyType.Dynamic);
         body.Tag = this;
         body.FixedRotation = true;
+        body.Mass = 1;
+        body.LinearDamping = 0f;
         var fixture = body.CreateCircle(Renderer.Texture!.Width/2f, 1);
         fixture.Tag = this;
         //fixture.Restitution = 0.5f;

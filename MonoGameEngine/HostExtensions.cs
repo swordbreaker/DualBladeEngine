@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MonoGameEngine.Engine.Physics;
+using MonoGameEngine.Engine.Services;
 using MonoGameEngine.Engine.Systems;
 using MonoGameEngine.Engine.Worlds;
 
@@ -14,7 +15,8 @@ public static class HostExtensions
             context.AddSingleton<InputManager>();
             context.AddSingleton<IGameEngineFactory, GameEngineFactory>();
             context.AddSingleton<IWorldFactory, WorldFactory>();
-            context.AddSingleton<IPhysicsManager>(new PhysicsManager(Vector2.UnitY * 9.8f));
+            context.AddSingleton<IPhysicsManager, PhysicsManager>();
             context.AddSingleton<ISystemFactory, SystemFactory>();
+            context.AddSingleton<IWorldToPixelConverter, WorldToPixelConverter>();
         });
 }

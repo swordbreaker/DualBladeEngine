@@ -31,6 +31,7 @@ public interface IGameEngine
     /// </summary>
     Vector2 GameSize { get; }
     CameraService CameraService { get; init; }
+    IWorldToPixelConverter WorldToPixelConverter { get; init; }
 
     /// <summary>
     /// Begins the draw.

@@ -26,5 +26,7 @@ public class PhysicsManager : World, IPhysicsManager
     {
     }
 
-    public PhysicsManager() : base() { }
+    public PhysicsManager() : base(new Vector2(0f, 9.80665f))
+    {
+    }
 }

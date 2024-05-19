@@ -9,12 +9,13 @@ public class RenderSystem : ComponentSystem<RenderComponent>
     protected override void Draw(RenderComponent component, GameTime gameTime, IGameEngine gameEngine)
     {
         var transform = GetTransformComponent(component);
+        var position = transform.AbsolutePosition();
         var origin = component.Origin;
         var rotation = MathHelper.ToRadians(transform.AbsoluteRotation());
 
         gameEngine.Draw(
             component.Texture!,
-            transform.AbsolutePosition(),
+            position,
             component.Color,
             scale: transform.AbsoluteScale(),
             rotation: rotation,

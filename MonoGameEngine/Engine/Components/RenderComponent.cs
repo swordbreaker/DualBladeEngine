@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Entities;
+using MonoGameEngine.Engine.Rendering;
+using nkast.Aether.Physics2D.Dynamics;
 
 namespace MonoGameEngine.Engine.Components;
 
@@ -8,16 +10,16 @@ namespace MonoGameEngine.Engine.Components;
 public record RenderComponent : IComponent
 {
     public Color Color = Color.White;
-    public Texture2D? Texture;
+    public ISprite? Sprite;
     public Vector2 Origin = Vector2.Zero;
     public IEntity Entity { get; init; }
 
-    public void SetTexture(Texture2D texture, bool updateOrigin = true)
+    public void SetSprite(ISprite sprite, bool updateOrigin = true)
     {
-        Texture = texture;
+        Sprite = sprite;
         if (updateOrigin)
         {
-            Origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+            Origin = new Vector2(sprite.Width / 2f, sprite.Height / 2f);
         }
     }
 }

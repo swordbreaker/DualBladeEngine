@@ -5,7 +5,7 @@ using System;
 
 namespace MonoGameEngine.Engine.Worlds;
 
-public class GameEngineFactory(IServiceProvider _serviceProvider) : IGameEngineFactory
+public class GameEngineFactory(IServiceProvider _serviceProvider, IWorldToPixelConverter worldToPixelConverter) : IGameEngineFactory
 {
     public IGameEngine Create(Game game)
     {
@@ -13,6 +13,7 @@ public class GameEngineFactory(IServiceProvider _serviceProvider) : IGameEngineF
         return new GameEngine
         {
             Content = game.Content,
+            WorldToPixelConverter = worldToPixelConverter,
             GraphicsDeviceManager = graphicsDeviceManager,
             InputManager = _serviceProvider.GetRequiredService<InputManager>(),
             PhysicsManager = _serviceProvider.GetRequiredService<IPhysicsManager>(),
