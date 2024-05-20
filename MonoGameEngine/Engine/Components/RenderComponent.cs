@@ -1,7 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using MonoGameEngine.Engine.Entities;
+﻿using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Rendering;
-using nkast.Aether.Physics2D.Dynamics;
 
 namespace MonoGameEngine.Engine.Components;
 
@@ -10,7 +8,7 @@ namespace MonoGameEngine.Engine.Components;
 public record RenderComponent : IComponent
 {
     public Color Color = Color.White;
-    public ISprite? Sprite;
+    public ISprite Sprite;
     public Vector2 Origin = Vector2.Zero;
     public IEntity Entity { get; init; }
 

@@ -2,8 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
+using MonoGameEngine.Engine.Rendering;
 using MonoGameEngine.Engine.Worlds;
 using nkast.Aether.Physics2D.Dynamics;
+using System.Numerics;
 
 namespace ExampleGame.Entities;
 
@@ -19,8 +21,8 @@ public class BallEntity : SpriteEntity
         KinematicComponent = AddComponent<KinematicComponent>();
         CharacterComponent = AddComponent<CharacterComponent>();
         
-        Transform!.Position = gameEngine.GameSize/2;
-        Renderer.SetTexture(gameEngine.Load<Texture2D>("ball"));
+        Transform!.Position = Vector2.Zero;
+        Renderer.SetSprite(gameEngine.CreateSprite("ball"));
 
         // Create a physics body
         var body = gameEngine.PhysicsManager.CreateBody(Transform.Position, bodyType: BodyType.Dynamic);
@@ -28,10 +30,10 @@ public class BallEntity : SpriteEntity
         body.FixedRotation = true;
         body.Mass = 1;
         body.LinearDamping = 0f;
-        var fixture = body.CreateCircle(Renderer.Texture!.Width/2f, 1);
+        var fixture = body.CreateCircle(Renderer.Sprite!.Width/2f, 1);
         fixture.Tag = this;
-        //fixture.Restitution = 0.5f;
-        //fixture.Friction = 1f;
+        fixture.Restitution = 0.01f;
+        fixture.Friction = 0f;
 
         KinematicComponent.PhysicsBody = body;
     }

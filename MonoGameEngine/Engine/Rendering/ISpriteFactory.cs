@@ -1,6 +1,8 @@
-﻿namespace MonoGameEngine.Engine.Rendering;
+﻿using Microsoft.Xna.Framework.Graphics;
+
+namespace MonoGameEngine.Engine.Rendering;
 
 public interface ISpriteFactory
 {
-    Sprite CreateSprite();
+    ISprite CreateSprite(Texture2D texture2D);
 }

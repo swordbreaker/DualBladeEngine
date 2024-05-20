@@ -1,6 +1,4 @@
-﻿using ExampleGame.Entities;
-using ExampleGame.Systems;
-using Microsoft.Xna.Framework;
+﻿using ExampleGame.Scenes;
 using MonoGameEngine;
 using MonoGameEngine.Engine.Worlds;
 using Myra.Graphics2D.UI;
@@ -16,40 +14,8 @@ public class MainGame : BaseGame
 
     protected override void Initialize()
     {
+        AddSceneExclusively(new MainScene(GameWorld, GameEngine));
         base.Initialize();
-
-        var (w, h) = GameEngine.GameSize;
-
-        GameWorld.AddEntity(new BallEntity(GameEngine)
-        {
-            World = GameWorld
-        });
-        GameWorld.AddEntity(new GroundEntity(GameEngine)
-        {
-            World = GameWorld
-        });
-
-        var left = new GroundEntity(GameEngine)
-        {
-            World = GameWorld,
-            Color = Color.Black,
-            Position = new Vector2(0, h / 2f),
-            Size = new Vector2(10, h)
-        };
-
-        var right = new GroundEntity(GameEngine)
-        {
-            World = GameWorld,
-            Color = Color.Black,
-            Position = new Vector2(w, h / 2f),
-            Size = new Vector2(10, h)
-        };
-        
-        AddEntity(left);
-        AddEntity(right);
-
-        GameWorld.AddSystem(new BallSystem(GameEngine.CameraService) { World = GameWorld });
-        GameWorld.AddSystem<SpawnSystem>();
     }
 
     protected override void LoadContent()

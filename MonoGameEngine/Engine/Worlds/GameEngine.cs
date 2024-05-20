@@ -1,19 +1,20 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Physics;
+using MonoGameEngine.Engine.Rendering;
 using MonoGameEngine.Engine.Services;
 using System;
 
 namespace MonoGameEngine.Engine.Worlds;
 
-public record GameEngine : IGameEngine
+public record GameEngine(ISpriteFactory _spriteFactory) : IGameEngine
 {
     public required IPhysicsManager PhysicsManager { get; init; }
     public required IWorldToPixelConverter WorldToPixelConverter { get; init; }
     public required GraphicsDeviceManager GraphicsDeviceManager { get; init; }
     public required InputManager InputManager { get; init; }
     public required ContentManager Content { get; init; }
-    public required CameraService CameraService { get; init; }
+    public required ICameraService CameraService { get; init; }
     public SpriteBatch? SpriteBatch { get; private set; }
 
     public Vector2 GameSize =>
@@ -30,7 +31,12 @@ public record GameEngine : IGameEngine
         if (SpriteBatch is null)
             throw new InvalidOperationException("SpriteBatch is not initialized");
 
-        SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: CameraService.TransformMatrix);
+        //var transform =  WorldToPixelConverter.WorldMatrix * CameraService.TransformMatrix;
+        //var transform = Matrix.Invert(WorldToPixelConverter.WorldMatrix);
+
+        var transform = CameraService.PixelTransformMatrix;
+        //transform = Matrix.Identity;
+        SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: transform);
     }
 
     public void Draw(
@@ -53,7 +59,6 @@ public record GameEngine : IGameEngine
 
         position = WorldToPixelConverter.WorldPointToPixel(position);
         origin = WorldToPixelConverter.WorldSizeToPixel(origin.Value);
-        scale = WorldToPixelConverter.WorldSizeToPixel(scale.Value);
 
         SpriteBatch.Draw(
                 texture,
@@ -77,5 +82,9 @@ public record GameEngine : IGameEngine
 
     public T Load<T>(string assetName) =>
         Content.Load<T>(assetName);
+    public ISprite CreateSprite(string assetName) =>
+        _spriteFactory.CreateSprite(Load<Texture2D>(assetName));
 
+    public ISprite CreateSprite(Texture2D texture2D) => 
+        _spriteFactory.CreateSprite(texture2D);
 }

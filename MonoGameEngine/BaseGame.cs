@@ -1,18 +1,23 @@
 ﻿using MonoGameEngine.Engine.Entities;
+using MonoGameEngine.Engine.Scenes;
 using MonoGameEngine.Engine.Systems;
 using MonoGameEngine.Engine.Worlds;
 using Myra;
 using Myra.Graphics2D.UI;
+using System.Collections.Generic;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace MonoGameEngine;
 
 public abstract class BaseGame : Game
 {
+    private readonly List<IGameScene> _activeScenes = [];
+
     protected IGameEngine GameEngine;
     protected IWorld GameWorld;
     protected Desktop? Desktop;
     protected Color BackgroundColor = Color.CornflowerBlue;
+    protected IReadOnlyList<IGameScene> ActiveScenes => _activeScenes;
 
     public BaseGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory)
     {
@@ -24,7 +29,7 @@ public abstract class BaseGame : Game
     protected override void Initialize()
     {
         GameEngine.Initialize();
-        InitializeSystems();
+        InitializeGlobalSystems();
         MyraEnvironment.Game = this;
         Desktop = new Desktop();
 
@@ -32,7 +37,7 @@ public abstract class BaseGame : Game
         base.Initialize();
     }
 
-    protected virtual void InitializeSystems()
+    protected virtual void InitializeGlobalSystems()
     {
         GameWorld.AddSystem<RenderSystem>();
         GameWorld.AddSystem<KinematicSystem>();
@@ -57,5 +62,22 @@ public abstract class BaseGame : Game
     protected void AddEntity<TEntity>(TEntity entity) where TEntity : Entity
     {
         GameWorld.AddEntity(entity);
-    }    
+    }
+
+    protected void AddSceneExclusively(IGameScene gameScene)
+    {
+        _activeScenes.ForEach(s => s.Dispose());
+        AddScene(gameScene);
+    }
+
+    protected void AddScene(IGameScene gameScene)
+    {
+        foreach (var system in gameScene.Systems)
+        {
+            GameWorld.AddSystem(system);
+        }
+
+        GameWorld.AddEntity(gameScene.Root);
+        _activeScenes.Add(gameScene);
+    }
 }

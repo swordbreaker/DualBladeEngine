@@ -8,6 +8,7 @@ namespace ExampleGame.Components;
 public class CharacterComponent : IComponent
 {
     public bool IsGrounded;
+    public bool IsJumping;
 
     public IEntity Entity { get; init; }
 }

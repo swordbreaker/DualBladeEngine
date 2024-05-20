@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Physics;
+using MonoGameEngine.Engine.Rendering;
 using MonoGameEngine.Engine.Services;
 
 namespace MonoGameEngine.Engine.Worlds;
@@ -30,7 +31,7 @@ public interface IGameEngine
     /// Get the window game size.
     /// </summary>
     Vector2 GameSize { get; }
-    CameraService CameraService { get; init; }
+    ICameraService CameraService { get; init; }
     IWorldToPixelConverter WorldToPixelConverter { get; init; }
 
     /// <summary>
@@ -63,4 +64,7 @@ public interface IGameEngine
     /// <typeparam name="T">The type of the content.</typeparam>
     /// <param name="assetName">The asset name.</param>
     T Load<T>(string assetName);
+
+    ISprite CreateSprite(string assetName);
+    ISprite CreateSprite(Texture2D texture2D);
 }

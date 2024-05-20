@@ -20,7 +20,7 @@ internal class SpawnSystem : BaseSystem
 
     private void CrateBall(IGameEngine gameEngine)
     {
-        var (w, h) = gameEngine.GameSize;
+        var (w, _) = gameEngine.GameSize;
 
         var entity = new TransformEntity() { World = World };
         var kinematic = entity.AddComponent<KinematicComponent>();
@@ -30,9 +30,9 @@ internal class SpawnSystem : BaseSystem
         var y = 0;
         var pos = new Vector2(x, y);
 
-        renderer.SetTexture(gameEngine.Load<Texture2D>("ball"));
+        renderer.SetSprite(gameEngine.CreateSprite("ball"));
         kinematic.PhysicsBody = gameEngine.PhysicsManager.CreateBody(pos, bodyType: BodyType.Dynamic);
-        kinematic.PhysicsBody.CreateCircle(renderer.Texture!.Width / 2f, 1);
+        kinematic.PhysicsBody.CreateCircle(renderer.Sprite!.Width / 2f, 1);
 
         entity.Transform.Position = pos;
 

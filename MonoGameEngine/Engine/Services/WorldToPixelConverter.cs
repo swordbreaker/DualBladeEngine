@@ -1,12 +1,19 @@
-﻿namespace MonoGameEngine.Engine.Services;
-public class WorldToPixelConverter : IWorldToPixelConverter
+﻿using MonoGameEngine.Engine.Worlds;
+
+namespace MonoGameEngine.Engine.Services;
+public class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceManager) : IWorldToPixelConverter
 {
     /// <summary>
     /// The size of a tile in pixels.
     /// </summary>
     public int TileSize { get; init; } = 32;
 
-    public Matrix WorldMatrix => Matrix.CreateScale(TileSize, -TileSize, TileSize);
+    public Matrix WorldMatrix =>
+        Matrix.CreateScale(TileSize, -TileSize, TileSize) *
+        Matrix.CreateTranslation(
+            _graphicsDeviceManager.PreferredBackBufferWidth * 0.5f,
+            _graphicsDeviceManager.PreferredBackBufferHeight * 0.5f,
+            0);
 
     public Matrix WorldSizeMatrix => Matrix.CreateScale(TileSize);
 

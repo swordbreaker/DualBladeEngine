@@ -17,6 +17,9 @@ public interface IWorld
     void Destroy(IEntity entity);
     void Destroy(IEntity entity, IComponent component);
 
+    void Destroy(ISystem system);
+    void Destroy(IEnumerable<ISystem> systems);
+
     void AddComponent<TComponent>(IEntity entity, TComponent component) where TComponent : IComponent;
     void AddEntity(IEntity entity);
     IEnumerable<TComponent> GetComponents<TComponent>() where TComponent : IComponent;

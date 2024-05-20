@@ -13,8 +13,13 @@ public class RenderSystem : ComponentSystem<RenderComponent>
         var origin = component.Origin;
         var rotation = MathHelper.ToRadians(transform.AbsoluteRotation());
 
+        if(component.Sprite is null)
+        {
+            return;
+        }
+
         gameEngine.Draw(
-            component.Texture!,
+            component.Sprite.Texture2D,
             position,
             component.Color,
             scale: transform.AbsoluteScale(),

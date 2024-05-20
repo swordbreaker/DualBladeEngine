@@ -1,5 +1,6 @@
 ﻿using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
+using MonoGameEngine.Engine.Extensions;
 using MonoGameEngine.Engine.Systems;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
         foreach (var entity in entities)
         {
             AddEntity(entity);
+            entity.GetChildren().ToList().ForEach(AddEntity);
         }
     }
 
@@ -92,6 +94,8 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
         }
 
         _entities[entity.GetType()].Add(entity);
+        entity.GetChildren().ToList().ForEach(AddEntity);
+
         foreach (var component in entity.Components)
         {
             if (!_components.ContainsKey(component.GetType()))
@@ -111,6 +115,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
         }
 
         _entities[entity.GetType()].Remove(entity);
+        entity.GetChildren().ToList().ForEach(Destroy);
     }
 
     public void Destroy(IEntity entity, IComponent component)
@@ -191,8 +196,17 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
         _gameEngine.EndDraw();
     }
 
-    public void AddSystem<TSystem>() where TSystem : ISystemWithWorld, new()
-    {
+    public void AddSystem<TSystem>() where TSystem : ISystemWithWorld, new() =>
         AddSystem(_systemFactory.Create<TSystem>(this));
+
+    public void Destroy(ISystem system) => 
+        _systems.Remove(system);
+
+    public void Destroy(IEnumerable<ISystem> systems)
+    {
+        foreach (var system in systems)
+        {
+            Destroy(system);
+        }
     }
 }
