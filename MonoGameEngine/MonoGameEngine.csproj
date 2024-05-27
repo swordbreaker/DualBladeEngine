@@ -26,6 +26,7 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
     <PackageReference Include="Myra" Version="1.5.5" />
+    <PackageReference Include="YamlDotNet" Version="15.1.4" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Content\Menu.xmmp">

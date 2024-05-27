@@ -12,4 +12,5 @@ public class InputSystem : ISystem
     {
         gameEngine.InputManager.Update();
     }
+    public void Dispose() { }
 }

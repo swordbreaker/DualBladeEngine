@@ -72,12 +72,13 @@ public abstract class BaseGame : Game
 
     protected void AddScene(IGameScene gameScene)
     {
+        GameWorld.AddEntity(gameScene.Root);
+
         foreach (var system in gameScene.Systems)
         {
             GameWorld.AddSystem(system);
         }
 
-        GameWorld.AddEntity(gameScene.Root);
         _activeScenes.Add(gameScene);
     }
 }

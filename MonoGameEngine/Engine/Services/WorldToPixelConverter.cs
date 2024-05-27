@@ -1,6 +1,4 @@
-﻿using MonoGameEngine.Engine.Worlds;
-
-namespace MonoGameEngine.Engine.Services;
+﻿namespace MonoGameEngine.Engine.Services;
 public class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceManager) : IWorldToPixelConverter
 {
     /// <summary>

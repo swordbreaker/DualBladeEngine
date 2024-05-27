@@ -7,4 +7,5 @@ public interface ICameraService
     float Rotation { get; set; }
     Matrix TransformMatrix { get; }
     Matrix PixelTransformMatrix { get; }
+    float Zoom { get; set; }
 }

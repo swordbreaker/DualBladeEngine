@@ -5,6 +5,8 @@ namespace MonoGameEngine.Engine.Systems;
 
 public abstract class ComponentSystem<TComponent> : BaseSystem, IComponentSystem where TComponent : IComponent
 {
+    private IGameEngine? _gameEngine;
+
     protected virtual void Initialize(TComponent component, IGameEngine gameEngine) { }
 
     protected virtual void Update(TComponent component, GameTime gameTime, IGameEngine gameEngine) { }
@@ -17,6 +19,9 @@ public abstract class ComponentSystem<TComponent> : BaseSystem, IComponentSystem
         {
             Initialize(component, gameEngine);
         }
+
+        _gameEngine = gameEngine;
+        World.ComponentAdded += Init;
     }
 
     public override void Update(GameTime gameTime, IGameEngine gameEngine)
@@ -35,6 +40,17 @@ public abstract class ComponentSystem<TComponent> : BaseSystem, IComponentSystem
         }
     }
 
+    public override void Dispose() =>
+        World.ComponentAdded -= Init;
+
     protected TransformComponent GetTransformComponent(IComponent component) =>
         World.GetComponent<TransformComponent>(component.Entity)!;
+
+    private void Init(IComponent component)
+    {
+        if (component is TComponent c && _gameEngine is not null)
+        {
+            Initialize(c, _gameEngine);
+        }
+    }
 }

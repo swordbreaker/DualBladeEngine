@@ -1,8 +1,6 @@
 ﻿using ExampleGame.Components;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Rendering;
 using MonoGameEngine.Engine.Worlds;
 using nkast.Aether.Physics2D.Dynamics;
 using System.Numerics;
