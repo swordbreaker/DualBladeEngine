@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
+using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace MonoGamesEngine.Analyzer
 {
@@ -9,45 +11,66 @@ namespace MonoGamesEngine.Analyzer
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var parser = new SceneParser();
-
-            var textFiles = context.AdditionalTextsProvider.Where(static file => file.Path.EndsWith(".scene.yaml"));
-            
-            var namesAndContents = textFiles.Select((text, cancellationToken) =>
-                (name: Path.GetFileNameWithoutExtension(text.Path),
-                entity: parser.ParseScene(text.GetText(cancellationToken)!.ToString())));
-
-            context.RegisterSourceOutput(namesAndContents, (spc, nameAndContent) =>
+            try
             {
-                var (name, entity) = nameAndContent;
+                var parser = new SceneParser();
 
-                spc.AddSource($"{name}.cs", 
-$$"""
+                var textFiles = context.AdditionalTextsProvider.Where(static file => file.Path.EndsWith(".scene.yaml"));
+
+                var namesAndContents = textFiles.Select((text, cancellationToken) =>
+                    (name: Path.GetFileNameWithoutExtension(text.Path),
+                    entity: parser.ParseScene(text.GetText(cancellationToken)!.ToString())));
+
+                context.RegisterSourceOutput(namesAndContents, (spc, nameAndContent) =>
+                {
+                    var (name, entities) = nameAndContent;
+                    name = name.Replace(".scene", "");
+
+                    var sb = new StringBuilder();
+                    foreach(var e in entities)
+                    {
+                        sb.AppendLine($"yield return new {e.Type}()");
+                        sb.AppendLine("{");
+                        sb.AppendLine($"    World = World,");
+                        sb.AppendLine($"    Position = new Vector2({e.Position[0]}, {e.Position[1]}),");
+                        sb.AppendLine($"    Scale = new Vector2({e.Scale[0]}, {e.Scale[1]}),");
+                        sb.AppendLine($"    Rotation = {e.Rotation},");
+                        foreach(var p in e.Properties)
+                        {
+                            sb.AppendLine($"    {p.Key} = {p.Value},");
+                        }
+                        sb.AppendLine("};");
+                    }
+
+                    spc.AddSource($"{name}.generated.cs",
+    $$"""
 using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Worlds;
 using System.Collections.Generic;
 
-namespace MonoGameEngine.Engine.EntityHierarchy;
+namespace MonoGameEngine.Scenes;
 
 internal class {{name}} : YamlGameScene
 {
-    public Test(IWorld world) : base(world) {}
+    public {{name}}(IWorld world) : base(world) {}
 
 
     protected override IEnumerable<IEntity> SetupEntities()
     {
-        yield return new {{entity.Type}}()
-        {
-            World = World,
-            Position = new Vector2({{entity.Position[0]}}, {{entity.Position[1]}}),
-            Scale = new Vector2({{entity.Scale[0]}}, {{entity.Scale[1]}}),
-            Rotation = {{entity.Rotation}},
-            {{entity.Properties.Select(p => $"{p.Key} = {p.Value},")}}
-        };
+        {{sb.ToString()}}
     }
 }
 """);
-            });
+                });
+            }
+            catch(Exception e)
+            {
+                context.RegisterSourceOutput(context.AdditionalTextsProvider, (spc, text) =>
+                {
+                    var descriptor = new DiagnosticDescriptor("YAMLGEN001", "YAMLGEN", $"Error generating scene {e.Message}", "YAMLGEN", DiagnosticSeverity.Error, true);
+                    spc.ReportDiagnostic(Diagnostic.Create(descriptor, null, "Error generating scene", DiagnosticSeverity.Error));
+                });
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ public class SceneParserTests
         var parser = new SceneParser();
         var result = parser.ParseScene(TestYaml);
 
-        result.Should().NotBeNull();
-        result.Children.Should().HaveCount(1);
+        result.Should().NotBeEmpty();
+        result.Should().HaveCount(1);
     }
 }
