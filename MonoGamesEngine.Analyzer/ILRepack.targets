@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <ItemGroup>
+      <InputAssemblies Include="$(TargetPath)"/>
+      <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'YamlDotNet'" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <DoNotInternalizeAssemblies Include="System.Diagnostics.CodeAnalysis" />
+      <DoNotInternalizeAssemblies Include="Microsoft.CodeAnalysis" />
+    </ItemGroup>
+
+    <ILRepack
+        AllowDuplicateResources="false"
+        DebugInfo="true"
+        Verbose="true"
+        LibraryPath="$(OutputPath)"
+        Internalize="true"
+        InputAssemblies="@(InputAssemblies)"
+        InternalizeExclude="@(DoNotInternalizeAssemblies)"
+        OutputFile="$(TargetPath)"
+        Parallel="true"
+        RenameInternalized="true"
+        TargetKind="SameAsPrimaryAssembly" />
+  </Target>
+</Project>

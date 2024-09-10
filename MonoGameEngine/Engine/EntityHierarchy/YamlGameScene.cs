@@ -4,6 +4,7 @@ using MonoGameEngine.Engine.Worlds;
 using System.Collections.Generic;
 
 namespace MonoGameEngine.Engine.EntityHierarchy;
+
 public abstract class YamlGameScene : GameScene
 {
     protected YamlGameScene(IWorld world) : base(world)

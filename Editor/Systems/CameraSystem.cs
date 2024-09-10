@@ -23,7 +23,7 @@ public class CameraSystem : BaseSystem
         gameEngine.CameraService.Position += move;
         Debug.WriteLine(zoom);
 
-        if(gameEngine.InputManager.IsKeyPressed(Keys.Space))
+        if (gameEngine.InputManager.IsKeyPressed(Keys.Space))
         {
             gameEngine.CameraService.Zoom = 1;
             gameEngine.CameraService.Position = Vector2.Zero;

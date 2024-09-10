@@ -17,12 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Icon.bmp" />
-    <None Remove="Icon.ico" />
-    <None Remove="Scenes\TestScene.scene.yaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AdditionalFiles Include="Scenes\TestScene.scene.yaml" />
   </ItemGroup>
 

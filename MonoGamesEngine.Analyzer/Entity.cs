@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 
 namespace MonoGamesEngine.Analyzer;
-public class Entity
+
+[GenerateAutomaticInterface]
+public class Entity : IEntity
 {
     public string Name { get; set; }
     public string Type { get; set; }
@@ -13,7 +15,8 @@ public class Entity
     public Dictionary<string, object> Properties { get; set; } = [];
 }
 
-public class Component
+[GenerateAutomaticInterface]
+public class Component : IComponent
 {
     public string Type { get; set; }
     public Dictionary<string, object> Properties { get; set; } = [];

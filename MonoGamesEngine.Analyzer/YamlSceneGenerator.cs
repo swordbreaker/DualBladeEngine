@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace MonoGamesEngine.Analyzer
             try
             {
                 var parser = new SceneParser();
+                var codeGenerator = new SceneCodeGenerator();
 
                 var textFiles = context.AdditionalTextsProvider.Where(static file => file.Path.EndsWith(".scene.yaml"));
 
@@ -26,51 +29,28 @@ namespace MonoGamesEngine.Analyzer
                     var (name, entities) = nameAndContent;
                     name = name.Replace(".scene", "");
 
-                    var sb = new StringBuilder();
-                    foreach(var e in entities)
-                    {
-                        sb.AppendLine($"yield return new {e.Type}()");
-                        sb.AppendLine("{");
-                        sb.AppendLine($"    World = World,");
-                        sb.AppendLine($"    Position = new Vector2({e.Position[0]}, {e.Position[1]}),");
-                        sb.AppendLine($"    Scale = new Vector2({e.Scale[0]}, {e.Scale[1]}),");
-                        sb.AppendLine($"    Rotation = {e.Rotation},");
-                        foreach(var p in e.Properties)
-                        {
-                            sb.AppendLine($"    {p.Key} = {p.Value},");
-                        }
-                        sb.AppendLine("};");
-                    }
+                    var code = codeGenerator.GenerateCode(entities, name);
 
-                    spc.AddSource($"{name}.generated.cs",
-    $$"""
-using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Worlds;
-using System.Collections.Generic;
-
-namespace MonoGameEngine.Scenes;
-
-internal class {{name}} : YamlGameScene
-{
-    public {{name}}(IWorld world) : base(world) {}
-
-
-    protected override IEnumerable<IEntity> SetupEntities()
-    {
-        {{sb.ToString()}}
-    }
-}
-""");
+                    code = FormatSource(code);
+                    spc.AddSource($"{name}.generated.cs", code);
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 context.RegisterSourceOutput(context.AdditionalTextsProvider, (spc, text) =>
                 {
-                    var descriptor = new DiagnosticDescriptor("YAMLGEN001", "YAMLGEN", $"Error generating scene {e.Message}", "YAMLGEN", DiagnosticSeverity.Error, true);
+                    var descriptor = new DiagnosticDescriptor("YAMLGEN001", "YAMLGEN", $"Error generating scene {e.Message} {e.StackTrace}", "YAMLGEN", DiagnosticSeverity.Error, true);
                     spc.ReportDiagnostic(Diagnostic.Create(descriptor, null, "Error generating scene", DiagnosticSeverity.Error));
                 });
             }
+        }
+
+        private string FormatSource(string code)
+        {
+            var sourceText = SourceText.From(code, Encoding.UTF8);
+            var tree = CSharpSyntaxTree.ParseText(sourceText);
+            var node = tree.GetRoot().NormalizeWhitespace();
+            return node.GetText(Encoding.UTF8).ToString();
         }
     }
 }

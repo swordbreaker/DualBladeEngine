@@ -29,7 +29,7 @@ public class SceneParserTests
         Origin: [0, 0]
 """;
 
-    [Fact()]
+    [Fact]
     public void ParseSceneTest()
     {
         var parser = new SceneParser();

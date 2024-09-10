@@ -65,13 +65,13 @@ public class BallSystem(ICameraService cameraService) : EntitySystem<BallEntity>
             gameEngine.PhysicsManager.Gravity = new Vector2(0, -5);
         }
 
-        if(!gameEngine.InputManager.IsKeyPressed(Keys.Space) && entity.CharacterComponent.IsJumping)
+        if (!gameEngine.InputManager.IsKeyPressed(Keys.Space) && entity.CharacterComponent.IsJumping)
         {
             entity.CharacterComponent.IsJumping = false;
             gameEngine.PhysicsManager.Gravity = new Vector2(0, -20);
         }
 
-        if(velocity.Y < 0 && entity.CharacterComponent.IsJumping)
+        if (velocity.Y < 0 && entity.CharacterComponent.IsJumping)
         {
             entity.CharacterComponent.IsJumping = false;
             gameEngine.PhysicsManager.Gravity = new Vector2(0, -20);

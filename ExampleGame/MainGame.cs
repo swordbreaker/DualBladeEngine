@@ -14,6 +14,7 @@ public class MainGame : BaseGame
 
     protected override void Initialize()
     {
+        //this.AddSceneExclusively(new TestScene(GameWorld, GameEngine));
         this.AddSceneExclusively(new MainScene(GameWorld, GameEngine));
         base.Initialize();
     }

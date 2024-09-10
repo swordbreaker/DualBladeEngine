@@ -85,6 +85,6 @@ public record GameEngine(ISpriteFactory _spriteFactory) : IGameEngine
     public ISprite CreateSprite(string assetName) =>
         _spriteFactory.CreateSprite(Load<Texture2D>(assetName));
 
-    public ISprite CreateSprite(Texture2D texture2D) => 
+    public ISprite CreateSprite(Texture2D texture2D) =>
         _spriteFactory.CreateSprite(texture2D);
 }
