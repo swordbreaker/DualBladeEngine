@@ -9,8 +9,6 @@ namespace ExampleGame.Entities;
 
 public class BallEntity : SpriteEntity
 {
-    public static float G = 9.81f * 50;
-
     public KinematicComponent KinematicComponent { get; }
     public CharacterComponent CharacterComponent { get; }
 
@@ -18,7 +16,7 @@ public class BallEntity : SpriteEntity
     {
         KinematicComponent = AddComponent<KinematicComponent>();
         CharacterComponent = AddComponent<CharacterComponent>();
-        
+
         Transform!.Position = Vector2.Zero;
         Renderer.SetSprite(gameEngine.CreateSprite("ball"));
 
@@ -28,7 +26,7 @@ public class BallEntity : SpriteEntity
         body.FixedRotation = true;
         body.Mass = 1;
         body.LinearDamping = 0f;
-        var fixture = body.CreateCircle(Renderer.Sprite!.Width/2f, 1);
+        var fixture = body.CreateCircle(Renderer.Sprite!.Width / 2f, 1);
         fixture.Tag = this;
         fixture.Restitution = 0.01f;
         fixture.Friction = 0f;

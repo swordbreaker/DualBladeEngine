@@ -5,11 +5,7 @@ using System.Collections.Generic;
 
 namespace MonoGameEngine.Engine.EntityHierarchy;
 
-public abstract class YamlGameScene : GameScene
+public abstract class YamlGameScene(IWorld world) : GameScene(world)
 {
-    protected YamlGameScene(IWorld world) : base(world)
-    {
-    }
-
     public override IEnumerable<ISystem> SetupSystems() => [];
 }

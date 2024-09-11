@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,8 @@ public class SceneCodeGenerator : ISceneCodeGenerator
 {
     public string GenerateCode(IEnumerable<IEntity> entities, string name)
     {
+        var probsSb = new StringBuilder();
+        GetEntityProperties(entities, probsSb);
         var sb = new StringBuilder();
         GetEntityInit(entities, sb);
 
@@ -27,6 +30,7 @@ internal class {{name}} : YamlGameScene
 {
     public {{name}}(IWorld world) : base(world) {}
 
+    {{probsSb}}
 
     protected override IEnumerable<IEntity> SetupEntities()
     {
@@ -38,15 +42,26 @@ internal class {{name}} : YamlGameScene
         return code;
     }
 
+    private void GetEntityProperties(IEnumerable<IEntity> entities, StringBuilder sb)
+    {
+        foreach (var e in entities.Where(x => x.Name is not null))
+        {
+            GetEntityProperties(e.Children, sb);
+            sb.AppendLine($"public {e.Type} {e.Name} {{ get; private set; }}");
+        }
+    }
+
     private void GetEntityInit(IEnumerable<IEntity> entities, StringBuilder sb)
     {
         foreach (var e in entities)
         {
             GetEntityInit(e.Children, sb);
+            var name = e.Name ?? e.Type + Guid.NewGuid().ToString().Replace("-", "");
+            var namePrefix = e.Name is null ? "var " : "this.";
 
             sb.Append(
                 $$"""
-                    var {{e.Name}} = new {{e.Type}}()
+                    {{namePrefix}}{{e.Name}} = new {{e.Type}}()
                     {
                         World = World,
                         {{string.Join(",\n", e.Properties.Select(p => $"{p.Key} = {p.Value}"))}}
