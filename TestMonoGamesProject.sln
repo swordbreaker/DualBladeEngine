@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGameEngine", "MonoGameE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "Editor\Editor.csproj", "{CCFF164C-5BE3-4704-9E78-1AB2F819BECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGamesEngine.Analyzer", "MonoGamesEngine.Analyzer\MonoGamesEngine.Analyzer.csproj", "{1E956E02-BD1F-4C0E-A318-2871186D3F08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGamesEngine.Analyzer", "MonoGamesEngine.Analyzer\MonoGamesEngine.Analyzer.csproj", "{1E956E02-BD1F-4C0E-A318-2871186D3F08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGamesEngine.Analyzer.Tests", "MonoGamesEngine.Analyzer.Tests\MonoGamesEngine.Analyzer.Tests.csproj", "{77538BE2-6910-4A65-9D84-C5F2BCD8A864}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGamesEngine.Analyzer.Tests", "MonoGamesEngine.Analyzer.Tests\MonoGamesEngine.Analyzer.Tests.csproj", "{77538BE2-6910-4A65-9D84-C5F2BCD8A864}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleAndroid", "ExampleAndroid\ExampleAndroid.csproj", "{64F53BCD-62EC-40D7-B697-5A72F1B918D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDesktop", "ExampleDesktop\ExampleDesktop.csproj", "{A216BAE3-EC3A-409F-9919-4E38346DA6C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{77538BE2-6910-4A65-9D84-C5F2BCD8A864}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77538BE2-6910-4A65-9D84-C5F2BCD8A864}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77538BE2-6910-4A65-9D84-C5F2BCD8A864}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64F53BCD-62EC-40D7-B697-5A72F1B918D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64F53BCD-62EC-40D7-B697-5A72F1B918D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64F53BCD-62EC-40D7-B697-5A72F1B918D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64F53BCD-62EC-40D7-B697-5A72F1B918D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

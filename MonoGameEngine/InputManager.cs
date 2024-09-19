@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
 
 namespace MonoGameEngine;
@@ -12,6 +13,7 @@ public class InputManager
 
     public void Update()
     {
+        TouchState = TouchPanel.GetState();
         var kstate = Keyboard.GetState();
         var newKey = kstate.GetPressedKeys();
         _justPressedKeys = new HashSet<Keys>(newKey);
@@ -36,6 +38,8 @@ public class InputManager
     public int ScrollWheelDelta { get; private set; }
 
     public Vector2 MousePos { get; private set; }
+
+    public TouchCollection TouchState { get; private set; }
 
     public bool IsKeyPressed(Keys key) =>
         _pressedKeysSet.Contains(key);

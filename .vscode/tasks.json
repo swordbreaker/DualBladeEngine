@@ -1,0 +1,10 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Debug Android Build",
+            "type": "shell",
+            "command": "dotnet build -p:Configuration=Debug ${workspaceFolder}/ExampleAndroid/ExampleAndroid.csproj \"/t:Install;_Run\" /p:AndroidAttachDebugger=true /p:AndroidSdbHostPort=10000",
+        },
+    ]
+}

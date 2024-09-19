@@ -1,7 +1,6 @@
 ﻿using ExampleGame.Scenes;
 using MonoGameEngine;
 using MonoGameEngine.Engine.Worlds;
-using MonoGameEngine.Scenes;
 using Myra.Graphics2D.UI;
 
 namespace ExampleGame;
@@ -15,9 +14,9 @@ public class MainGame : BaseGame
 
     protected override void Initialize()
     {
-        var scene = new TestScene(GameWorld);
-        this.AddSceneExclusively(scene);
-        //this.AddSceneExclusively(new MainScene(GameWorld, GameEngine));
+        //var scene = new TestScene(GameWorld);
+        //this.AddSceneExclusively(scene);
+        this.AddSceneExclusively(new MainScene(GameWorld, GameEngine));
         base.Initialize();
     }
 

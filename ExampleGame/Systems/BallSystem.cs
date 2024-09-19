@@ -41,6 +41,7 @@ public class BallSystem(ICameraService cameraService) : EntitySystem<BallEntity>
         var body = entity.KinematicComponent.PhysicsBody;
 
         var velocity = body.LinearVelocity;
+
         if (gameEngine.InputManager.IsKeyPressed(Keys.A))
         {
             velocity.X = MathF.Min(0, velocity.X);
@@ -58,7 +59,9 @@ public class BallSystem(ICameraService cameraService) : EntitySystem<BallEntity>
 
         var jumpForce = 300;
 
-        if (gameEngine.InputManager.IsKeyJustPressed(Keys.Space) && entity.CharacterComponent.IsGrounded)
+        var jumpPressed = gameEngine.InputManager.TouchState.Count > 0 || gameEngine.InputManager.IsKeyJustPressed(Keys.Space);
+
+        if (jumpPressed && entity.CharacterComponent.IsGrounded)
         {
             velocity.Y = jumpForce * gameTime.DeltaSeconds();
             entity.CharacterComponent.IsJumping = true;
