@@ -1,29 +1,26 @@
-﻿using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Scenes;
+﻿using MonoGameEngine.Engine.Services;
 using MonoGameEngine.Engine.Systems;
 using MonoGameEngine.Engine.Worlds;
 using Myra;
 using Myra.Graphics2D.UI;
-using System.Collections.Generic;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace MonoGameEngine;
 
 public abstract class BaseGame : Game
 {
-    private readonly List<IGameScene> _activeScenes = [];
-
     protected IGameEngine GameEngine;
     protected IWorld GameWorld;
     protected Desktop? Desktop;
     protected Color BackgroundColor = Color.CornflowerBlue;
-    protected IReadOnlyList<IGameScene> ActiveScenes => _activeScenes;
+    protected ISceneManager SceneManager;
 
-    public BaseGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory)
+    public BaseGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory, ISceneManagerFactory sceneManagerFactory)
     {
         GameEngine = gameEngineFactory.Create(this);
         GameWorld = worldFactory.Create(GameEngine);
         Content.RootDirectory = "Content";
+        SceneManager = sceneManagerFactory.CreateSceneManager(GameWorld);
     }
 
     protected override void Initialize()
@@ -57,28 +54,5 @@ public abstract class BaseGame : Game
 
         Desktop!.Render();
         base.Draw(gameTime);
-    }
-
-    protected void AddEntity<TEntity>(TEntity entity) where TEntity : Entity
-    {
-        GameWorld.AddEntity(entity);
-    }
-
-    protected void AddSceneExclusively(IGameScene gameScene)
-    {
-        _activeScenes.ForEach(s => s.Dispose());
-        AddScene(gameScene);
-    }
-
-    protected void AddScene(IGameScene gameScene)
-    {
-        GameWorld.AddEntity(gameScene.Root);
-
-        foreach (var system in gameScene.Systems)
-        {
-            GameWorld.AddSystem(system);
-        }
-
-        _activeScenes.Add(gameScene);
     }
 }

@@ -10,23 +10,38 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Engine\Services\WorldToPixelConverter.cs~RF53ac0777.TMP" />
-    <None Remove="Icon.ico" />
-    <None Remove="Icon.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aether.Physics2D.MG" Version="2.1.1" />
+    <PackageReference Include="Gum.MonoGame" Version="2024.9.16.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Framework.Android" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
     <PackageReference Include="Myra" Version="1.5.5" />
     <PackageReference Include="YamlDotNet" Version="15.1.4" />
+    <PackageReference Include="MonoGame.Extended" Version="4.0.0" />
+    <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="4.0.0" />
+    <PackageReference Include="AutomaticInterface" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Content\bin\Android\Content\ball.xnb">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\bin\Android\Content\pixel.xnb">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\bin\DesktopGL\Content\ball.xnb">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\bin\DesktopGL\Content\pixel.xnb">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Content\Menu.xmmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

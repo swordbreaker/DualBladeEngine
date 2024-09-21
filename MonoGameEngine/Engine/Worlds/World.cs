@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace MonoGameEngine.Engine.Worlds;
 
-public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWorld
+public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory, IJobQueue _jobQueue) : IWorld
 {
     private readonly HashSet<ISystem> _systems = [];
     private readonly Dictionary<Type, HashSet<IComponent>> _components = [];
@@ -43,7 +43,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
     {
         _systems.UnionWith(systems);
 
-        if(isInitialized)
+        if (isInitialized)
         {
             foreach (var system in systems)
             {
@@ -56,7 +56,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
     {
         _systems.Add(system);
 
-        if(isInitialized)
+        if (isInitialized)
         {
             system.Initialize(_gameEngine);
         }
@@ -86,7 +86,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
     {
         if (!_entities.ContainsKey(entity.GetType()))
         {
-            _entities[entity.GetType()] = new HashSet<IEntity>();
+            _entities[entity.GetType()] = [];
         }
 
         _entities[entity.GetType()].Add(entity);
@@ -172,6 +172,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory) : IWo
 
     public void Update(GameTime gameTime)
     {
+        _jobQueue.Execute();
         _gameEngine.PhysicsManager.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
 
         foreach (var system in _systems)

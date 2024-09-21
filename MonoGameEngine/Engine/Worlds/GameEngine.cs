@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Physics;
 using MonoGameEngine.Engine.Rendering;
 using MonoGameEngine.Engine.Services;
+using MonoGameEngine.Engine.Systems;
 using System;
 
 namespace MonoGameEngine.Engine.Worlds;
@@ -82,6 +83,7 @@ public record GameEngine(ISpriteFactory _spriteFactory) : IGameEngine
 
     public T Load<T>(string assetName) =>
         Content.Load<T>(assetName);
+
     public ISprite CreateSprite(string assetName) =>
         _spriteFactory.CreateSprite(Load<Texture2D>(assetName));
 

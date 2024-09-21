@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MonoGameEngine.Ui\MonoGameEngine.Ui.csproj" />
     <ProjectReference Include="..\MonoGameEngine\MonoGameEngine.csproj" />
     <ProjectReference Include="..\MonoGamesEngine.Analyzer\MonoGamesEngine.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

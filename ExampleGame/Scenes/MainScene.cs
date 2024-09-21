@@ -1,7 +1,6 @@
 ﻿using ExampleGame.Entities;
 using ExampleGame.Systems;
 using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Extensions;
 using MonoGameEngine.Engine.Scenes;

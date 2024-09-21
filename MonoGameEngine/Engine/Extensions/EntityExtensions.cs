@@ -21,20 +21,20 @@ public static class EntityExtensions
     }
 
     public static IMaybe<IEntity> GetParent(this IEntity entity) =>
-        from thisTranform in entity.GetComponent<TransformComponent>()
+        from thisTranform in entity.GetComponent<INodeComponent>()
         from parentTransform in thisTranform.Parent
         select parentTransform.Entity;
 
     public static IEnumerable<IEntity> GetChildren(this IEntity entity) =>
-        entity.GetComponent<TransformComponent>()
+        entity.GetComponent<INodeComponent>()
             .Map(t => t.Children.Select(c => c.Entity))
-            .SomeOrProvided(Enumerable.Empty<IEntity>());
+            .SomeOrProvided([]);
 
     public static void AddChild(this Entity entity, Entity child)
     {
         var result =
-            from parentTransform in entity.GetComponent<TransformComponent>()
-            from childTransform in child.GetComponent<TransformComponent>()
+            from parentTransform in entity.GetComponent<INodeComponent>()
+            from childTransform in child.GetComponent<INodeComponent>()
             select (parentTransform, childTransform);
 
         result.IfSome(result => result.parentTransform.AddChild(result.childTransform));
@@ -43,8 +43,8 @@ public static class EntityExtensions
     public static void AddParent(this Entity entity, Entity parent)
     {
         var result =
-            from childTransform in entity.GetComponent<TransformComponent>()
-            from parentTransform in parent.GetComponent<TransformComponent>()
+            from childTransform in entity.GetComponent<INodeComponent>()
+            from parentTransform in parent.GetComponent<INodeComponent>()
             select (childTransform, parentTransform);
 
         result.IfSome(result => result.childTransform.AddParent(result.parentTransform));

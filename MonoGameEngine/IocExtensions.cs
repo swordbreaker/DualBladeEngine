@@ -21,5 +21,7 @@ public static class IocExtensions
             context.AddSingleton<ISpriteFactory, SpriteFactory>();
             context.AddSingleton<ICameraServiceFactory, CameraServiceFactory>();
             context.AddSingleton<IWorldToPixelConverterFactory, WorldToPixelConverterFactory>();
+            context.AddSingleton<ISceneManagerFactory, SceneManagerFactory>();
+            context.AddSingleton<IJobQueue, JobQueue>();
         });
 }

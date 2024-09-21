@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGamesEngine.Analyzer.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleAndroid", "ExampleAndroid\ExampleAndroid.csproj", "{64F53BCD-62EC-40D7-B697-5A72F1B918D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDesktop", "ExampleDesktop\ExampleDesktop.csproj", "{A216BAE3-EC3A-409F-9919-4E38346DA6C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleDesktop", "ExampleDesktop\ExampleDesktop.csproj", "{A216BAE3-EC3A-409F-9919-4E38346DA6C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleAndroid2", "ExampleAndroid2\ExampleAndroid2.csproj", "{3B983004-C415-4D5A-BF14-FAB7D248248F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameEngine.Ui", "MonoGameEngine.Ui\MonoGameEngine.Ui.csproj", "{591E83BA-08D7-4A18-A818-02923521805B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,15 @@ Global
 		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A216BAE3-EC3A-409F-9919-4E38346DA6C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B983004-C415-4D5A-BF14-FAB7D248248F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B983004-C415-4D5A-BF14-FAB7D248248F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B983004-C415-4D5A-BF14-FAB7D248248F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3B983004-C415-4D5A-BF14-FAB7D248248F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B983004-C415-4D5A-BF14-FAB7D248248F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{591E83BA-08D7-4A18-A818-02923521805B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{591E83BA-08D7-4A18-A818-02923521805B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{591E83BA-08D7-4A18-A818-02923521805B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{591E83BA-08D7-4A18-A818-02923521805B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,5 @@
 ﻿using ExampleGame.Components;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGameEngine.Engine.Components;
 using MonoGameEngine.Engine.Entities;
 using MonoGameEngine.Engine.Worlds;
@@ -18,6 +19,7 @@ public class BallEntity : SpriteEntity
         CharacterComponent = AddComponent<CharacterComponent>();
 
         Transform!.Position = Vector2.Zero;
+
         Renderer.SetSprite(gameEngine.CreateSprite("ball"));
 
         // Create a physics body

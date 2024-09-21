@@ -42,16 +42,4 @@ public static class TransformComponentExtensions
 
         return rotation;
     }
-
-    public static void AddChild(this TransformComponent parent, TransformComponent child)
-    {
-        child.Parent = Maybe.Some(parent);
-        parent.Children.Add(child);
-    }
-
-    public static void AddParent(this TransformComponent child, TransformComponent parent)
-    {
-        child.Parent = Maybe.Some(parent);
-        parent.Children.Add(child);
-    }
 }

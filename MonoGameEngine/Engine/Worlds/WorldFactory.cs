@@ -2,8 +2,8 @@
 
 namespace MonoGameEngine.Engine.Worlds;
 
-public class WorldFactory(ISystemFactory _systemFactory) : IWorldFactory
+public class WorldFactory(ISystemFactory _systemFactory, IJobQueue jobQueue) : IWorldFactory
 {
     public IWorld Create(IGameEngine engine) =>
-        new World(engine, _systemFactory);
+        new World(engine, _systemFactory, jobQueue);
 }

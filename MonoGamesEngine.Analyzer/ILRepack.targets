@@ -15,7 +15,6 @@
 
         <ILRepack
             AllowDuplicateResources="false"
-            DebugInfo="true"
             LibraryPath="$(OutputPath)"
             Internalize="true"
             InputAssemblies="@(InputAssemblies)"

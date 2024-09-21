@@ -11,6 +11,6 @@ public class RootEntity : TransformEntity
     public required IEnumerable<IEntity> Childs
     {
         get => Transform.Children.Select(x => x.Entity);
-        init => Transform.Children.AddRange(value.Select(x => x.GetComponent<TransformComponent>()).Somes());
+        init => Transform.Children.AddRange(value.Select(x => x.GetComponent<INodeComponent>()).Somes());
     }
 }
