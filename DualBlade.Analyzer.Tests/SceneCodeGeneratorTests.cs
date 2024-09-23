@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit.Abstractions;
 
-namespace MonoGamesEngine.Analyzer.Tests;
+namespace DualBlade.Analyzer.Tests;
 
 public class SceneCodeGeneratorTests(ITestOutputHelper Output)
 {
@@ -10,17 +10,16 @@ public class SceneCodeGeneratorTests(ITestOutputHelper Output)
     {
         // arrange
         var generator = new SceneCodeGenerator();
-        var entities = new List<IEntity>
+        var entities = new List<Entity>
         {
-            new Entity
-            {
+            new() {
                 Name = "Ball",
                 Type = "TransformEntity",
-                Position = new float[] { 0, 0 },
+                Position = [0, 0],
                 Rotation = 0,
-                Scale = new float[] { 1, 1 },
-                Components = new List<Component>
-                {
+                Scale = [1, 1],
+                Components =
+                [
                     new Component
                     {
                         Type = "RenderComponent",
@@ -29,18 +28,18 @@ public class SceneCodeGeneratorTests(ITestOutputHelper Output)
                             { "Texture", "ball" }
                         }
                     }
-                },
-                Children = new List<Entity>
-                {
+                ],
+                Children =
+                [
                     new Entity
                     {
                         Name = "Ball",
                         Type = "TransformEntity",
-                        Position = new float[] { 0, 0 },
+                        Position = [0, 0],
                         Rotation = 0,
-                        Scale = new float[] { 1, 1 },
-                        Components = new List<Component>
-                        {
+                        Scale = [1, 1],
+                        Components =
+                        [
                             new Component
                             {
                                 Type = "RenderComponent",
@@ -51,14 +50,20 @@ public class SceneCodeGeneratorTests(ITestOutputHelper Output)
                                     { "Origin", new float[] { 0, 0 } }
                                 }
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             }
         };
 
+        var root = new SceneRoot
+        {
+            Entities = [.. entities],
+            AdditionalUsings = [],
+        };
+
         // act
-        var result = generator.GenerateCode(entities, "TestScene");
+        var result = generator.GenerateCode(root, "TestScene");
 
         // assert
         result.Should().NotBeNullOrEmpty();

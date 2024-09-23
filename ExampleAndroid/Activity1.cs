@@ -30,7 +30,7 @@ namespace ExampleAndroid
         {
             base.OnCreate(bundle);
 
-            _game = this.CreateGame();
+            _game = CreateGame();
             //_game = new Game1();
             _view = _game.Services.GetService(typeof(View)) as View;
 
@@ -38,7 +38,7 @@ namespace ExampleAndroid
             _game.Run();
         }
 
-        private MainGame CreateGame()
+        private static MainGame CreateGame()
         {
             var host = new HostBuilder()
             .AddGameEngine()

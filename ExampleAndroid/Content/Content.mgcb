@@ -20,7 +20,7 @@
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
+/processorParam:ResizeToPowerOfTwo=True
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:ball.png

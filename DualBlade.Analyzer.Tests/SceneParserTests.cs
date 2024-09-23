@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-namespace MonoGamesEngine.Analyzer.Tests;
+namespace DualBlade.Analyzer.Tests;
 
 public class SceneParserTests
 {
@@ -35,7 +35,7 @@ public class SceneParserTests
         var parser = new SceneParser();
         var result = parser.ParseScene(TestYaml);
 
-        result.Should().NotBeEmpty();
-        result.Should().HaveCount(1);
+        result.Entities.Should().NotBeEmpty();
+        result.Entities.Should().HaveCount(1);
     }
 }
