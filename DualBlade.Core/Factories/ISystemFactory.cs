@@ -4,5 +4,5 @@ namespace DualBlade.Core.Factories;
 
 public interface ISystemFactory
 {
-    TSystem Create<TSystem>(object[] additionalParameters) where TSystem : ISystemWithContext;
+    TSystem Create<TSystem>(object[] additionalParameters) where TSystem : ISystem;
 }

@@ -1,8 +1,6 @@
 ﻿using DualBlade.Core.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Systems;
-using System;
-using System.Collections.Generic;
 
 namespace DualBlade.Core.Worlds;
 
@@ -34,7 +32,7 @@ public interface IWorld
 
     void AddSystems(params ISystem[] systems);
     void AddSystem(ISystem system);
-    void AddSystem<TSystem>(params object[] additionalParameters) where TSystem : ISystemWithContext;
+    void AddSystem<TSystem>(params object[] additionalParameters) where TSystem : ISystem;
     void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent;
     void Initialize();
 }

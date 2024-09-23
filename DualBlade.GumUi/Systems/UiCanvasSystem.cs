@@ -29,13 +29,12 @@ public class UiCanvasSystem(IGameContext gameContext) : ComponentSystem<UiCanvas
     protected override void Update(UiCanvasComponent component, GameTime gameTime)
     {
         base.Update(component, gameTime);
-        FormsUtilities.Update(gameTime, component.Container);
+        FormUtils.Update(gameTime, component.Container);
     }
 
     protected override void OnDestroy(UiCanvasComponent component)
     {
         base.OnDestroy(component);
-        Debug.WriteLine("Removing from managers");
         component.Container.RemoveFromManagers();
     }
 }

@@ -6,9 +6,14 @@ namespace DualBlade.Core.Factories;
 
 internal class SystemFactory(IGameContext gameContext) : ISystemFactory
 {
-    public TSystem Create<TSystem>(object[] additionalParameters) where TSystem : ISystemWithContext
+    public TSystem Create<TSystem>(object[] additionalParameters) where TSystem : ISystem
     {
-        var parameters = additionalParameters.Prepend(gameContext).ToArray();
-        return (TSystem)ActivatorUtilities.CreateInstance(gameContext.ServiceProvider, typeof(TSystem), parameters);
+        if (typeof(TSystem).IsAssignableTo(typeof(ISystemWithContext)))
+        {
+            var parameters = additionalParameters.Prepend(gameContext).ToArray();
+            return (TSystem)ActivatorUtilities.CreateInstance(gameContext.ServiceProvider, typeof(TSystem), parameters);
+        }
+
+        return (TSystem)ActivatorUtilities.CreateInstance(gameContext.ServiceProvider, typeof(TSystem), additionalParameters);
     }
 }

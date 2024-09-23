@@ -1,5 +1,5 @@
 ﻿using DualBlade.Core.Services;
-using MonoGameGum.Forms;
+using Microsoft.Xna.Framework.Input.Touch;
 using RenderingLibrary;
 
 namespace DualBlade.GumUi;
@@ -9,6 +9,9 @@ internal class UiStartupService : IStartupService
     {
         SystemManagers.Default = new SystemManagers();
         SystemManagers.Default.Initialize(gameContext.GameEngine.GraphicsDeviceManager.GraphicsDevice, fullInstantiation: true);
-        FormsUtilities.InitializeDefaults();
+        FormUtils.InitializeDefaults();
+
+        TouchPanel.DisplayWidth = gameContext.GameEngine.GraphicsDeviceManager.PreferredBackBufferWidth;
+        TouchPanel.DisplayHeight = gameContext.GameEngine.GraphicsDeviceManager.PreferredBackBufferHeight;
     }
 }

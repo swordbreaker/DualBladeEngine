@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using DualBlade.Core;
 using DualBlade.GumUi;
+using DualBlade._2D.Rendering;
 
 namespace ExampleAndroid
 {
@@ -42,6 +43,8 @@ namespace ExampleAndroid
             var host = new HostBuilder()
             .AddGameEngine()
             .AddGumUi()
+            .AddPhysics2D()
+            .Add2DRendering()
             .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<MainGame>();

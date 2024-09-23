@@ -17,6 +17,4 @@ public class MainMenuScene(IGameContext _gameContext) : GameScene(_gameContext)
     {
         yield return CreateEntity<MainMenuEntity>();
     }
-
-    private void StartButton_Click(object? sender, EventArgs e) => throw new NotImplementedException();
 }

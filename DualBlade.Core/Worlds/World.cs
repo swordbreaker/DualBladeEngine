@@ -193,7 +193,7 @@ public class World(IGameEngine _gameEngine, ISystemFactory _systemFactory, IJobQ
         _gameEngine.EndDraw();
     }
 
-    public void AddSystem<TSystem>(params object[] additionalParameters) where TSystem : ISystemWithContext
+    public void AddSystem<TSystem>(params object[] additionalParameters) where TSystem : ISystem
     {
         AddSystem(_systemFactory.Create<TSystem>(additionalParameters));
     }

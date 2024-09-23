@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DualBlade.Analyzer", "DualB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{CD3FFB21-3624-4207-A3CA-AE4F8FE81AD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{73327501-0CD7-4247-8D14-2B1844FE5CBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{84081F8B-5F7D-4977-BA6E-F020D49D25B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84081F8B-5F7D-4977-BA6E-F020D49D25B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84081F8B-5F7D-4977-BA6E-F020D49D25B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73327501-0CD7-4247-8D14-2B1844FE5CBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73327501-0CD7-4247-8D14-2B1844FE5CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73327501-0CD7-4247-8D14-2B1844FE5CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73327501-0CD7-4247-8D14-2B1844FE5CBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
