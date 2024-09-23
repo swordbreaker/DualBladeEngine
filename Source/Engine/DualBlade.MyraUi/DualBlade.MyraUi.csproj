@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Myra" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Myra" Version="1.5.7" />
+    <ProjectReference Include="..\DualBlade.Core\DualBlade.Core.csproj" />
+    <PackageReference Include="Jab" Version="0.10.2" />
+  </ItemGroup>
+</Project>
