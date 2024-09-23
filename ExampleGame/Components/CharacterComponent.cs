@@ -1,5 +1,5 @@
-﻿using MonoGameEngine.Engine.Components;
-using MonoGameEngine.Engine.Entities;
+﻿using DualBlade.Core.Components;
+using DualBlade.Core.Entities;
 
 namespace ExampleGame.Components;
 

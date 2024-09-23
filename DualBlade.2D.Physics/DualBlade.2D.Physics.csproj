@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Aether.Physics2D.MG" Version="2.1.1" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" />
+    <ProjectReference Include="..\DualBlade.Core\DualBlade.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FunctionalMonads">
+      <HintPath>..\..\TestMonoGamesProject\Libs\FunctionalMonads.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,14 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DualBlade.Core.Extensions;
+using DualBlade.Core.Services;
+using DualBlade.Core.Systems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using MonoGameEngine.Engine.Extensions;
-using MonoGameEngine.Engine.Systems;
-using MonoGameEngine.Engine.Worlds;
 using System.Diagnostics;
 
 namespace Editor.Systems;
-public class CameraSystem : BaseSystem
+public class CameraSystem(IGameContext context) : BaseSystem(context)
 {
-    public override void Update(GameTime gameTime, IGameEngine gameEngine)
+    private readonly IGameEngine gameEngine = context.GameEngine;
+
+    public override void Update(GameTime gameTime)
     {
         var zoom = gameEngine.InputManager.ScrollWheelDelta * 0.0005f;
         gameEngine.CameraService.Zoom += zoom;

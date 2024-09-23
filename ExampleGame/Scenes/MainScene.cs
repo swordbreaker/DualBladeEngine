@@ -1,18 +1,21 @@
-﻿using ExampleGame.Entities;
+﻿using DualBlade._2D.Rendering.Entities;
+using DualBlade.Core.Entities;
+using DualBlade.Core.Extensions;
+using DualBlade.Core.Scenes;
+using DualBlade.Core.Services;
+using DualBlade.Core.Systems;
+using ExampleGame.Entities;
 using ExampleGame.Systems;
 using Microsoft.Xna.Framework;
-using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Extensions;
-using MonoGameEngine.Engine.Scenes;
-using MonoGameEngine.Engine.Systems;
-using MonoGameEngine.Engine.Worlds;
 
 namespace ExampleGame.Scenes;
-public class MainScene(IWorld world, IGameEngine gameEngine) : GameScene(world)
+public class MainScene(IGameContext context) : GameScene(context)
 {
+    private readonly IGameEngine gameEngine = context.GameEngine;
+
     public override IEnumerable<ISystem> SetupSystems()
     {
-        yield return new BallSystem(gameEngine.CameraService) { World = World };
+        yield return CreateSystem<BallSystem>();
         yield return CreateSystem<SpawnSystem>();
     }
 
@@ -20,36 +23,24 @@ public class MainScene(IWorld world, IGameEngine gameEngine) : GameScene(world)
     {
         var (w, h) = gameEngine.GameSize;
 
-        var ball = new BallEntity(gameEngine)
-        {
-            World = World,
-        };
-        var ballChild = new SpriteEntity() { World = World };
+        var ball = CreateEntity<BallEntity>();
+        var ballChild = CreateEntity<SpriteEntity>();
         ballChild.Renderer.SetSprite(gameEngine.CreateSprite("ball"));
         ballChild.Transform.Position = new Vector2(0, 1f);
         ball.AddChild(ballChild);
 
         yield return ball;
 
-        yield return new GroundEntity(gameEngine)
-        {
-            World = World,
-        };
+        yield return this.CreateEntity<GroundEntity>();
 
-        var left = new GroundEntity(gameEngine)
-        {
-            World = World,
-            Color = Color.Black,
-            Position = new Vector2(-w / 2, 0),
-        };
+        var left = this.CreateEntity<GroundEntity>();
+        left.Color = Color.Black;
+        left.Position = new Vector2(-w / 2, 0);
         left.Size = new Vector2(2, h / left.Renderer.Sprite.Height);
 
-        var right = new GroundEntity(gameEngine)
-        {
-            World = World,
-            Color = Color.Black,
-            Position = new Vector2(w / 2, 0),
-        };
+        var right = this.CreateEntity<GroundEntity>();
+        right.Color = Color.Black;
+        right.Position = new Vector2(w / 2, 0);
         right.Size = new Vector2(2, h / right.Renderer.Sprite.Height);
 
         yield return left;

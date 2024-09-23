@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DualBlade._2D.Rendering</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <ProjectReference Include="..\DualBlade.Core\DualBlade.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FunctionalMonads">
+      <HintPath>..\Libs\FunctionalMonads.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

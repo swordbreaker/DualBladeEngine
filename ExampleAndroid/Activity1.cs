@@ -2,55 +2,53 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
-using ExampleGame;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Xna.Framework;
+using ExampleGame;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using DualBlade.Core;
+using DualBlade.GumUi;
 
-namespace ExampleAndroid;
-
-[Activity(
-    Label = "@string/app_name",
-    MainLauncher = true,
-    Icon = "@drawable/icon",
-    AlwaysRetainTaskState = true,
-    LaunchMode = LaunchMode.SingleInstance,
-    ScreenOrientation = ScreenOrientation.FullUser,
-    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize
-)]
-public class Activity1 : AndroidGameActivity
+namespace ExampleAndroid
 {
-    private MainGame _game;
-    private View _view;
-
-    protected override void OnCreate(Bundle bundle)
+    [Activity(
+        Label = "@string/app_name",
+        MainLauncher = true,
+        Icon = "@drawable/icon",
+        AlwaysRetainTaskState = true,
+        LaunchMode = LaunchMode.SingleInstance,
+        ScreenOrientation = ScreenOrientation.FullUser,
+        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize
+    )]
+    public class Activity1 : AndroidGameActivity
     {
-        base.OnCreate(bundle);
+        private MainGame _game;
+        private View _view;
 
-        try
+        protected override void OnCreate(Bundle bundle)
         {
-            // var host = new HostBuilder()
-            //     .AddGameEngine()
-            //     .ConfigureServices((context, services) =>
-            //     {
-            //         services.AddSingleton<MainGame>();
-            //     })
-            //     .Build();
+            base.OnCreate(bundle);
 
-            // var game = host.Services.GetRequiredService<MainGame>();
-            _game = new MainGame();
+            _game = this.CreateGame();
+            //_game = new Game1();
             _view = _game.Services.GetService(typeof(View)) as View;
 
             SetContentView(_view);
             _game.Run();
         }
-        catch (System.Exception ex)
-        {
-            View view = new(this);
-            view.SetBackgroundColor(Android.Graphics.Color.Red);
-            System.Diagnostics.Debug.WriteLine(ex.Message);
 
-            SetContentView(view);
+        private MainGame CreateGame()
+        {
+            var host = new HostBuilder()
+            .AddGameEngine()
+            .AddGumUi()
+            .ConfigureServices((context, services) =>
+            {
+                services.AddSingleton<MainGame>();
+            })
+            .Build();
+
+            return host.Services.GetRequiredService<MainGame>();
         }
     }
 }

@@ -1,28 +1,32 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Components;
+using DualBlade._2D.Rendering.Components;
+using DualBlade._2D.Rendering.Entities;
+using DualBlade.Core.Factories;
+using DualBlade.Core.Services;
+using DualBlade.Core.Systems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using MonoGameEngine.Engine.Components;
-using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Systems;
-using MonoGameEngine.Engine.Worlds;
 using nkast.Aether.Physics2D.Dynamics;
+using Services;
 
 namespace ExampleGame.Systems;
-internal class SpawnSystem : BaseSystem
+internal class SpawnSystem(IGameContext gameContext, IEntityFactory entityFactory, IPhysicsManager physicsManager) : BaseSystem(gameContext)
 {
-    public override void Update(GameTime gameTime, IGameEngine gameEngine)
+    private readonly IGameEngine gameEngine = gameContext.GameEngine;
+
+    public override void Update(GameTime gameTime)
     {
         if (gameEngine.InputManager.IsKeyJustPressed(Keys.Z))
         {
-            CrateBall(gameEngine);
+            CrateBall();
         }
     }
 
-    private void CrateBall(IGameEngine gameEngine)
+    private void CrateBall()
     {
         var (w, _) = gameEngine.GameSize;
 
-        var entity = new TransformEntity() { World = World };
+        var entity = entityFactory.CreateEntity<TransformEntity>();
         var kinematic = entity.AddComponent<KinematicComponent>();
         var renderer = entity.AddComponent<RenderComponent>();
 
@@ -31,7 +35,7 @@ internal class SpawnSystem : BaseSystem
         var pos = new Vector2(x, y);
 
         renderer.SetSprite(gameEngine.CreateSprite("ball"));
-        kinematic.PhysicsBody = gameEngine.PhysicsManager.CreateBody(pos, bodyType: BodyType.Dynamic);
+        kinematic.PhysicsBody = physicsManager.CreateBody(pos, bodyType: BodyType.Dynamic);
         kinematic.PhysicsBody.CreateCircle(renderer.Sprite!.Width / 2f, 1);
 
         entity.Transform.Position = pos;

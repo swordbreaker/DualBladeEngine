@@ -1,30 +1,32 @@
-﻿using Editor.Systems;
+﻿using DualBlade._2D.Rendering.Systems;
+using DualBlade.Core;
+using DualBlade.Core.Factories;
+using DualBlade.Core.Scenes;
+using DualBlade.Core.Services;
+using DualBlade.Core.Systems;
+using Editor.Systems;
 using ExampleGame.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameEngine;
-using MonoGameEngine.Engine.Scenes;
-using MonoGameEngine.Engine.Systems;
-using MonoGameEngine.Engine.Worlds;
 
 namespace Editor;
 public class EditorGame : BaseGame
 {
-    public EditorGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory) : base(worldFactory, gameEngineFactory)
+    public EditorGame(IGameCreationContext context) : base(context)
     {
         IsMouseVisible = true;
     }
 
     protected override void InitializeGlobalSystems()
     {
-        GameWorld.AddSystem<RenderSystem>();
-        GameWorld.AddSystem<CameraSystem>();
-        GameWorld.AddSystem(new InputSystem());
+        World.AddSystem<RenderSystem>();
+        World.AddSystem<CameraSystem>();
+        World.AddSystem<InputSystem>();
     }
 
     protected override void Initialize()
     {
-        this.AddEditorScene(new MainScene(GameWorld, GameEngine));
+        this.AddEditorScene(new MainScene(this.Context));
 
         base.Initialize();
     }
@@ -32,7 +34,7 @@ public class EditorGame : BaseGame
     private void AddEditorScene(IGameScene gameScene)
     {
         var root = gameScene.Root;
-        GameWorld.AddEntity(root);
+        World.AddEntity(root);
 
         //foreach (var system in gameScene.Systems)
         //{

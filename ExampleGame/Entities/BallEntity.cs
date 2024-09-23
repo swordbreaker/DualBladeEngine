@@ -1,9 +1,9 @@
-﻿using ExampleGame.Components;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGameEngine.Engine.Components;
-using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Worlds;
+﻿using Components;
+using DualBlade._2D.Rendering.Entities;
+using DualBlade.Core.Services;
+using ExampleGame.Components;
 using nkast.Aether.Physics2D.Dynamics;
+using Services;
 using System.Numerics;
 
 namespace ExampleGame.Entities;
@@ -13,8 +13,10 @@ public class BallEntity : SpriteEntity
     public KinematicComponent KinematicComponent { get; }
     public CharacterComponent CharacterComponent { get; }
 
-    public BallEntity(IGameEngine gameEngine)
+    public BallEntity(IGameContext context, IPhysicsManager physicsManager)
     {
+        var gameEngine = context.GameEngine;
+
         KinematicComponent = AddComponent<KinematicComponent>();
         CharacterComponent = AddComponent<CharacterComponent>();
 
@@ -23,7 +25,7 @@ public class BallEntity : SpriteEntity
         Renderer.SetSprite(gameEngine.CreateSprite("ball"));
 
         // Create a physics body
-        var body = gameEngine.PhysicsManager.CreateBody(Transform.Position, bodyType: BodyType.Dynamic);
+        var body = physicsManager.CreateBody(Transform.Position, bodyType: BodyType.Dynamic);
         body.Tag = this;
         body.FixedRotation = true;
         body.Mass = 1;

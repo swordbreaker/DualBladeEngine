@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MonoGamesEngine.Analyzer\MonoGamesEngine.Analyzer.csproj" />
+    <ProjectReference Include="..\DualBlade.Analyzer\DualBlade.Analyzer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

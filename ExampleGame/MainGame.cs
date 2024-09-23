@@ -1,35 +1,22 @@
-﻿using ExampleGame.Scenes;
+﻿using DualBlade.Core;
+using DualBlade.Core.Services;
+using ExampleGame.Scenes;
 using Microsoft.Xna.Framework;
-using MonoGameEngine;
-using MonoGameEngine.Engine.Services;
-using MonoGameEngine.Engine.Systems;
-using MonoGameEngine.Engine.Worlds;
-using MonoGameGum.Forms;
-using RenderingLibrary;
 
 namespace ExampleGame;
 
 public class MainGame : BaseGame
 {
-    private readonly IJobQueue _jobQueue;
-
-    public MainGame(IWorldFactory worldFactory, IGameEngineFactory gameEngineFactory, ISceneManagerFactory sceneManagerFactory, IJobQueue jobQueue) : base(worldFactory, gameEngineFactory, sceneManagerFactory)
+    public MainGame(IGameCreationContext context) : base(context)
     {
         Content.RootDirectory = "Content";
-        _jobQueue = jobQueue;
     }
 
     protected override void Initialize()
     {
         base.Initialize();
-
         this.IsMouseVisible = true;
-
-        SystemManagers.Default = new SystemManagers();
-        SystemManagers.Default.Initialize(GameEngine.GraphicsDeviceManager.GraphicsDevice, fullInstantiation: true);
-        FormsUtilities.InitializeDefaults();
-
-        SceneManager.AddSceneExclusively(new MainMenuScene(GameWorld, GameEngine, SceneManager, _jobQueue));
+        SceneManager.AddSceneExclusively<MainMenuScene>();
     }
 
     protected override void LoadContent()

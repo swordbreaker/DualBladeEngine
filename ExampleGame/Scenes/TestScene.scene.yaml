@@ -1,4 +1,7 @@
-﻿- Type: TransformEntity
+﻿AdditionalUsings:
+- DualBlade._2D.Rendering.Entities
+Entities:
+- Type: TransformEntity
   Name: BallParent
   Position: [0, 0]
   Rotation: 0

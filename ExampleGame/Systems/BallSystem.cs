@@ -1,18 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using ExampleGame.Entities;
-using MonoGameEngine.Engine.Systems;
-using MonoGameEngine.Engine.Worlds;
-using MonoGameEngine.Engine.Services;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Contacts;
-using MonoGameEngine.Engine.Extensions;
+using DualBlade.Core.Services;
+using DualBlade.Core.Systems;
+using DualBlade.Core.Extensions;
+using Services;
 
 namespace ExampleGame.Systems;
 
-public class BallSystem(ICameraService cameraService) : EntitySystem<BallEntity>
+public class BallSystem(IGameContext context, IPhysicsManager physicsManager) : EntitySystem<BallEntity>(context)
 {
-    protected override void Initialize(BallEntity entity, IGameEngine gameEngine)
+    private readonly IGameEngine gameEngine = context.GameEngine;
+    private ICameraService CameraService => gameEngine.CameraService;
+
+    protected override void Initialize(BallEntity entity)
     {
         entity.KinematicComponent.PhysicsBody.OnCollision += PhysicsBody_OnCollision;
         entity.KinematicComponent.PhysicsBody.OnSeparation += PhysicsBody_OnSeparation;
@@ -36,7 +39,7 @@ public class BallSystem(ICameraService cameraService) : EntitySystem<BallEntity>
         }
     }
 
-    protected override void Update(BallEntity entity, GameTime gameTime, IGameEngine gameEngine)
+    protected override void Update(BallEntity entity, GameTime gameTime)
     {
         var body = entity.KinematicComponent.PhysicsBody;
 
@@ -65,22 +68,22 @@ public class BallSystem(ICameraService cameraService) : EntitySystem<BallEntity>
         {
             velocity.Y = jumpForce * gameTime.DeltaSeconds();
             entity.CharacterComponent.IsJumping = true;
-            gameEngine.PhysicsManager.Gravity = new Vector2(0, -5);
+            physicsManager.Gravity = new Vector2(0, -5);
         }
 
         if (!gameEngine.InputManager.IsKeyPressed(Keys.Space) && entity.CharacterComponent.IsJumping)
         {
             entity.CharacterComponent.IsJumping = false;
-            gameEngine.PhysicsManager.Gravity = new Vector2(0, -20);
+            physicsManager.Gravity = new Vector2(0, -20);
         }
 
         if (velocity.Y < 0 && entity.CharacterComponent.IsJumping)
         {
             entity.CharacterComponent.IsJumping = false;
-            gameEngine.PhysicsManager.Gravity = new Vector2(0, -20);
+            physicsManager.Gravity = new Vector2(0, -20);
         }
 
         body.LinearVelocity = velocity;
-        cameraService.Position = entity.Transform.Position;
+        CameraService.Position = entity.Transform.Position;
     }
 }

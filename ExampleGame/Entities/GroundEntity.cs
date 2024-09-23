@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGameEngine.Engine.Entities;
-using MonoGameEngine.Engine.Worlds;
+﻿using DualBlade._2D.Rendering.Entities;
+using DualBlade.Core.Services;
+using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
+using Services;
 
 namespace ExampleGame.Entities;
 
@@ -10,23 +10,23 @@ public class GroundEntity : SpriteEntity
 {
     public readonly Body PhysicsBody;
 
-    public GroundEntity(IGameEngine gameEngine)
+    public GroundEntity(IGameContext context, IPhysicsManager physicsManager)
     {
+        var gameEngine = context.GameEngine;
+
         var (w, h) = gameEngine.GameSize;
         var size = new Vector2(w, 1);
-        var pos = new Vector2(0, -h/2);
+        var pos = new Vector2(0, -h / 2);
 
         Renderer.SetSprite(gameEngine.CreateSprite("pixel"));
         Renderer.Color = Color.Green;
         Transform.Scale = size / Renderer.Sprite.Size;
         Transform.Position = pos;
 
-        PhysicsBody = gameEngine.PhysicsManager.CreateBody(pos, bodyType: BodyType.Static);
+        PhysicsBody = physicsManager.CreateBody(pos, bodyType: BodyType.Static);
         PhysicsBody.Tag = this;
         var fixture = PhysicsBody.CreateRectangle(size.X, size.Y, 1f, Vector2.Zero);
         fixture.Tag = this;
-        //fixture.Restitution = 0.3f;
-        //fixture.Friction = 0.5f;
     }
 
     public Vector2 Position
