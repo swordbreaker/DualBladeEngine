@@ -1,5 +1,6 @@
 ﻿using DualBlade._2D.Rendering.Components;
 using DualBlade.Core.Extensions;
+using FunctionalMonads.Monads.MaybeMonad;
 
 namespace DualBlade._2D.Rendering.Extensions;
 public static class TransformComponentExtensions
@@ -12,7 +13,12 @@ public static class TransformComponentExtensions
         {
             if (p is TransformComponent parentTransform)
             {
-                position += parentTransform.Position;
+                var m = parentTransform.Parent
+                    .Bind(x => x is TransformComponent t ? Maybe.Some(t) : Maybe.None<TransformComponent>())
+                    .Map(x => Matrix.CreateScale(x.Scale.X, x.Scale.Y, 0) * Matrix.CreateRotationZ(x.Rotation))
+                    .SomeOrProvided(Matrix.Identity);
+
+                position += Vector2.Transform(parentTransform.Position, m);
             }
         });
 
