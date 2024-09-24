@@ -6,6 +6,7 @@ using DualBlade._2D.Rendering;
 using ExampleGame.Systems;
 using ExampleGame.Scenes;
 using DualBlade.MyraUi;
+using Microsoft.Xna.Framework.Content;
 
 namespace ExampleGame;
 

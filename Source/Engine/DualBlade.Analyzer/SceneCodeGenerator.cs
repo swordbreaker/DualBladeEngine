@@ -39,7 +39,7 @@ $$"""
 
 namespace DualBlade.Scenes;
 
-internal class {{name}} : YamlGameScene
+internal partial class {{name}} : YamlGameScene
 {
     public {{name}}(IGameContext context) : base(context) {}
 

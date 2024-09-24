@@ -9,5 +9,8 @@ namespace DualBlade.Core.Entities
 
         IEnumerable<IEntity> Children { get; }
         IMaybe<IEntity> Parent { get; }
+
+        void AddChild(IEntity child);
+        void AddParent(IEntity parent);
     }
 }

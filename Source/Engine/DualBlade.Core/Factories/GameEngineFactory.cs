@@ -1,4 +1,5 @@
 ﻿using DualBlade.Core.Services;
+using Microsoft.Xna.Framework.Content;
 
 namespace DualBlade.Core.Factories;
 
@@ -7,7 +8,7 @@ public sealed class GameEngineFactory(
     IWorldToPixelConverterFactory worldToPixelConverterFactory,
     ICameraServiceFactory cameraServiceFactory) : IGameEngineFactory
 {
-    public IGameEngine Create(Game game)
+    public IGameEngine Create(Game game, ContentManager? contentManager = null)
     {
         var graphicsDeviceManager = new GraphicsDeviceManager(game);
         var worldToPixelConverter = worldToPixelConverterFactory.Create(graphicsDeviceManager);
@@ -15,7 +16,7 @@ public sealed class GameEngineFactory(
 
         return new GameEngine(new SpriteFactory(worldToPixelConverter))
         {
-            Content = game.Content,
+            Content = contentManager ?? game.Content,
             WorldToPixelConverter = worldToPixelConverter,
             GraphicsDeviceManager = graphicsDeviceManager,
             InputManager = inputManager,

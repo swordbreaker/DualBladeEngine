@@ -23,7 +23,7 @@ public abstract class GameScene : IGameScene
         };
     }
 
-    public IEntity Root { get; }
+    public virtual IEntity Root { get; }
 
     public IEnumerable<ISystem> Systems { get; }
 

@@ -3,7 +3,7 @@
 Entities:
 - Type: TransformEntity
   Name: BallParent
-  Position: [0, 0]
+  Position: [0, 2]
   Rotation: 0
   Scale: [1, 1]
   Components:
@@ -13,7 +13,7 @@ Entities:
   Children:
   - Type: TransformEntity
     Name: Ball
-    Position: [0, 0]
+    Position: [1, 2]
     Rotation: 0
     Scale: [1, 1]
     Components:

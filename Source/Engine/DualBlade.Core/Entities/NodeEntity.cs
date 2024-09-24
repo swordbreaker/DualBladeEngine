@@ -21,5 +21,17 @@ namespace DualBlade.Core.Entities
             get => NodeComponent.Children.Select(c => c.Entity);
             init => NodeComponent.Children.AddRange(value.Select(x => x.GetComponent<INodeComponent>()).Somes());
         }
+
+        public void AddChild(IEntity child)
+        {
+            child.GetComponent<INodeComponent>()
+                .IfSome(NodeComponent.AddChild);
+        }
+
+        public void AddParent(IEntity parent)
+        {
+            parent.GetComponent<INodeComponent>()
+                .IfSome(NodeComponent.AddParent);
+        }
     }
 }

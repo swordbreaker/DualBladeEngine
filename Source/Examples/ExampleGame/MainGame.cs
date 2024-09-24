@@ -10,7 +10,6 @@ public class MainGame : BaseGame
 {
     public MainGame(IGameCreationContext context) : base(context)
     {
-        Content.RootDirectory = "Content";
     }
 
     protected override void Initialize()

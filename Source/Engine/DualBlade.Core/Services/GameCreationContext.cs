@@ -1,5 +1,6 @@
 ﻿using AutomaticInterface;
 using DualBlade.Core.Factories;
+using Microsoft.Xna.Framework.Content;
 
 namespace DualBlade.Core.Services;
 
@@ -12,9 +13,9 @@ public sealed class GameCreationContext(
 {
     public IServiceProvider ServiceProvider => serviceProvider;
 
-    public IGameContext CreateContext(BaseGame game)
+    public IGameContext CreateContext(BaseGame game, ContentManager? contentManager = null)
     {
-        var gameEngine = gameEngineFactory.Create(game);
+        var gameEngine = gameEngineFactory.Create(game, contentManager);
         var gameWorld = worldFactory.Create(gameEngine);
 
         if (gameContext is IGameContextInitializer gameContextInitializer)

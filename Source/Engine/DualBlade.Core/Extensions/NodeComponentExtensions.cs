@@ -2,6 +2,7 @@
 using FunctionalMonads.Monads.MaybeMonad;
 
 namespace DualBlade.Core.Extensions;
+
 public static class NodeComponentExtensions
 {
     public static void AddChild(this INodeComponent parent, INodeComponent child)

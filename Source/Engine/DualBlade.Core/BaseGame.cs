@@ -2,6 +2,7 @@
 using DualBlade.Core.Systems;
 using DualBlade.Core.Worlds;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Xna.Framework.Content;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace DualBlade.Core;
@@ -15,9 +16,9 @@ public abstract class BaseGame : Game
     protected ISceneManager SceneManager;
     protected IServiceProvider ServiceProvider;
 
-    public BaseGame(IGameCreationContext creationContext)
+    public BaseGame(IGameCreationContext creationContext, ContentManager? contentManager = null)
     {
-        Context = creationContext.CreateContext(this);
+        Context = creationContext.CreateContext(this, contentManager);
         World = Context.World;
 
         Content.RootDirectory = "Content";

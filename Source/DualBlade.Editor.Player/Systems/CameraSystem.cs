@@ -3,7 +3,6 @@ using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System.Diagnostics;
 
 namespace Editor.Systems;
 public class CameraSystem(IGameContext context) : BaseSystem(context)
@@ -23,7 +22,6 @@ public class CameraSystem(IGameContext context) : BaseSystem(context)
         var move = new Vector2(right + left, up + down) * gameTime.DeltaSeconds() * 50;
 
         gameEngine.CameraService.Position += move;
-        Debug.WriteLine(zoom);
 
         if (gameEngine.InputManager.IsKeyPressed(Keys.Space))
         {

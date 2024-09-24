@@ -2,6 +2,7 @@
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using Jab;
+using Microsoft.Xna.Framework.Content;
 
 namespace DualBlade.Core;
 
@@ -16,6 +17,7 @@ namespace DualBlade.Core;
 [Singleton<IGameCreationContext, GameCreationContext>]
 [Singleton<ICameraServiceFactory, CameraServiceFactory>]
 [Singleton<IWorldToPixelConverterFactory, WorldToPixelConverterFactory>]
+[Singleton<ContentManager>]
 [Transient<InputSystem>]
 public interface ICoreServiceModule
 {

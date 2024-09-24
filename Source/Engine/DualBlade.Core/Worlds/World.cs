@@ -9,7 +9,7 @@ namespace DualBlade.Core.Worlds;
 
 public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory, IJobQueue _jobQueue) : IWorld
 {
-    private readonly HashSet<ISystem> _systems = [];
+    private readonly List<ISystem> _systems = [];
     private readonly Dictionary<Type, HashSet<IComponent>> _components = [];
     private readonly Dictionary<Type, HashSet<IEntity>> _entities = [];
     private bool isInitialized = false;
@@ -40,7 +40,7 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
 
     public void AddSystems(params ISystem[] systems)
     {
-        _systems.UnionWith(systems);
+        _systems.AddRange(systems.Except(_systems));
 
         if (isInitialized)
         {
