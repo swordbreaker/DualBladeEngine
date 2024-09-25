@@ -28,11 +28,7 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
         if (SpriteBatch is null)
             throw new InvalidOperationException("SpriteBatch is not initialized");
 
-        //var transform =  WorldToPixelConverter.WorldMatrix * CameraService.TransformMatrix;
-        //var transform = Matrix.Invert(WorldToPixelConverter.WorldMatrix);
-
         var transform = CameraService.PixelTransformMatrix;
-        //transform = Matrix.Identity;
         SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: transform);
     }
 

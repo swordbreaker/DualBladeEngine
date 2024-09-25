@@ -28,6 +28,8 @@ public interface IGameEngine
 
     IWorldToPixelConverter WorldToPixelConverter { get; init; }
 
+    public SpriteBatch? SpriteBatch { get; }
+
     /// <summary>
     /// Begins the draw.
     /// </summary>

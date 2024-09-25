@@ -26,7 +26,7 @@ public class SceneGenerator(IGameContext gameContext)
             "DualBlade.Core.Scenes"
         ]);
 
-       sceneRoot.AdditionalUsings.ForEach(x => usings.Add(x));
+        sceneRoot.AdditionalUsings.ForEach(x => usings.Add(x));
 
         var root = new RootEntity();
         foreach (var entityDto in sceneRoot.Entities)

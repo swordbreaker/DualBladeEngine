@@ -2,6 +2,7 @@
 using DualBlade._2D.Rendering;
 using DualBlade.Core;
 using DualBlade.Core.Services;
+using DualBlade.Editor.Player.Services;
 using DualBlade.MyraUi;
 using Editor;
 using Editor.Systems;
@@ -25,7 +26,10 @@ internal class Program
 [Import<I2DPhysicsServiceModule>]
 [Import<IMyraUiServiceModule>]
 [Singleton<EditorGame>]
+[Singleton<SystemProvider>]
 [Transient<CameraSystem>]
+[Transient<RenderSelectSystem>]
+[Transient<SelectableSystem>]
 internal partial class ServiceProvider
 {
 }

@@ -4,5 +4,5 @@ namespace DualBlade.Core.Components;
 
 public interface IComponent
 {
-    IEntity Entity { init; get; }
+    public IEntity Entity { init; get; }
 }

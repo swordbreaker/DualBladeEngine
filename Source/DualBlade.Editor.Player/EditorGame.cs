@@ -5,9 +5,12 @@ using DualBlade.Core.Scenes;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using DualBlade.Editor.Player.Entities;
+using DualBlade.Editor.Player.Services;
+using DualBlade.Editor.Player.Systems;
 using DualBlade.Editor.Player.Yaml;
 using DualBlade.MyraUi.Systems;
 using Editor.Systems;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -22,9 +25,10 @@ public class EditorGame : BaseGame
 
     private FileSystemWatcher watcher;
     private readonly IJobQueue jobQueue;
+    private readonly SystemProvider systemProvider;
     private FileStream fileStream;
 
-    public EditorGame(IGameCreationContext context, IJobQueue jobQueue) : base(context)
+    public EditorGame(IGameCreationContext context, IJobQueue jobQueue, SystemProvider systemProvider) : base(context)
     {
         IsMouseVisible = true;
         this.Window.AllowUserResizing = true;
@@ -33,6 +37,7 @@ public class EditorGame : BaseGame
         Context.GameEngine.GraphicsDeviceManager.PreferredBackBufferWidth = 1280;
         Context.GameEngine.GraphicsDeviceManager.PreferredBackBufferHeight = 720;
         this.jobQueue = jobQueue;
+        this.systemProvider = systemProvider;
     }
 
     protected override void InitializeGlobalSystems()
@@ -40,7 +45,10 @@ public class EditorGame : BaseGame
         World.AddSystem<RenderSystem>();
         World.AddSystem<CameraSystem>();
         World.AddSystem<InputSystem>();
+        World.AddSystem<RenderSelectSystem>();
+        World.AddSystem<SelectableSystem>();
         World.AddSystem<MyraDesktopSystem>();
+        World.AddSystem(new EditorUiSystem(Context, systemProvider, Context.ServiceProvider.GetRequiredService<IJobQueue>()));
     }
 
     protected override void Initialize()

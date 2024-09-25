@@ -38,6 +38,7 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         isInitialized = true;
     }
 
+    #region Systems
     public void AddSystems(params ISystem[] systems)
     {
         _systems.AddRange(systems.Except(_systems));
@@ -51,6 +52,11 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         }
     }
 
+    public void AddSystem<TSystem>() where TSystem : ISystem
+    {
+        AddSystem(_systemFactory.Create<TSystem>());
+    }
+
     public void AddSystem(ISystem system)
     {
         _systems.Add(system);
@@ -59,6 +65,32 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         {
             system.Initialize();
         }
+    }
+
+    public void Destroy(ISystem system)
+    {
+        system.Dispose();
+        _systems.Remove(system);
+    }
+
+    public void Destroy(IEnumerable<ISystem> systems)
+    {
+        foreach (var system in systems)
+        {
+            Destroy(system);
+        }
+    }
+    #endregion
+
+    #region Entity
+    public IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : IEntity
+    {
+        if (!_entities.ContainsKey(typeof(TEntity)))
+        {
+            return [];
+        }
+
+        return _entities[typeof(TEntity)].Cast<TEntity>();
     }
 
     public void AddEntities(params IEntity[] entities)
@@ -70,19 +102,9 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         }
     }
 
-    private void AddComponent<TComponent>(TComponent component) where TComponent : IComponent
-    {
-        if (!_components.ContainsKey(component.GetType()))
-        {
-            _components[component.GetType()] = [];
-        }
-
-        _components[component.GetType()].Add(component);
-        ComponentAdded?.Invoke(component);
-    }
-
     public void AddEntity(IEntity entity)
     {
+        entity.Initialize(this);
         if (!_entities.ContainsKey(entity.GetType()))
         {
             _entities[entity.GetType()] = [];
@@ -92,7 +114,7 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         EntityAdded?.Invoke(entity);
         entity.GetChildren().ToList().ForEach(AddEntity);
 
-        foreach (var component in entity.Components)
+        foreach (var component in entity.Components.ToList())
         {
             AddComponent(component);
         }
@@ -114,28 +136,9 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         children.ForEach(Destroy);
     }
 
-    public void DestroyComponent(IComponent component)
-    {
-        if (!_entities.ContainsKey(component.Entity.GetType()) || !_entities[component.Entity.GetType()].TryGetValue(component.Entity, out var e))
-        {
-            throw new Exception("Entity not found in world");
-        }
+    #endregion
 
-        if (!_components.ContainsKey(component.GetType()) || !_components[component.GetType()].TryGetValue(component, out var c))
-        {
-            throw new Exception("Component not found in world");
-        }
-
-        component.Entity.RemoveComponent(component.GetType());
-        _components[component.GetType()].Remove(component);
-        ComponentDestroyed?.Invoke(component);
-    }
-
-    public void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent
-    {
-        entity.RemoveComponent<TComponent>();
-        _components[typeof(TComponent)].Where(c => c.Entity == entity).ToList().ForEach(c => DestroyComponent(c));
-    }
+    #region Components
 
     public TComponent? GetComponent<TComponent>(IEntity entity) where TComponent : IComponent
     {
@@ -163,15 +166,51 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         return _components[typeof(TComponent)].Cast<TComponent>();
     }
 
-    public IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : IEntity
+    public void AddComponent<TComponent>(IEntity entity, TComponent component) where TComponent : IComponent
     {
-        if (!_entities.ContainsKey(typeof(TEntity)))
+        if (!_entities.ContainsKey(entity.GetType()) || !_entities[entity.GetType()].Contains(entity))
         {
-            return [];
+            throw new Exception("Entity not found in world");
         }
 
-        return _entities[typeof(TEntity)].Cast<TEntity>();
+        AddComponent(component);
     }
+
+    private void AddComponent<TComponent>(TComponent component) where TComponent : IComponent
+    {
+        if (!_components.ContainsKey(component.GetType()))
+        {
+            _components[component.GetType()] = [];
+        }
+
+        _components[component.GetType()].Add(component);
+        ComponentAdded?.Invoke(component);
+    }
+
+    public void DestroyComponent(IComponent component)
+    {
+        if (!_entities.ContainsKey(component.Entity.GetType()) || !_entities[component.Entity.GetType()].TryGetValue(component.Entity, out var e))
+        {
+            throw new Exception("Entity not found in world");
+        }
+
+        if (!_components.ContainsKey(component.GetType()) || !_components[component.GetType()].TryGetValue(component, out var c))
+        {
+            throw new Exception("Component not found in world");
+        }
+
+        component.Entity.RemoveComponent(component.GetType());
+        _components[component.GetType()].Remove(component);
+        ComponentDestroyed?.Invoke(component);
+    }
+
+
+    public void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent
+    {
+        entity.RemoveComponent<TComponent>();
+        _components[typeof(TComponent)].Where(c => c.Entity == entity).ToList().ForEach(c => DestroyComponent(c));
+    }
+    #endregion
 
     public void Update(GameTime gameTime)
     {
@@ -185,30 +224,9 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
 
     public void Draw(GameTime gameTime)
     {
-        _gameEngine.BeginDraw();
         foreach (var system in _systems)
         {
             system.Draw(gameTime);
-        }
-        _gameEngine.EndDraw();
-    }
-
-    public void AddSystem<TSystem>() where TSystem : ISystem
-    {
-        AddSystem(_systemFactory.Create<TSystem>());
-    }
-
-    public void Destroy(ISystem system)
-    {
-        system.Dispose();
-        _systems.Remove(system);
-    }
-
-    public void Destroy(IEnumerable<ISystem> systems)
-    {
-        foreach (var system in systems)
-        {
-            Destroy(system);
         }
     }
 }

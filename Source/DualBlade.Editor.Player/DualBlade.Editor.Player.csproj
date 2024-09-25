@@ -23,6 +23,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MonoGame.Extended" Version="4.0.2" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
     <PackageReference Include="Jab" Version="0.10.2" />
@@ -34,7 +35,13 @@
     <ProjectReference Include="..\Engine\DualBlade.Core\DualBlade.Core.csproj" />
     <ProjectReference Include="..\Engine\DualBlade.GumUi\DualBlade.GumUi.csproj" />
     <ProjectReference Include="..\Examples\ExampleGame\ExampleGame.csproj" />
+
+    <Reference Include="FunctionalMonads">
+      <HintPath>..\Libs\FunctionalMonads.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
   </ItemGroup>
+
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />

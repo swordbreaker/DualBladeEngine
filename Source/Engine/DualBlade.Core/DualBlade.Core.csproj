@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>True</IsAotCompatible>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,7 @@
   <ItemGroup>
     <Reference Include="FunctionalMonads">
       <HintPath>..\..\Libs\FunctionalMonads.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
 </Project>

@@ -10,6 +10,9 @@ namespace DualBlade.Editor.Player.Entities;
 
 public class EditorUiEntity : NodeEntity
 {
+    public Window ControlWindow { get; }
+    public StackPanel SystemStackPanel { get; }
+
     public EditorUiEntity(SceneRoot sceneRoot, Action onChnaged)
     {
         var root = new Panel();
@@ -20,7 +23,7 @@ public class EditorUiEntity : NodeEntity
 
         };
 
-        propertyGrid.PropertyChanged += (sender, e) => 
+        propertyGrid.PropertyChanged += (sender, e) =>
             Debug.WriteLine(e.Data);
 
         var window = new Window
@@ -31,9 +34,28 @@ public class EditorUiEntity : NodeEntity
             MaxWidth = 800,
         };
 
+
+        SystemStackPanel = new VerticalStackPanel()
+        {
+            Spacing = 8,
+        };
+
+        var stackPanel = new VerticalStackPanel()
+        {
+            Spacing = 8
+        };
+        stackPanel.Widgets.Add(SystemStackPanel);
+
+        ControlWindow = new Window()
+        {
+            Title = "Tools",
+            Content = stackPanel,
+        };
+
         var desktop = new Desktop();
         desktop.Root = root;
-        window.ShowModal(desktop);
+        window.Show(desktop);
+        ControlWindow.Show(desktop);
         AddComponent(new MyraDesktopComponent() { Desktop = desktop, Entity = this });
     }
 

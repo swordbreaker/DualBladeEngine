@@ -22,6 +22,10 @@ public sealed class InputManager : IInputManager
         _pressedKeysSet = new HashSet<Keys>(newKey);
 
         var mstate = Mouse.GetState();
+        var lPressed = mstate.LeftButton == ButtonState.Pressed;
+        var rPressed = mstate.RightButton == ButtonState.Pressed;
+        IsLeftMouseJustPressed = !IsLeftMousePressed && lPressed;
+        IsRightMouseJustPressed = !IsRightMousePressed && rPressed;
         IsLeftMousePressed = mstate.LeftButton == ButtonState.Pressed;
         IsRightMousePressed = mstate.RightButton == ButtonState.Pressed;
         IsMiddleMousePressed = mstate.MiddleButton == ButtonState.Pressed;
@@ -33,7 +37,9 @@ public sealed class InputManager : IInputManager
     }
 
     public bool IsLeftMousePressed { get; private set; }
+    public bool IsLeftMouseJustPressed { get; private set; }
     public bool IsRightMousePressed { get; private set; }
+    public bool IsRightMouseJustPressed { get; private set; }
     public bool IsMiddleMousePressed { get; private set; }
     public int ScrollWheelValue { get; private set; }
     public int ScrollWheelDelta { get; private set; }

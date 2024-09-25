@@ -31,7 +31,7 @@ public class NodeComponentExtensionsTests
         transformA.AddParent(transformB);
 
         // assert
-        var parent = transformA.Parent.Should().BeAssignableTo<Some<NodeComponent>>().Subject.Value;
+        var parent = transformA.Parent.Should().BeAssignableTo<Some<INodeComponent>>().Subject.Value;
         parent.Should().Be(transformB);
     }
 }

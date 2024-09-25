@@ -8,7 +8,6 @@ internal interface IGameContextInitializer
     void Init(IGameEngine gameEngine, BaseGame baseGame, IWorld world);
 }
 
-[GenerateAutomaticInterface]
 public sealed class GameContext(IServiceProvider _serviceProvider, ISceneManagerFactory sceneManagerFactory) : IGameContext, IGameContextInitializer
 {
     private bool isInitialized = false;
@@ -17,7 +16,6 @@ public sealed class GameContext(IServiceProvider _serviceProvider, ISceneManager
     private IWorld? _world;
     private ISceneManager? _sceneManager;
 
-    [IgnoreAutomaticInterface]
     public void Init(IGameEngine gameEngine, BaseGame baseGame, IWorld world)
     {
         _gameEngine = gameEngine;
@@ -59,7 +57,7 @@ public sealed class GameContext(IServiceProvider _serviceProvider, ISceneManager
     {
         if (!isInitialized || func() is not T value)
         {
-            throw new InvalidOperationException("GameFacade not initialized, have you implemented the BaseGame class and called it at the start?");
+            throw new InvalidOperationException("GameContext not initialized, have you implemented the BaseGame class and called it at the start?");
         }
 
         return value;
