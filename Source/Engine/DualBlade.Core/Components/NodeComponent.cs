@@ -1,11 +1,12 @@
-﻿using DualBlade.Core.Entities;
-using FunctionalMonads.Monads.MaybeMonad;
+﻿using DualBlade.Core.Collections;
+using DualBlade.Core.Entities;
 
 namespace DualBlade.Core.Components;
 
 public class NodeComponent : INodeComponent
 {
-    public IMaybe<INodeComponent> Parent { get; set; } = Maybe.None<INodeComponent>();
-    public List<INodeComponent> Children { get; set; } = [];
+    public int? Parent { get; set; } = null;
+    public GrowableMemory<int> Children { get; set; } = new(10);
+
     public IEntity Entity { get; init; }
 }

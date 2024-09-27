@@ -98,7 +98,7 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         foreach (var entity in entities)
         {
             AddEntity(entity);
-            entity.GetChildren().ToList().ForEach(AddEntity);
+            //entity.GetChildren().ToList().ForEach(AddEntity);
         }
     }
 
@@ -112,7 +112,7 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
 
         _entities[entity.GetType()].Add(entity);
         EntityAdded?.Invoke(entity);
-        entity.GetChildren().ToList().ForEach(AddEntity);
+        //entity.GetChildren().ToList().ForEach(AddEntity);
 
         foreach (var component in entity.Components.ToList())
         {
@@ -123,7 +123,8 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
     public void Destroy(IEntity entity)
     {
         // get the children before destroying the transform component
-        var children = entity.GetChildren().ToList();
+        //var children = entity.GetChildren().ToList();
+        var children = new List<IEntity>();
 
         foreach (var component in entity.Components)
         {
@@ -176,7 +177,7 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         AddComponent(component);
     }
 
-    private void AddComponent<TComponent>(TComponent component) where TComponent : IComponent
+    internal void AddComponent<TComponent>(TComponent component) where TComponent : IComponent
     {
         if (!_components.ContainsKey(component.GetType()))
         {
@@ -203,7 +204,6 @@ public sealed class World(IGameEngine _gameEngine, ISystemFactory _systemFactory
         _components[component.GetType()].Remove(component);
         ComponentDestroyed?.Invoke(component);
     }
-
 
     public void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent
     {

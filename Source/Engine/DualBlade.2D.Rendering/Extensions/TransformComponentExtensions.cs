@@ -13,10 +13,11 @@ public static class TransformComponentExtensions
         {
             if (p is TransformComponent parentTransform)
             {
-                var m = parentTransform.Parent
-                    .Bind(x => x is TransformComponent t ? Maybe.Some(t) : Maybe.None<TransformComponent>())
-                    .Map(x => Matrix.CreateScale(x.Scale.X, x.Scale.Y, 0) * Matrix.CreateRotationZ(x.Rotation))
-                    .SomeOrProvided(Matrix.Identity);
+                var parent = parentTransform.Parent as TransformComponent;
+
+                var m = (parent is not null)
+                    ? Matrix.CreateScale(parent.Scale.X, parent.Scale.Y, 0) * Matrix.CreateRotationZ(parent.Rotation)
+                    : Matrix.Identity;
 
                 position += Vector2.Transform(parentTransform.Position, m);
             }

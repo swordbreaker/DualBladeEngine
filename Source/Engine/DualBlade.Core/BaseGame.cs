@@ -18,10 +18,10 @@ public abstract class BaseGame : Game
 
     public BaseGame(IGameCreationContext creationContext, ContentManager? contentManager = null)
     {
+        Content.RootDirectory = "Content";
         Context = creationContext.CreateContext(this, contentManager);
         World = Context.World;
 
-        Content.RootDirectory = "Content";
         GameEngine = Context.GameEngine;
         ServiceProvider = creationContext.ServiceProvider;
         SceneManager = Context.SceneManager;

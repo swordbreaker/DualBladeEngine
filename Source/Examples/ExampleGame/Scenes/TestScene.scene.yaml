@@ -12,7 +12,7 @@ Entities:
         Texture: ball
   Children:
   - Type: TransformEntity
-    Name: Ball
+    Name: Balla
     Position: [1, 2]
     Rotation: 0
     Scale: [1, 1]

@@ -1,64 +1,125 @@
-﻿using DualBlade.Core.Components;
-using DualBlade.Core.Entities;
-using Microsoft.Xna.Framework;
-using System.Runtime.CompilerServices;
+﻿using Microsoft.Xna.Framework;
+using System.Diagnostics;
+using Xunit.Abstractions;
 
 namespace DualBlade.Core.Worlds.Tests;
 
-public struct TestComp : IComponent
+public struct CompA : ITestComponent
 {
-    public IEntity Entity { get; init; }
+    public int Value;
 
-    public int MyNumber;
-    public string MyString;
+    public int Id { get; set; }
+    public int EntityId { get; set; }
 }
 
-public class TestSystem : ICompSys
+public struct CompB : ITestComponent
 {
-    public Type ComponentType => typeof(TestComp);
+    public int Value;
+    public Vector2 Position;
 
-    public IComponent LastComp;
+    public int Id { get; set; }
+    public int EntityId { get; set; }
+}
 
-    public void Update(ref IComponent component, GameTime gameTime)
+public struct LifetimeComponent : ITestComponent
+{
+    public int LifeCount;
+
+    public int Id { get; set; }
+    public int EntityId { get; set; }
+}
+
+public class LifetimeSystem(TestWorld world) : TestSystem<LifetimeComponent>
+{
+    protected override void Update(ref LifetimeComponent component)
     {
-        LastComp = component;
+        if (component.LifeCount > 5)
+        {
+            world.RemoveComponent(component);
+        }
+        component.LifeCount++;
+    }
+}
 
-        var testComp = Unsafe.As<IComponent, TestComp>(ref component);
-        testComp.MyNumber = 5;
-        component = testComp;
+public class SpawnerSystem(TestWorld world) : TestSystem<LifetimeComponent>
+{
+    public override void Update()
+    {
+        world.AddComponent(new LifetimeComponent());
     }
 
-    public void Update(GameTime gameTime) { }
-    public void Draw(GameTime gameTime) { }
-    public void Initialize() { }
-    public void Dispose() { }
+    protected override void Update(ref LifetimeComponent component) { }
 }
 
-public class TestWorldTests
+public class MySystem : TestSystem<CompA>
 {
+    protected override void Update(ref CompA component)
+    {
+        component.Value = 42;
+    }
+}
+
+public class TestWorldTests(ITestOutputHelper _output)
+{
+    private TestWorld _world;
+
     [Fact()]
     public void UpdateTest()
     {
+        _world = new TestWorld();
+        _world.AddComponent(new CompA());
+
+        using (var compRef = _world.GetComponentRef<CompA>(0))
+        {
+            compRef.Value.Value = 42;
+        }
+
+        _world.GetComponent<CompA>(0).Value.Should().Be(42);
+    }
+
+    [Fact]
+    public void Test2()
+    {
         var world = new TestWorld();
-        var entity = new Entity();
 
-        var refComp = world.AddComponent(new TestComp { MyNumber = 2, MyString = "Test", Entity = entity });
-        ref var cc = ref refComp.Value;
-        cc.MyNumber = 3;
+        world.AddComponent(new CompA());
+        world._systems.Add(new MySystem());
 
-        var comp = world.GetComponent<TestComp>(entity);
+        world.Update();
 
-        comp.MyNumber.Should().Be(3);
+        world.GetComponent<CompA>(0).Value.Should().Be(42);
+    }
 
-        var sys = new TestSystem();
-        world.AddSystem(sys);
-        world.Update(new GameTime());
+    [Fact]
+    public void Test3()
+    {
+        int[] initialCounts = new int[GC.MaxGeneration + 1];
 
-        var c = sys.LastComp.Should().BeAssignableTo<TestComp>().Subject;
-        c.MyNumber.Should().Be(2);
+        // Store initial counts
+        for (int i = 0; i <= GC.MaxGeneration; i++)
+        {
+            initialCounts[i] = GC.CollectionCount(i);
+        }
 
-        world.Update(new GameTime());
-        c = sys.LastComp.Should().BeAssignableTo<TestComp>().Subject;
-        c.MyNumber.Should().Be(5);
+        var world = new TestWorld();
+
+        world._systems.Add(new SpawnerSystem(world));
+        world._systems.Add(new LifetimeSystem(world));
+
+        for (var i = 0; i < 100; i++)
+        {
+            world.Update();
+            _output.WriteLine(world._components.Count.ToString());
+        }
+
+        GC.Collect();
+
+        // Check for changes
+        for (int i = 0; i <= GC.MaxGeneration; i++)
+        {
+            int currentCount = GC.CollectionCount(i);
+            int collectionsSinceStart = currentCount - initialCounts[i];
+            _output.WriteLine($"Generation {i} collections since start: {collectionsSinceStart}");
+        }
     }
 }

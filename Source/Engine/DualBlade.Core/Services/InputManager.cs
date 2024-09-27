@@ -24,11 +24,18 @@ public sealed class InputManager : IInputManager
         var mstate = Mouse.GetState();
         var lPressed = mstate.LeftButton == ButtonState.Pressed;
         var rPressed = mstate.RightButton == ButtonState.Pressed;
+        var mPresse = mstate.MiddleButton == ButtonState.Pressed;
         IsLeftMouseJustPressed = !IsLeftMousePressed && lPressed;
         IsRightMouseJustPressed = !IsRightMousePressed && rPressed;
-        IsLeftMousePressed = mstate.LeftButton == ButtonState.Pressed;
-        IsRightMousePressed = mstate.RightButton == ButtonState.Pressed;
-        IsMiddleMousePressed = mstate.MiddleButton == ButtonState.Pressed;
+        IsMiddleMouseJustPressed = !IsMiddleMousePressed && mPresse;
+
+        IsLeftMouseJustReleased = IsLeftMousePressed && !lPressed;
+        IsRightMouseJustReleased = IsRightMousePressed && !rPressed;
+        IsMiddleMouseJustReleased = IsMiddleMousePressed && !mPresse;
+
+        IsLeftMousePressed = lPressed;
+        IsRightMousePressed = rPressed;
+        IsMiddleMousePressed = mPresse;
 
         MousePos = mstate.Position.ToVector2();
         ScrollWheelValue = mstate.ScrollWheelValue;
@@ -38,9 +45,13 @@ public sealed class InputManager : IInputManager
 
     public bool IsLeftMousePressed { get; private set; }
     public bool IsLeftMouseJustPressed { get; private set; }
+    public bool IsLeftMouseJustReleased { get; private set; }
     public bool IsRightMousePressed { get; private set; }
     public bool IsRightMouseJustPressed { get; private set; }
+    public bool IsRightMouseJustReleased { get; private set; }
     public bool IsMiddleMousePressed { get; private set; }
+    public bool IsMiddleMouseJustPressed { get; private set; }
+    public bool IsMiddleMouseJustReleased { get; private set; }
     public int ScrollWheelValue { get; private set; }
     public int ScrollWheelDelta { get; private set; }
 

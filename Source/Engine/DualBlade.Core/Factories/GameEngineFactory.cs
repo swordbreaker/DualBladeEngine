@@ -14,7 +14,7 @@ public sealed class GameEngineFactory(
         var worldToPixelConverter = worldToPixelConverterFactory.Create(graphicsDeviceManager);
         var cameraService = cameraServiceFactory.Create(graphicsDeviceManager, worldToPixelConverter);
 
-        return new GameEngine(new SpriteFactory(worldToPixelConverter))
+        return new GameEngine(new SpriteFactory(worldToPixelConverter, graphicsDeviceManager))
         {
             Content = contentManager ?? game.Content,
             WorldToPixelConverter = worldToPixelConverter,

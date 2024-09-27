@@ -13,7 +13,7 @@ public class MainMenuScene(IGameContext _gameContext) : GameScene(_gameContext)
         yield return this.CreateSystem<MyraDesktopSystem>();
     }
 
-    protected override IEnumerable<IEntity> SetupEntities()
+    protected override IEnumerable<INodeEntity> SetupEntities()
     {
         yield return new MainMenuEntity(GameContext, Resolve<IJobQueue>());
     }

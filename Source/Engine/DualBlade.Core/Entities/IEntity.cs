@@ -5,7 +5,7 @@ namespace DualBlade.Core.Entities;
 
 public interface IEntity
 {
-    IEnumerable<IComponent> Components { get; }
+    IEnumerable<IComponent> Components { get; init; }
 
     TComponent AddComponent<TComponent>() where TComponent : IComponent, new();
     void AddComponent<TComponent>(TComponent component) where TComponent : IComponent;

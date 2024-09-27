@@ -19,6 +19,7 @@ namespace DualBlade.Core;
 [Singleton<IWorldToPixelConverterFactory, WorldToPixelConverterFactory>]
 [Singleton<ContentManager>]
 [Transient<InputSystem>]
+[Transient<FpsDisplaySystem>]
 public interface ICoreServiceModule
 {
 }

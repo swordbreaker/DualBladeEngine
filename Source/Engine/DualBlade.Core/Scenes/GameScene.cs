@@ -17,17 +17,17 @@ public abstract class GameScene : IGameScene
         GameContext = context;
         SystemFactory = context.ServiceProvider.GetRequiredService<ISystemFactory>();
 
-        Root = new RootEntity
-        {
-            Children = SetupEntities(),
-        };
+        Root = new RootEntity();
+        //{
+        //    Children = SetupEntities(),
+        //};
     }
 
     public virtual IEntity Root { get; }
 
     public IEnumerable<ISystem> Systems { get; }
 
-    protected abstract IEnumerable<IEntity> SetupEntities();
+    protected abstract IEnumerable<INodeEntity> SetupEntities();
     public abstract IEnumerable<ISystem> SetupSystems();
 
     public void Dispose()

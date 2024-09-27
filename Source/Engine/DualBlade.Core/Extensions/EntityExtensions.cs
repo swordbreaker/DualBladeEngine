@@ -1,55 +1,68 @@
 ﻿using DualBlade.Core.Components;
 using DualBlade.Core.Entities;
-using FunctionalMonads.Monads.MaybeMonad;
 
 namespace DualBlade.Core.Extensions;
 
 public static class EntityExtensions
 {
-    public static IMaybe<TComponent> GetComponent<TComponent>(this IEntity entity) where TComponent : IComponent
+    public static TComponent? GetComponent<TComponent>(this IEntity entity) where TComponent : IComponent
     {
         var components = entity.Components.OfType<TComponent>().ToArray();
         return components.Length switch
         {
-            0 => Maybe.None<TComponent>(),
-            1 => Maybe.Some(components[0]),
+            0 => default,
+            1 => components[0],
             _ => throw new Exception("Multiple components of the same type found")
         };
     }
 
-    public static IMaybe<IEntity> GetParent(this IEntity entity) =>
-        from thisTranform in entity.GetComponent<INodeComponent>()
-        from parentTransform in thisTranform.Parent
-        select parentTransform.Entity;
+    //public static IEntity? GetParent(this IEntity entity)
+    //{
+    //    var thisNode = entity.GetComponent<INodeComponent>();
+    //    var parentNode = thisNode?.Parent;
+    //    return parentNode?.Entity;
+    //}
 
-    public static IEnumerable<IEntity> GetChildren(this IEntity entity) =>
-        entity.GetComponent<INodeComponent>()
-            .Map(t => t.Children.Select(c => c.Entity))
-            .SomeOrProvided([]);
+    //public static IEnumerable<IEntity> GetChildren(this IEntity entity)
+    //{
+    //    var node = entity.GetComponent<INodeComponent>();
+    //    if (node is null)
+    //    {
+    //        return [];
+    //    }
 
-    public static void AddChild(this Entity entity, Entity child)
-    {
-        var result =
-            from parentTransform in entity.GetComponent<INodeComponent>()
-            from childTransform in child.GetComponent<INodeComponent>()
-            select (parentTransform, childTransform);
+    //    return node.Children.Select(c => c.Entity);
+    //}
 
-        result.IfSome(result => result.parentTransform.AddChild(result.childTransform));
-    }
+    //public static void AddChild(this Entity entity, Entity child)
+    //{
+    //    var parentTransform = entity.GetComponent<INodeComponent>();
+    //    var childTransform = child.GetComponent<INodeComponent>();
 
-    public static void AddParent(this Entity entity, Entity parent)
-    {
-        var result =
-            from childTransform in entity.GetComponent<INodeComponent>()
-            from parentTransform in parent.GetComponent<INodeComponent>()
-            select (childTransform, parentTransform);
+    //    if (parentTransform is null || childTransform is null)
+    //    {
+    //        return;
+    //    }
 
-        result.IfSome(result => result.childTransform.AddParent(result.parentTransform));
-    }
+    //    parentTransform.AddChild(childTransform);
+    //}
 
-    public static IMaybe<IEntity> Parent(this INodeEntity entity) =>
-        entity.NodeComponent.Parent.Map(p => p.Entity);
+    //public static void AddParent(this Entity entity, Entity parent)
+    //{
+    //    var childTransform = entity.GetComponent<INodeComponent>();
+    //    var parentTransform = parent.GetComponent<INodeComponent>();
 
-    public static IEnumerable<IEntity> Children(this INodeEntity entity) =>
-        entity.NodeComponent.Children.Select(c => c.Entity);
+    //    if (childTransform is null || parentTransform is null)
+    //    {
+    //        return;
+    //    }
+
+    //    childTransform.AddParent(parentTransform);
+    //}
+
+    //public static IEntity? Parent(this INodeEntity entity) =>
+    //    entity.NodeComponent.Parent.Entity;
+
+    //public static IEnumerable<IEntity> Children(this INodeEntity entity) =>
+    //    entity.NodeComponent.Children.Select(c => c.Entity);
 }

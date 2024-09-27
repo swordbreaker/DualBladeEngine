@@ -45,7 +45,7 @@ internal partial class {{name}} : YamlGameScene
 
     {{probsSb}}
 
-    protected override IEnumerable<IEntity> SetupEntities()
+    protected override IEnumerable<INodeEntity> SetupEntities()
     {
         {{sb}}
     }

@@ -15,7 +15,7 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
     {
         base.Initialize(component);
 
-        if (component.Entity.GetComponent<TransformComponent>().IsNone)
+        if (component.Entity.GetComponent<TransformComponent>() is null)
         {
             throw new Exception("RenderComponent must have a TransformComponent");
         }

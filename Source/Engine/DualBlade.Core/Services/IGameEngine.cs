@@ -28,7 +28,9 @@ public interface IGameEngine
 
     IWorldToPixelConverter WorldToPixelConverter { get; init; }
 
-    public SpriteBatch? SpriteBatch { get; }
+    SpriteBatch? SpriteBatch { get; }
+
+    ISpriteFactory SpriteFactory { get; }
 
     /// <summary>
     /// Begins the draw.

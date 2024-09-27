@@ -21,7 +21,7 @@ public class MainScene(IGameContext context) : GameScene(context)
         yield return CreateSystem<SpawnSystem>();
     }
 
-    protected override IEnumerable<IEntity> SetupEntities()
+    protected override IEnumerable<INodeEntity> SetupEntities()
     {
         var (w, h) = gameEngine.GameSize;
         var physicsManager = GameContext.ServiceProvider.GetRequiredService<IPhysicsManager>();

@@ -3,6 +3,7 @@ using DualBlade._2D.Rendering;
 using DualBlade.Core;
 using DualBlade.Core.Services;
 using DualBlade.Editor.Player.Services;
+using DualBlade.Editor.Player.Systems;
 using DualBlade.MyraUi;
 using Editor;
 using Editor.Systems;

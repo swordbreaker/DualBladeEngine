@@ -8,13 +8,26 @@ public class Entity : IEntity
     private readonly Dictionary<Type, IComponent> _components = [];
     private IWorld? _world;
 
-    public IEnumerable<IComponent> Components => _components.Values;
+    public IEnumerable<IComponent> Components
+    {
+        get
+        {
+            return _components.Values;
+        }
+        init
+        {
+            foreach (var component in value)
+            {
+                AddComponent(component);
+            }
+        }
+    }
 
     public void Initialize(IWorld world) => _world = world;
 
     public TComponent AddComponent<TComponent>() where TComponent : IComponent, new()
     {
-        var component = new TComponent();
+        var component = new TComponent() { Entity = this };
         AddComponent(component);
         return component;
     }

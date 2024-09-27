@@ -51,7 +51,9 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
             throw new InvalidOperationException("SpriteBatch is not initialized");
 
         position = WorldToPixelConverter.WorldPointToPixel(position);
-        origin = WorldToPixelConverter.WorldSizeToPixel(origin.Value);
+        origin = origin is null
+            ? new Vector2(texture.Width / 2, texture.Height / 2)
+            : WorldToPixelConverter.WorldSizeToPixel(origin.Value);
 
         SpriteBatch.Draw(
                 texture,

@@ -9,7 +9,7 @@ using FontStashSharp.RichText;
 
 namespace ExampleGame.Entities;
 
-internal class MainMenuEntity : Entity
+internal class MainMenuEntity : NodeEntity
 {
     public MainMenuEntity(IGameContext gameContext, IJobQueue jobQueue)
     {
@@ -45,6 +45,7 @@ internal class MainMenuEntity : Entity
         {
             Root = stackPanel,
         };
+
         this.AddComponent(new MyraDesktopComponent() { Entity = this, Desktop = desktop });
     }
 }

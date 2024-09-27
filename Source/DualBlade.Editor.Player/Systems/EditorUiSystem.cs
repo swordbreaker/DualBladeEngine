@@ -22,9 +22,10 @@ public class EditorUiSystem(IGameContext context, SystemProvider systemProvider,
 
         if (input.IsKeyJustPressed(Keys.Home) && !entity.ControlWindow.Visible)
         {
-            var desktop = entity.GetComponent<MyraDesktopComponent>()
-                .Map(x => x.Desktop)
-                .IfSome(desktop => entity.ControlWindow.Show(desktop));
+            if (entity.GetComponent<MyraDesktopComponent>()?.Desktop is Desktop desktop)
+            {
+                entity.ControlWindow.Show(desktop);
+            }
         }
 
         entity.SystemStackPanel.Widgets.Clear();
