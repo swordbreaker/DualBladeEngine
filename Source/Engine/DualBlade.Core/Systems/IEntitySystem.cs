@@ -10,4 +10,5 @@ public interface IEntitySystem : ISystemWithContext
 
     internal INodeEntity Update(IEntity entity, GameTime gameTime);
     internal void Draw(IEntity entity, GameTime gameTime);
+    void AfterDraw(GameTime gameTime);
 }

@@ -34,7 +34,7 @@ public interface IWorld
     #endregion
 
     #region Components
-    internal ComponentRef<TComponent> AddComponent<TComponent>(TComponent component) where TComponent : IComponent;
+    internal ComponentRef<TComponent> AddComponent<TComponent>(TComponent component, IEntity entity) where TComponent : IComponent;
 
     internal TComponent GetComponentCopy<TComponent>(int id) where TComponent : IComponent;
     internal ComponentProxy<TComponent> GetComponentProxy<TComponent>(int id) where TComponent : IComponent;

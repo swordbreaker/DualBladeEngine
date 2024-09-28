@@ -15,8 +15,8 @@ public partial struct RootEntity : INodeEntity
     public IEnumerable<IEntity> Children { get; }
     public INodeEntity? Parent { get; }
     public int Id { get; }
-    public GrowableMemory<ComponentRef<IComponent>> Components { get; }
-    public GrowableMemory<IComponent> InitialComponents { get; }
+    public GrowableMemory<ComponentRef<IComponent>> Components { get; } = new();
+    public GrowableMemory<IComponent> InitialComponents { get; } = new();
 
     public void AddChild(INodeEntity child) => throw new NotImplementedException();
     public void AddComponent(IComponent component) => throw new NotImplementedException();

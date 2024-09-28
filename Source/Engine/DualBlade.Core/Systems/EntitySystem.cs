@@ -32,6 +32,7 @@ public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameCo
     public override void Update(GameTime gameTime) { }
 
     public override void Draw(GameTime gameTime) { }
+    public virtual void AfterDraw(GameTime gameTime) { }
 
     public override void Dispose()
     {

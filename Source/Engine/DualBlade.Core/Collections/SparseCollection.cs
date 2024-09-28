@@ -1,13 +1,13 @@
 ﻿namespace DualBlade.Core.Collections;
 
-public struct SparseCollection<T>(int count)
+public class SparseCollection<T>(int count)
 {
     private readonly List<T> items = new(count);
     private readonly Stack<int> freeIndices = new();
     private readonly HashSet<int> freeSet = new();
     public int Count { get; private set; }
 
-    public readonly T this[int index]
+    public T this[int index]
     {
         get => items[index];
         set => items[index] = value;

@@ -20,7 +20,10 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
     public override void Draw(GameTime gameTime)
     {
         _gameEngine.BeginDraw();
-        base.Draw(gameTime);
+    }
+
+    public override void AfterDraw(GameTime gameTime)
+    {
         _gameEngine.EndDraw();
     }
 

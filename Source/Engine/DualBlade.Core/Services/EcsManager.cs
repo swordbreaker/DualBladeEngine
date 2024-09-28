@@ -6,7 +6,7 @@ namespace DualBlade.Core.Services;
 
 public interface IEcsManager
 {
-    EntityProxy<INodeEntity> GetEntity(IComponent component);
+    EntityProxy<IEntity> GetEntity(IComponent component);
     void DestroyEntity(IComponent component);
     ComponentRef<TComponent>? GetAdjacentComponent<TComponent>(IComponent component) where TComponent : IComponent;
     void TraverseToParent(INodeComponent node, Action<INodeComponent> action);
@@ -17,9 +17,9 @@ public interface IEcsManager
 
 public class EcsManager(IWorld world) : IEcsManager
 {
-    public EntityProxy<INodeEntity> GetEntity(IComponent component)
+    public EntityProxy<IEntity> GetEntity(IComponent component)
     {
-        return world.GetEntityProxy<INodeEntity>(component.EntityId);
+        return world.GetEntityProxy<IEntity>(component.EntityId);
     }
 
     public void DestroyEntity(IComponent component)
@@ -27,6 +27,7 @@ public class EcsManager(IWorld world) : IEcsManager
         var entity = GetEntity(component).Value;
         world.Destroy(entity);
     }
+
 
     public ComponentRef<TComponent>? GetAdjacentComponent<TComponent>(IComponent component) where TComponent : IComponent
     {

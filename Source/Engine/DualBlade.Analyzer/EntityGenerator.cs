@@ -59,8 +59,8 @@ public class EntityGenerator : IIncrementalGenerator
                 {{ctor}}
 
                 public int Id { get; private set; }
-                public GrowableMemory<ComponentRef<IComponent>> Components { get; }
-                public GrowableMemory<IComponent> InitialComponents { get; }
+                public GrowableMemory<ComponentRef<IComponent>> Components { get; } = new(5);
+                public GrowableMemory<IComponent> InitialComponents { get; } = new(5);
 
                 public readonly void AddComponent(IComponent component)
                 {
@@ -71,7 +71,7 @@ public class EntityGenerator : IIncrementalGenerator
 
                     if (this.addComponent is not null)
                     {
-                        this.Components.Add(this.addComponent(component));
+                        this.Components.Add(this.addComponent(component, this.Id));
                     }
                     else
                     {

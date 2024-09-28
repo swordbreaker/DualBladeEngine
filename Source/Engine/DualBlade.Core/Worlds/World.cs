@@ -9,7 +9,7 @@ namespace DualBlade.Core.Worlds;
 
 public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IWorld
 {
-    public delegate ComponentRef<IComponent> AddComponentDelegate(IComponent component);
+    public delegate ComponentRef<IComponent> AddComponentDelegate(IComponent component, int entityId);
     public delegate IComponent GetCopyDelegate(int id);
     public delegate ComponentProxy<IComponent> GetProxyDelegate<TComponent>();
 
@@ -129,7 +129,7 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
 
         foreach (var component in entity.InitialComponents.ToSpan())
         {
-            entity.Components.Add(AddComponent(component));
+            entity.Components.Add(AddComponent(component, entity.Id));
         }
 
         if (_entitySystems.TryGetValue(typeof(TEntity), out var systems))
@@ -172,6 +172,8 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
             Destroy(component.GetCopy());
         }
 
+        _entities.Remove(entity.Id);
+
         if (_entitySystems.TryGetValue(entity.GetType(), out var systems))
         {
             foreach (var system in systems)
@@ -185,9 +187,10 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
 
     #region Components
 
-    private ComponentRef<TComponent> AddComponent<TComponent>(TComponent component) where TComponent : IComponent
+    private ComponentRef<TComponent> AddComponent<TComponent>(TComponent component, int entityId) where TComponent : IComponent
     {
         component.Id = _components.NextFreeIndex();
+        component.EntityId = entityId;
         _components.Add(component);
 
         if (_componentSystems.TryGetValue(typeof(TComponent), out var systems))
@@ -201,8 +204,8 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
         return new ComponentRef<TComponent>(this, component.Id);
     }
 
-    ComponentRef<TComponent> IWorld.AddComponent<TComponent>(TComponent component) =>
-        AddComponent(component);
+    ComponentRef<TComponent> IWorld.AddComponent<TComponent>(TComponent component, IEntity entity) =>
+        AddComponent(component, entity.Id);
 
     private TComponent GetComponentCopy<TComponent>(int id) where TComponent : IComponent =>
         (TComponent)_components[id];
@@ -292,6 +295,7 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
                 {
                     system.Draw(gameTime);
                     system.Draw(component, gameTime);
+                    system.AfterDraw(gameTime);
                 }
             }
         }
@@ -304,6 +308,7 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
                 {
                     system.Draw(gameTime);
                     system.Draw(entity, gameTime);
+                    system.AfterDraw(gameTime);
                 }
             }
         }

@@ -11,4 +11,5 @@ public interface IComponentSystem : ISystemWithContext
 
     internal IComponent Update(IComponent component, GameTime gameTime);
     internal void Draw(IComponent component, GameTime gameTime);
+    void AfterDraw(GameTime gameTime);
 }

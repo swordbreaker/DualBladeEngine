@@ -12,6 +12,7 @@ public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : Ba
 
     public override void Update(GameTime gameTime) { }
     public override void Draw(GameTime gameTime) { }
+    public virtual void AfterDraw(GameTime gameTime) { }
     protected virtual void Update(ref TComponent component, GameTime gameTime) { }
     protected virtual void Draw(TComponent component, GameTime gameTime) { }
     protected virtual void OnAdded(ref TComponent component) { }

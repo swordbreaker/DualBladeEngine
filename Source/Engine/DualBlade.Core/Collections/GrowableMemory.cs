@@ -1,21 +1,21 @@
 ﻿namespace DualBlade.Core.Collections;
 
-public struct GrowableMemory<T>
+public class GrowableMemory<T>
 {
-    private Memory<T> _memory;
+    private Memory<T> _memory = new T[10];
+    private int _length;
 
-    public int Length { get; private set; }
+    public int Length => _length;
 
     public GrowableMemory()
     {
-        _memory = new T[10];
-        Length = 0;
+        _length = 0;
     }
 
     public GrowableMemory(int capacity)
     {
         _memory = new T[capacity];
-        Length = 0;
+        _length = 0;
     }
 
     public ref T this[int index] => ref _memory.Span[index];
@@ -30,7 +30,7 @@ public struct GrowableMemory<T>
         }
 
         _memory.Span[Length] = item;
-        return Length++;
+        return _length++;
     }
 
     public void Remove(int index)
@@ -45,15 +45,15 @@ public struct GrowableMemory<T>
             _memory.Span[i] = _memory.Span[i + 1];
         }
 
-        Length--;
+        _length--;
     }
 
-    public void Clear() => Length = 0;
+    public void Clear() => _length = 0;
 
-    public readonly bool Contains(Predicate<T> predicate)
+    public bool Contains(Predicate<T> predicate)
     {
-        var span = _memory.Span[..Length];
-        for (int i = 0; i < Length; i++)
+        var span = _memory.Span[.._length];
+        for (int i = 0; i < _length; i++)
         {
             if (predicate(span[i]))
             {
@@ -64,10 +64,10 @@ public struct GrowableMemory<T>
         return false;
     }
 
-    public readonly bool Contains(T item)
+    public bool Contains(T item)
     {
-        var span = _memory.Span[..Length];
-        for (int i = 0; i < Length; i++)
+        var span = _memory.Span[.._length];
+        for (int i = 0; i < _length; i++)
         {
             if (span[i].Equals(item))
             {
@@ -78,10 +78,10 @@ public struct GrowableMemory<T>
         return false;
     }
 
-    public readonly T Find(Predicate<T> predicate)
+    public T Find(Predicate<T> predicate)
     {
-        var span = _memory.Span[..Length];
-        for (int i = 0; i < Length; i++)
+        var span = _memory.Span[.._length];
+        for (int i = 0; i < _length; i++)
         {
             if (predicate(span[i]))
             {
@@ -92,10 +92,10 @@ public struct GrowableMemory<T>
         throw new InvalidOperationException("Item not found");
     }
 
-    public readonly bool TryFind(Predicate<T> predicate, out T item)
+    public bool TryFind(Predicate<T> predicate, out T item)
     {
-        var span = _memory.Span[..Length];
-        for (int i = 0; i < Length; i++)
+        var span = _memory.Span[.._length];
+        for (int i = 0; i < _length; i++)
         {
             if (predicate(span[i]))
             {

@@ -18,9 +18,9 @@ public class MainScene(IGameContext context) : GameScene(context)
 
     protected override IEnumerable<IEntity> SetupEntities()
     {
-        for (float x = -5; x < 5; x += 2f)
+        for (float x = -6; x < 6; x += 2f)
         {
-            for (float y = -5; y < 5; y += 2f)
+            for (float y = -6; y < 6; y += 2f)
             {
                 var entity = new ParticleEmitterEntity(new Vector2(x, y));
                 yield return entity;
