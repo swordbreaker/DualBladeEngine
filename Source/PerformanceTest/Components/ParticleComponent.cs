@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 
 namespace PerformanceTest.Components;
-public class ParticleComponent : ComponentBase
+public partial struct ParticleComponent : IComponent
 {
     public Vector2 Velocity;
     public Vector2 Acceleration;

@@ -10,24 +10,26 @@ public abstract class GameScene : IGameScene
 {
     protected readonly IGameContext GameContext;
     protected readonly ISystemFactory SystemFactory;
+    protected readonly IEcsManager EcsManager;
 
     public GameScene(IGameContext context)
     {
         Systems = SetupSystems();
         GameContext = context;
         SystemFactory = context.ServiceProvider.GetRequiredService<ISystemFactory>();
+        EcsManager = context.EcsManager;
 
-        Root = new RootEntity();
+        Root = new RootEntity(SetupEntities());
         //{
         //    Children = SetupEntities(),
         //};
     }
 
-    public virtual IEntity Root { get; }
+    public virtual INodeEntity Root { get; }
 
     public IEnumerable<ISystem> Systems { get; }
 
-    protected abstract IEnumerable<INodeEntity> SetupEntities();
+    protected abstract IEnumerable<IEntity> SetupEntities();
     public abstract IEnumerable<ISystem> SetupSystems();
 
     public void Dispose()

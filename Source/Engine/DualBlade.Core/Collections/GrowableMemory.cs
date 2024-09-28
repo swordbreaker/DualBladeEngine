@@ -86,6 +86,22 @@ public struct GrowableMemory<T>
         throw new InvalidOperationException("Item not found");
     }
 
+    public readonly bool TryFind(Predicate<T> predicate, out T item)
+    {
+        var span = _memory.Span[..Length];
+        for (int i = 0; i < Length; i++)
+        {
+            if (predicate(span[i]))
+            {
+                item = span[i];
+                return true;
+            }
+        }
+
+        item = default!;
+        return false;
+    }
+
     public Memory<T> ToMemory() => _memory[..Length];
     public Span<T> ToSpan() => _memory.Span[..Length];
 }

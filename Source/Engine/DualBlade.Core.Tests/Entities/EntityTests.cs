@@ -87,9 +87,9 @@ public class EntityTests
         //transformComponent.Entity.Should().Be(entity);
     }
 
-    public class DummyEntity : Entity
+    public class DummyEntity : IEntity
     {
-        public DummyEntity(Func<IEntity, IComponent> factory)
+        public DummyEntity(Func<INodeEntity, IComponent> factory)
         {
             //AddComponent(factory());
         }

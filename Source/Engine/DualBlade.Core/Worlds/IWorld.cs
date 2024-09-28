@@ -10,30 +10,38 @@ public interface IWorld
     IEnumerable<ISystem> Systems { get; }
     IEnumerable<IEntity> Entities { get; }
 
-    event Action<IEntity> EntityAdded;
-    event Action<IEntity> EntityDestroyed;
-    event Action<IComponent> ComponentAdded;
-    event Action<IComponent> ComponentDestroyed;
-
+    void Initialize();
     void Update(GameTime gameTime);
     void Draw(GameTime gameTime);
 
-    void Destroy(IEntity entity);
-    void DestroyComponent(IComponent component);
-
+    #region Systems
+    void AddSystems(params ISystem[] systems);
+    void AddSystem<TSystem>() where TSystem : ISystem;
+    void AddSystem(ISystem system);
     void Destroy(ISystem system);
     void Destroy(IEnumerable<ISystem> systems);
+    #endregion
 
-    void AddEntity(IEntity entity);
-    void AddComponent<TComponent>(IEntity entity, TComponent component) where TComponent : IComponent;
-    IEnumerable<TComponent> GetComponents<TComponent>() where TComponent : IComponent;
-    TComponent? GetComponent<TComponent>(IEntity entity) where TComponent : IComponent;
+    #region Entity
+    void AddEntities(params IEntity[] entities);
+    void AddEntity<TEntity>(TEntity entity) where TEntity : IEntity;
 
-    IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : IEntity;
+    EntityProxy<TEntity> GetEntityProxy<TEntity>(int id) where TEntity : IEntity;
 
-    void AddSystems(params ISystem[] systems);
-    void AddSystem(ISystem system);
-    void AddSystem<TSystem>() where TSystem : ISystem;
-    void DestroyComponent<TComponent>(IEntity entity) where TComponent : IComponent;
-    void Initialize();
+    void UpdateIEntity(IEntity entity);
+
+    void Destroy(IEntity entity);
+    #endregion
+
+    #region Components
+    internal ComponentRef<TComponent> AddComponent<TComponent>(TComponent component) where TComponent : IComponent;
+
+    internal TComponent GetComponentCopy<TComponent>(int id) where TComponent : IComponent;
+    internal ComponentProxy<TComponent> GetComponentProxy<TComponent>(int id) where TComponent : IComponent;
+    internal ComponentRef<TComponent> GetComponent<TComponent>(int id) where TComponent : IComponent;
+
+    void UpdateComponent(IComponent component);
+
+    internal void Destroy(IComponent component);
+    #endregion
 }

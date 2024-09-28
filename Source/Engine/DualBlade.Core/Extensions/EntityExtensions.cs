@@ -5,16 +5,16 @@ namespace DualBlade.Core.Extensions;
 
 public static class EntityExtensions
 {
-    public static TComponent? GetComponent<TComponent>(this IEntity entity) where TComponent : IComponent
-    {
-        var components = entity.Components.OfType<TComponent>().ToArray();
-        return components.Length switch
-        {
-            0 => default,
-            1 => components[0],
-            _ => throw new Exception("Multiple components of the same type found")
-        };
-    }
+    //public static TComponent? GetComponent<TComponent>(this IEntity entity) where TComponent : IComponent
+    //{
+    //    var components = entity.Components.OfType<TComponent>().ToArray();
+    //    return components.Length switch
+    //    {
+    //        0 => default,
+    //        1 => components[0],
+    //        _ => throw new Exception("Multiple components of the same type found")
+    //    };
+    //}
 
     //public static IEntity? GetParent(this IEntity entity)
     //{

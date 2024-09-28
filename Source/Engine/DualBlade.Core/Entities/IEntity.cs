@@ -1,16 +1,22 @@
-﻿using DualBlade.Core.Worlds;
-using IComponent = DualBlade.Core.Components.IComponent;
+﻿using DualBlade.Core.Collections;
+using DualBlade.Core.Components;
+using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Entities;
 
 public interface IEntity
 {
-    IEnumerable<IComponent> Components { get; init; }
+    public int Id { get; }
 
-    TComponent AddComponent<TComponent>() where TComponent : IComponent, new();
-    void AddComponent<TComponent>(TComponent component) where TComponent : IComponent;
-    void RemoveComponent<TComponent>() where TComponent : IComponent;
-    void RemoveComponent(Type type);
+    ComponentRef<TComponent>? Component<TComponent>() where TComponent : IComponent;
 
-    void Initialize(IWorld world);
+    GrowableMemory<ComponentRef<IComponent>> Components { get; }
+
+    GrowableMemory<IComponent> InitialComponents { get; }
+
+    void AddComponent(IComponent component);
+
+    void Init(
+        World.AddComponentDelegate addComponent,
+        int id);
 }

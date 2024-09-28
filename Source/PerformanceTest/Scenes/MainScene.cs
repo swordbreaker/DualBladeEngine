@@ -1,5 +1,4 @@
-﻿using DualBlade._2D.Rendering.Components;
-using DualBlade.Core.Entities;
+﻿using DualBlade.Core.Entities;
 using DualBlade.Core.Scenes;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
@@ -17,14 +16,13 @@ public class MainScene(IGameContext context) : GameScene(context)
         yield return CreateSystem<ParticleEmitterSystem>();
     }
 
-    protected override IEnumerable<INodeEntity> SetupEntities()
+    protected override IEnumerable<IEntity> SetupEntities()
     {
         for (float x = -5; x < 5; x += 2f)
         {
             for (float y = -5; y < 5; y += 2f)
             {
-                var entity = new ParticleEmitterEntity();
-                entity.Transform.Position = new Vector2(x, y);
+                var entity = new ParticleEmitterEntity(new Vector2(x, y));
                 yield return entity;
             }
         }

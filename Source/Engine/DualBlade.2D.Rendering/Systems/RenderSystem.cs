@@ -1,7 +1,5 @@
 ﻿using DualBlade._2D.Rendering.Components;
 using DualBlade._2D.Rendering.Extensions;
-using DualBlade.Core.Components;
-using DualBlade.Core.Extensions;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 
@@ -11,11 +9,9 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
 {
     private readonly IGameEngine _gameEngine = gameContext.GameEngine;
 
-    protected override void Initialize(RenderComponent component)
+    protected override void OnAdded(ref RenderComponent component)
     {
-        base.Initialize(component);
-
-        if (component.Entity.GetComponent<TransformComponent>() is null)
+        if (Ecs.GetAdjacentComponent<TransformComponent>(component) is null)
         {
             throw new Exception("RenderComponent must have a TransformComponent");
         }
@@ -30,11 +26,11 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
 
     protected override void Draw(RenderComponent component, GameTime gameTime)
     {
-        var transform = GetTransformComponent(component);
-        var position = transform.AbsolutePosition();
+        var transform = Ecs.GetAdjacentComponent<TransformComponent>(component)!.Value.GetCopy();
+        var position = Ecs.AbsolutePosition(transform);
         var origin = component.Origin;
-        var rotation = MathHelper.ToRadians(transform.AbsoluteRotation());
-        var scale = transform.AbsoluteScale();
+        var rotation = MathHelper.ToRadians(Ecs.AbsoluteRotation(transform));
+        var scale = Ecs.AbsoluteScale(transform);
 
         if (component.Sprite is null)
         {
@@ -49,7 +45,4 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
             rotation: rotation,
             origin: origin);
     }
-
-    protected TransformComponent GetTransformComponent(IComponent component) =>
-        World.GetComponent<TransformComponent>(component.Entity)!;
 }

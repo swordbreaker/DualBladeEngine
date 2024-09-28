@@ -1,8 +1,9 @@
 ﻿using DualBlade.Core.Collections;
+using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Components;
 public interface INodeComponent : IComponent
 {
-    int? Parent { get; set; }
-    GrowableMemory<int> Children { get; set; }
+    ComponentRef<IComponent>? Parent { get; set; }
+    GrowableMemory<ComponentRef<IComponent>> Children { get; }
 }

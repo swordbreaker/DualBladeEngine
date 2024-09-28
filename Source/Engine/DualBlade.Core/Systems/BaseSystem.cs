@@ -1,5 +1,6 @@
 ﻿using DualBlade.Core.Services;
 using DualBlade.Core.Worlds;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DualBlade.Core.Systems;
 
@@ -7,6 +8,8 @@ public class BaseSystem(IGameContext gameContext) : ISystemWithContext
 {
     public IGameContext GameContext { get; } = gameContext;
     public IWorld World { get; } = gameContext.World;
+
+    protected IEcsManager Ecs = gameContext.EcsManager;
 
     public virtual void Dispose()
     {

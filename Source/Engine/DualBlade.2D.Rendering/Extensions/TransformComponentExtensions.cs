@@ -1,22 +1,26 @@
 ﻿using DualBlade._2D.Rendering.Components;
-using DualBlade.Core.Extensions;
-using FunctionalMonads.Monads.MaybeMonad;
+using DualBlade.Core.Components;
+using DualBlade.Core.Services;
 
 namespace DualBlade._2D.Rendering.Extensions;
 public static class TransformComponentExtensions
 {
-    public static Vector2 AbsolutePosition(this TransformComponent transform)
+    public static Vector2 AbsolutePosition(this IEcsManager ecs, TransformComponent transform)
     {
         var position = Vector2.Zero;
 
-        transform.TraverseToParent(p =>
+        ecs.TraverseToParent(transform, p =>
         {
             if (p is TransformComponent parentTransform)
             {
-                var parent = parentTransform.Parent as TransformComponent;
+                TransformComponent? parent = null;
+                if (parentTransform.Parent.HasValue && parentTransform.Parent.Value.GetCopy() is TransformComponent transformComponent)
+                {
+                    parent = transformComponent;
+                }
 
-                var m = (parent is not null)
-                    ? Matrix.CreateScale(parent.Scale.X, parent.Scale.Y, 0) * Matrix.CreateRotationZ(parent.Rotation)
+                var m = (parent.HasValue)
+                    ? Matrix.CreateScale(parent.Value.Scale.X, parent.Value.Scale.Y, 0) * Matrix.CreateRotationZ(parent.Value.Rotation)
                     : Matrix.Identity;
 
                 position += Vector2.Transform(parentTransform.Position, m);
@@ -26,11 +30,11 @@ public static class TransformComponentExtensions
         return position;
     }
 
-    public static Vector2 AbsoluteScale(this TransformComponent transform)
+    public static Vector2 AbsoluteScale(this IEcsManager ecs, TransformComponent transform)
     {
         var scale = Vector2.One;
 
-        transform.TraverseToParent(p =>
+        ecs.TraverseToParent(transform, p =>
         {
             if (p is TransformComponent parentTransform)
             {
@@ -41,11 +45,11 @@ public static class TransformComponentExtensions
         return scale;
     }
 
-    public static float AbsoluteRotation(this TransformComponent transform)
+    public static float AbsoluteRotation(this IEcsManager ecs, TransformComponent transform)
     {
         var rotation = 0f;
 
-        transform.TraverseToParent(p =>
+        ecs.TraverseToParent(transform, p =>
         {
             if (p is TransformComponent parentTransform)
             {

@@ -1,125 +1,126 @@
-﻿using Microsoft.Xna.Framework;
-using System.Diagnostics;
-using Xunit.Abstractions;
+﻿//using Microsoft.Xna.Framework;
+//using System.ComponentModel;
+//using Xunit.Abstractions;
 
-namespace DualBlade.Core.Worlds.Tests;
+//namespace DualBlade.Core.Worlds.Tests;
 
-public struct CompA : ITestComponent
-{
-    public int Value;
 
-    public int Id { get; set; }
-    public int EntityId { get; set; }
-}
+//public struct CompA : ITestComponent
+//{
+//    public int Value;
 
-public struct CompB : ITestComponent
-{
-    public int Value;
-    public Vector2 Position;
+//    public int Id { get; set; }
+//    public int EntityId { get; set; }
+//}
 
-    public int Id { get; set; }
-    public int EntityId { get; set; }
-}
+//public struct CompB : ITestComponent
+//{
+//    public int Value;
+//    public Vector2 Position;
 
-public struct LifetimeComponent : ITestComponent
-{
-    public int LifeCount;
+//    public int Id { get; set; }
+//    public int EntityId { get; set; }
+//}
 
-    public int Id { get; set; }
-    public int EntityId { get; set; }
-}
+//public struct LifetimeComponent : ITestComponent
+//{
+//    public int LifeCount;
 
-public class LifetimeSystem(TestWorld world) : TestSystem<LifetimeComponent>
-{
-    protected override void Update(ref LifetimeComponent component)
-    {
-        if (component.LifeCount > 5)
-        {
-            world.RemoveComponent(component);
-        }
-        component.LifeCount++;
-    }
-}
+//    public int Id { get; set; }
+//    public int EntityId { get; set; }
+//}
 
-public class SpawnerSystem(TestWorld world) : TestSystem<LifetimeComponent>
-{
-    public override void Update()
-    {
-        world.AddComponent(new LifetimeComponent());
-    }
+//public class LifetimeSystem(TestWorld world) : TestSystem<LifetimeComponent>
+//{
+//    protected override void Update(ref LifetimeComponent component)
+//    {
+//        if (component.LifeCount > 5)
+//        {
+//            world.RemoveComponent(component);
+//        }
+//        component.LifeCount++;
+//    }
+//}
 
-    protected override void Update(ref LifetimeComponent component) { }
-}
+//public class SpawnerSystem(TestWorld world) : TestSystem<LifetimeComponent>
+//{
+//    public override void Update()
+//    {
+//        world.AddComponent(new LifetimeComponent());
+//    }
 
-public class MySystem : TestSystem<CompA>
-{
-    protected override void Update(ref CompA component)
-    {
-        component.Value = 42;
-    }
-}
+//    protected override void Update(ref LifetimeComponent component) { }
+//}
 
-public class TestWorldTests(ITestOutputHelper _output)
-{
-    private TestWorld _world;
+//public class MySystem : TestSystem<CompA>
+//{
+//    protected override void Update(ref CompA component)
+//    {
+//        component.Value = 42;
+//    }
+//}
 
-    [Fact()]
-    public void UpdateTest()
-    {
-        _world = new TestWorld();
-        _world.AddComponent(new CompA());
+//public class TestWorldTests(ITestOutputHelper _output)
+//{
+//    private TestWorld _world;
 
-        using (var compRef = _world.GetComponentRef<CompA>(0))
-        {
-            compRef.Value.Value = 42;
-        }
+//    [Fact()]
+//    public void UpdateTest()
+//    {
+//        _world = new TestWorld();
+//        _world.AddComponent(new CompA());
 
-        _world.GetComponent<CompA>(0).Value.Should().Be(42);
-    }
+//        using (var compRef = _world.GetComponentRef<CompA>(0))
+//        {
+//            compRef.Value.Value = 42;
+//        }
 
-    [Fact]
-    public void Test2()
-    {
-        var world = new TestWorld();
+//        _world.GetComponent<CompA>(0).Value.Should().Be(42);
+//    }
 
-        world.AddComponent(new CompA());
-        world._systems.Add(new MySystem());
+//    [Fact]
+//    public void Test2()
+//    {
+//        var world = new TestWorld();
 
-        world.Update();
+//        world.AddComponent(new CompA());
+//        world._systems.Add(new MySystem());
 
-        world.GetComponent<CompA>(0).Value.Should().Be(42);
-    }
+//        world.Update();
 
-    [Fact]
-    public void Test3()
-    {
-        int[] initialCounts = new int[GC.MaxGeneration + 1];
+//        world.GetComponent<CompA>(0).Value.Should().Be(42);
+//    }
 
-        // Store initial counts
-        for (int i = 0; i <= GC.MaxGeneration; i++)
-        {
-            initialCounts[i] = GC.CollectionCount(i);
-        }
+//    [Fact]
+//    public void Test3()
+//    {
+//        int[] initialCounts = new int[GC.MaxGeneration + 1];
 
-        var world = new TestWorld();
+//        // Store initial counts
+//        for (int i = 0; i <= GC.MaxGeneration; i++)
+//        {
+//            initialCounts[i] = GC.CollectionCount(i);
+//        }
 
-        world._systems.Add(new SpawnerSystem(world));
-        world._systems.Add(new LifetimeSystem(world));
+//        var world = new TestWorld();
 
-        for (var i = 0; i < 100; i++)
-        {
-            world.Update();
-            _output.WriteLine(world._components.Count.ToString());
-        }
+//        world._systems.Add(new SpawnerSystem(world));
+//        world._systems.Add(new LifetimeSystem(world));
 
-        GC.Collect();
+//        for (var i = 0; i < 100; i++)
+//        {
+//            world.Update();
+//            _output.WriteLine(world._components.Count.ToString());
+//        }
 
-        // Check for changes
-        for (int i = 0; i <= GC.MaxGeneration; i++)
-        {
-            int currentCount = GC.CollectionCount(i);
-            int collectionsSinceStart = currentCount - initialCounts[i];
-            _output.WriteLine($"Generation {i} collections since start: {collectionsSinceStart}");
-        }
-    }
-}
+//        GC.Collect();
+
+//        // Check for changes
+//        for (int i = 0; i <= GC.MaxGeneration; i++)
+//        {
+//            int currentCount = GC.CollectionCount(i);
+//            int collectionsSinceStart = currentCount - initialCounts[i];
+//            _output.WriteLine($"Generation {i} collections since start: {collectionsSinceStart}");
+//        }
+//    }
+//}

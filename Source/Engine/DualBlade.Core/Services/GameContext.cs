@@ -15,6 +15,7 @@ public sealed class GameContext(IServiceProvider _serviceProvider, ISceneManager
     private BaseGame? _game;
     private IWorld? _world;
     private ISceneManager? _sceneManager;
+    private IEcsManager _ecsManager;
 
     public void Init(IGameEngine gameEngine, BaseGame baseGame, IWorld world)
     {
@@ -23,6 +24,7 @@ public sealed class GameContext(IServiceProvider _serviceProvider, ISceneManager
         _world = world;
         isInitialized = true;
         _sceneManager = sceneManagerFactory.CreateSceneManager(this);
+        _ecsManager = new EcsManager(world);
     }
 
     public IServiceProvider ServiceProvider => _serviceProvider;
@@ -49,6 +51,12 @@ public sealed class GameContext(IServiceProvider _serviceProvider, ISceneManager
     {
         get => GetValueSafe(_sceneManager);
         private set => _sceneManager = value;
+    }
+
+    public IEcsManager EcsManager
+    {
+        get => GetValueSafe(_ecsManager);
+        private set => _ecsManager = value;
     }
 
     private T GetValueSafe<T>(T? vale) => GetValueSafe(() => vale);

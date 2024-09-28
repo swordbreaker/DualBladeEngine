@@ -2,29 +2,25 @@
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using System;
-using DualBlade.Core.Extensions;
-using FunctionalMonads.Monads.MaybeMonad;
 using DualBlade._2D.Physics.Components;
 
 namespace DualBlade._2D.Physics.Systems;
 
 public class KinematicSystem(IGameContext gameContext) : ComponentSystem<KinematicComponent>(gameContext)
 {
-    protected override void Initialize(KinematicComponent component)
+    protected override void OnAdded(ref KinematicComponent component)
     {
-        base.Initialize(component);
-        if (component.Entity.GetComponent<TransformComponent>() is null)
+        if (!Ecs.GetAdjacentComponent<TransformComponent>(component).HasValue)
         {
             throw new Exception("KinematicComponent must have a TransformComponent");
         }
     }
 
-    protected override void Update(KinematicComponent component, GameTime gameTime)
+    protected override void Update(ref KinematicComponent component, GameTime gameTime)
     {
-        var entity = component.Entity;
-        var transform = entity.GetComponent<TransformComponent>();
+        using var transformProxy = Ecs.GetAdjacentComponent<TransformComponent>(component).Value.GetProxy();
 
-        transform.Position = component.PhysicsBody.Position;
-        transform.Rotation = component.PhysicsBody.Rotation;
+        transformProxy.Value.Position = component.PhysicsBody.Position;
+        transformProxy.Value.Rotation = component.PhysicsBody.Rotation;
     }
 }

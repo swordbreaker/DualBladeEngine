@@ -1,17 +1,26 @@
 ﻿using DualBlade._2D.Rendering.Components;
-using DualBlade.Core.Components;
 using DualBlade.Core.Entities;
+using DualBlade.Core.Worlds;
 
 namespace DualBlade._2D.Rendering.Entities;
 
-public class TransformEntity : NodeEntity
+public partial struct TransformEntity : IEntity
 {
-    public TransformComponent Transform { get; init; }
+    public readonly ComponentRef<TransformComponent> Transform
+    {
+        get
+        {
+            var c = this.Component<TransformComponent>();
+            if (c.HasValue)
+            {
+                return c.Value;
+            }
+            throw new InvalidOperationException("Only access this property after the entity was added to the world");
+        }
+    }
 
     public TransformEntity()
     {
-        RemoveComponent<NodeComponent>();
-        Transform = AddComponent<TransformComponent>();
-        NodeComponent = Transform;
+        AddComponent(new TransformComponent());
     }
 }

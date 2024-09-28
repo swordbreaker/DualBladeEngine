@@ -4,7 +4,7 @@ using DualBlade.Core.Systems;
 namespace DualBlade.Core.Scenes;
 public interface IGameScene : IDisposable
 {
-    IEntity Root { get; }
+    INodeEntity Root { get; }
 
     IEnumerable<ISystem> Systems { get; }
 }

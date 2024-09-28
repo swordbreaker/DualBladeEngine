@@ -2,7 +2,7 @@
 
 namespace DualBlade._2D.Rendering.Components;
 
-public class TransformComponent : NodeComponent
+public partial struct TransformComponent : INodeComponent
 {
     public Vector2 Position = Vector2.Zero;
     public float Rotation = 0f;

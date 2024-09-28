@@ -1,66 +1,45 @@
 ﻿using DualBlade.Core.Components;
 using DualBlade.Core.Services;
-using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Systems;
 
-public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : BaseSystem(gameContext), IComponentSystem where TComponent : IComponent
+public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : BaseSystem(gameContext), IComponentSystem
+    where TComponent : IComponent
 {
-    protected virtual void Initialize(TComponent component) { }
+    Type IComponentSystem.CompType { get; } = typeof(TComponent);
 
+    public override void Initialize() { }
+
+    public override void Update(GameTime gameTime) { }
+    public override void Draw(GameTime gameTime) { }
+    protected virtual void Update(ref TComponent component, GameTime gameTime) { }
+    protected virtual void Draw(TComponent component, GameTime gameTime) { }
+    protected virtual void OnAdded(ref TComponent component) { }
     protected virtual void OnDestroy(TComponent component) { }
 
-    protected virtual void Update(TComponent component, GameTime gameTime) { }
-
-    protected virtual void Draw(TComponent component, GameTime gameTime) { }
-
-    public override void Initialize()
+    IComponent IComponentSystem.Update(IComponent component, GameTime gameTime)
     {
-        foreach (var component in World.GetComponents<TComponent>())
-        {
-            Initialize(component);
-        }
+        var comp = (TComponent)component;
 
-        World.ComponentAdded += Init;
-        World.ComponentDestroyed += OnDestroy;
+        this.Update(ref comp, gameTime);
+        return comp;
     }
 
-    public override void Update(GameTime gameTime)
+    void IComponentSystem.Draw(IComponent component, GameTime gameTime) =>
+        this.Draw((TComponent)component, gameTime);
+
+    IComponent IComponentSystem.OnAdded(IComponent component)
     {
-        foreach (var component in World.GetComponents<TComponent>())
-        {
-            Update(component, gameTime);
-        }
+        var c = (TComponent)component;
+        OnAdded(ref c);
+        return c;
     }
 
-    public override void Draw(GameTime gameTime)
-    {
-        foreach (var component in World.GetComponents<TComponent>())
-        {
-            Draw(component, gameTime);
-        }
-    }
+    void IComponentSystem.OnDestroy(IComponent component) =>
+        OnDestroy((TComponent)component);
 
     public override void Dispose()
     {
         GC.SuppressFinalize(this);
-        World.ComponentAdded -= Init;
-        World.ComponentDestroyed -= OnDestroy;
-    }
-
-    private void Init(IComponent component)
-    {
-        if (component is TComponent c)
-        {
-            Initialize(c);
-        }
-    }
-
-    private void OnDestroy(IComponent component)
-    {
-        if (component is TComponent c)
-        {
-            OnDestroy(c);
-        }
     }
 }

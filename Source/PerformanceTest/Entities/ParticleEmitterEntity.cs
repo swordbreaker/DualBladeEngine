@@ -1,11 +1,15 @@
-﻿using DualBlade._2D.Rendering.Entities;
+﻿using DualBlade._2D.Rendering.Components;
+using DualBlade.Core.Entities;
+using Microsoft.Xna.Framework;
 using PerformanceTest.Components;
+using System;
 
 namespace PerformanceTest.Entities;
-public class ParticleEmitterEntity : TransformEntity
+public partial struct ParticleEmitterEntity : IEntity
 {
-    public ParticleEmitterEntity() : base()
+    public ParticleEmitterEntity(Vector2 pos)
     {
-        AddComponent<ParticleEmitterComponent>();
+        AddComponent(new TransformComponent() { Position = pos });
+        AddComponent(new ParticleEmitterComponent());
     }
 }

@@ -17,11 +17,11 @@ public class MessureUiScene(IGameContext context) : GameScene(context)
         yield return CreateSystem<WorldDebugInfoSystem>();
     }
 
-    protected override IEnumerable<INodeEntity> SetupEntities()
+    protected override IEnumerable<IEntity> SetupEntities()
     {
-        yield return new NodeEntity
-        {
-            Components = [new FpsDisplayComponent { Font = gameEngine.Load<SpriteFont>("DefaultFont") }]
-        };
+        var entity = new Entity();
+        entity.AddComponent(new FpsDisplayComponent { Font = gameEngine.Load<SpriteFont>("DefaultFont") });
+
+        yield return entity;
     }
 }

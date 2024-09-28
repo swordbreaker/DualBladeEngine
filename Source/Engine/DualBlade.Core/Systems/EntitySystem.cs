@@ -1,52 +1,50 @@
 ﻿using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
-using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Systems;
 
-public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameContext), IEntitySystem where TEntity : IEntity
+public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameContext), IEntitySystem where TEntity : INodeEntity
 {
-    protected virtual void Initialize(TEntity entity) { }
-    protected virtual void Update(TEntity entity, GameTime gameTime) { }
+    Type IEntitySystem.EntityType { get; } = typeof(TEntity);
+
+    protected virtual void OnAdded(ref TEntity entity) { }
+    protected virtual void Update(ref TEntity entity, GameTime gameTime) { }
+    public virtual void OnDestroy(TEntity entity) { }
     protected virtual void Draw(TEntity entity, GameTime gameTime) { }
+
+    INodeEntity IEntitySystem.Update(IEntity component, GameTime gameTime)
+    {
+        var ent = (TEntity)component;
+
+        this.Update(ref ent, gameTime);
+        return ent;
+    }
+
+    void IEntitySystem.Draw(IEntity entity, GameTime gameTime)
+    {
+        this.Draw((TEntity)entity, gameTime);
+    }
 
     public override void Initialize()
     {
-        foreach (var entity in World.GetEntities<TEntity>())
-        {
-            Initialize(entity);
-        }
-
-        World.EntityAdded += Init;
     }
 
-    public override void Update(GameTime gameTime)
-    {
-        foreach (var entity in World.GetEntities<TEntity>())
-        {
-            Update(entity, gameTime);
-        }
-    }
+    public override void Update(GameTime gameTime) { }
 
-    public override void Draw(GameTime gameTime)
-    {
-        foreach (var entity in World.GetEntities<TEntity>())
-        {
-            Draw(entity, gameTime);
-        }
-    }
+    public override void Draw(GameTime gameTime) { }
 
     public override void Dispose()
     {
         GC.SuppressFinalize(this);
-        World.EntityAdded -= Init;
     }
 
-    private void Init(IEntity e)
+    INodeEntity IEntitySystem.OnAdded(IEntity entity)
     {
-        if (e is TEntity entity)
-        {
-            Initialize(entity);
-        }
+        var e = (TEntity)entity;
+        OnAdded(ref e);
+        return e;
     }
+
+    void IEntitySystem.OnDestroy(IEntity entity) =>
+        OnDestroy((TEntity)entity);
 }

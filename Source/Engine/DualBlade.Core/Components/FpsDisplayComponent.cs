@@ -2,7 +2,7 @@
 
 namespace DualBlade.Core.Components;
 
-public class FpsDisplayComponent : ComponentBase
+public partial struct FpsDisplayComponent : IComponent
 {
     public int FrameCounter;
     public int FrameRate;
@@ -15,4 +15,8 @@ public class FpsDisplayComponent : ComponentBase
     public SpriteFont? Font;
     public Vector2 Position = new(10, 10);
     public Color FontColor = Color.Black;
+
+    public FpsDisplayComponent()
+    {
+    }
 }
