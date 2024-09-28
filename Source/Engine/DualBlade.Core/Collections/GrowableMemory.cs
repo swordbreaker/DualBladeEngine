@@ -6,6 +6,12 @@ public struct GrowableMemory<T>
 
     public int Length { get; private set; }
 
+    public GrowableMemory()
+    {
+        _memory = new T[10];
+        Length = 0;
+    }
+
     public GrowableMemory(int capacity)
     {
         _memory = new T[capacity];
