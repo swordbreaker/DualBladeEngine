@@ -1,4 +1,5 @@
 ﻿using DualBlade.Core.Components;
+using DualBlade.Core.Entities;
 
 namespace DualBlade.Core.Worlds;
 
@@ -11,27 +12,27 @@ namespace DualBlade.Core.Worlds;
 /// <typeparam name="T"></typeparam>
 public readonly struct ComponentRef<T> where T : IComponent
 {
-    private readonly IWorld world;
+    private readonly IEntity entity;
     private readonly int id;
 
-    internal ComponentRef(IWorld world, int id)
+    internal ComponentRef(IEntity entity, int id)
     {
-        this.world = world;
+        this.entity = entity;
         this.id = id;
     }
 
     public ComponentRef<TOther> As<TOther>() where TOther : IComponent =>
-        new(world, id);
+        new(entity, id);
 
     /// <summary>
     /// Gets a copy of the component.
     /// </summary>s
     public T GetCopy() =>
-        world.GetComponentCopy<T>(id);
+        entity.Component<T>().Value;
 
     /// <summary>
     /// Gets a proxy for the component that allows for mutation.
     /// </summary>
     public ComponentProxy<T> GetProxy() =>
-        world.GetComponentProxy<T>(id);
+        entity.Component<T>();
 }

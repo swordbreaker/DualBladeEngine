@@ -5,10 +5,10 @@ namespace DualBlade.Core.Systems;
 public interface IEntitySystem : ISystemWithContext
 {
     internal Type EntityType { get; }
-    internal INodeEntity OnAdded(IEntity entity);
+    internal IEntity OnAdded(IEntity entity);
     internal void OnDestroy(IEntity entity);
 
-    internal INodeEntity Update(IEntity entity, GameTime gameTime);
+    internal IEntity Update(IEntity entity, GameTime gameTime);
     internal void Draw(IEntity entity, GameTime gameTime);
     void AfterDraw(GameTime gameTime);
 }

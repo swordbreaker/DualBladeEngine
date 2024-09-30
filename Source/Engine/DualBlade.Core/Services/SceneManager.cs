@@ -34,7 +34,7 @@ internal sealed class SceneManager(IGameContext gameContext, IServiceProvider se
 
     public void AddScene(IGameScene gameScene)
     {
-        world.AddEntity(gameScene.Root);
+        gameScene.Root.AddToWorld(world);
 
         foreach (var system in gameScene.Systems)
         {

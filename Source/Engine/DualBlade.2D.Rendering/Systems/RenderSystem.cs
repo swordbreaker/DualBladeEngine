@@ -1,21 +1,14 @@
 ﻿using DualBlade._2D.Rendering.Components;
 using DualBlade._2D.Rendering.Extensions;
+using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 
 namespace DualBlade._2D.Rendering.Systems;
 
-public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComponent>(gameContext)
+public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComponent, TransformComponent>(gameContext)
 {
     private readonly IGameEngine _gameEngine = gameContext.GameEngine;
-
-    protected override void OnAdded(ref RenderComponent component)
-    {
-        if (Ecs.GetAdjacentComponent<TransformComponent>(component) is null)
-        {
-            throw new Exception("RenderComponent must have a TransformComponent");
-        }
-    }
 
     public override void Draw(GameTime gameTime)
     {
@@ -27,23 +20,22 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
         _gameEngine.EndDraw();
     }
 
-    protected override void Draw(RenderComponent component, GameTime gameTime)
+    protected override void Draw(RenderComponent render, TransformComponent transform, IEntity entity, GameTime gameTime)
     {
-        var transform = Ecs.GetAdjacentComponent<TransformComponent>(component)!.Value.GetCopy();
-        var position = Ecs.AbsolutePosition(transform);
-        var origin = component.Origin;
-        var rotation = MathHelper.ToRadians(Ecs.AbsoluteRotation(transform));
-        var scale = Ecs.AbsoluteScale(transform);
+        var position = Ecs.AbsolutePosition(entity);
+        var origin = render.Origin;
+        var rotation = MathHelper.ToRadians(Ecs.AbsoluteRotation(entity));
+        var scale = Ecs.AbsoluteScale(entity);
 
-        if (component.Sprite is null)
+        if (render.Sprite is null)
         {
             return;
         }
 
         _gameEngine.Draw(
-            component.Sprite.Texture2D,
+            render.Sprite.Texture2D,
             position,
-            component.Color,
+            render.Color,
             scale: scale,
             rotation: rotation,
             origin: origin);

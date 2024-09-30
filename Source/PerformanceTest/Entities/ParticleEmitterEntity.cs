@@ -2,7 +2,6 @@
 using DualBlade.Core.Entities;
 using Microsoft.Xna.Framework;
 using PerformanceTest.Components;
-using System;
 
 namespace PerformanceTest.Entities;
 public partial struct ParticleEmitterEntity : IEntity

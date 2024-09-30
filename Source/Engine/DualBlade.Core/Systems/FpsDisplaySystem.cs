@@ -1,11 +1,12 @@
 ﻿using DualBlade.Core.Components;
+using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 
 namespace DualBlade.Core.Systems;
 
 public class FpsDisplaySystem(IGameContext gameContext) : ComponentSystem<FpsDisplayComponent>(gameContext)
 {
-    protected override void Update(ref FpsDisplayComponent component, GameTime gameTime)
+    protected override void Update(ref FpsDisplayComponent component, ref IEntity entity, GameTime gameTime)
     {
         component.ElapsedUpdateTime += gameTime.ElapsedGameTime;
 
@@ -17,10 +18,8 @@ public class FpsDisplaySystem(IGameContext gameContext) : ComponentSystem<FpsDis
         }
     }
 
-    protected override void Draw(FpsDisplayComponent component, GameTime gameTime)
+    protected override void Draw(FpsDisplayComponent component, IEntity entity, GameTime gameTime)
     {
-        base.Draw(component, gameTime);
-
         component.ElapsedFrameTime += gameTime.ElapsedGameTime;
 
         if (component.ElapsedFrameTime > TimeSpan.FromSeconds(1))
@@ -31,7 +30,8 @@ public class FpsDisplaySystem(IGameContext gameContext) : ComponentSystem<FpsDis
         }
 
         component.FrameCounter++;
-        World.UpdateComponent(component);
+        entity.UpdateComponent(component);
+        World.UpdateEntity(entity);
 
         var displayText = $"FPS: {component.FrameRate} Update: {component.UpdateRate}";
 

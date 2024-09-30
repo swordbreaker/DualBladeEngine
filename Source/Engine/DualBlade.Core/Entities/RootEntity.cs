@@ -1,29 +1,35 @@
-﻿using DualBlade.Core.Collections;
-using DualBlade.Core.Components;
-using DualBlade.Core.Worlds;
+﻿using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Entities;
 
-public partial struct RootEntity : INodeEntity
+public class RootEntityConstructor
 {
-    public RootEntity(IEnumerable<IEntity> children)
+    private IEntity entity;
+    private readonly IWorld world;
+
+    private List<IEntity> children = new();
+
+    public RootEntityConstructor(RootEntity rootEntity, IWorld world)
     {
-        Children = children;
+        this.world = world;
+        entity = world.AddEntity(rootEntity);
     }
 
-    public INodeComponent NodeComponent { get; init; }
-    public IEnumerable<IEntity> Children { get; }
-    public INodeEntity? Parent { get; }
-    public int Id { get; }
-    public GrowableMemory<ComponentRef<IComponent>> Components { get; } = new();
-    public GrowableMemory<IComponent> InitialComponents { get; } = new();
-
-    public void AddChild(INodeEntity child) => throw new NotImplementedException();
-    public void AddComponent(IComponent component) => throw new NotImplementedException();
-    public void AddParent(INodeEntity parent) => throw new NotImplementedException();
-    public ComponentRef<TComponent>? Component<TComponent>() where TComponent : IComponent => throw new NotImplementedException();
-    public void Init(World.AddComponentDelegate addComponent, int id)
+    public void AddChildern(IEnumerable<IEntity> entities)
     {
-
+        foreach (var entity in entities)
+        {
+            AddChild(entity);
+        }
     }
+
+    public void AddChild(IEntity entity)
+    {
+        var childEntity = world.AddEntity(entity);
+        entity.Children.Add(childEntity.Id);
+    }
+}
+
+public partial struct RootEntity : IEntity
+{
 }

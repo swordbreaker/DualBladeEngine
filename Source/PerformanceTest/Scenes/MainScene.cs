@@ -16,14 +16,14 @@ public class MainScene(IGameContext context) : GameScene(context)
         yield return CreateSystem<ParticleEmitterSystem>();
     }
 
-    protected override IEnumerable<IEntity> SetupEntities()
+    protected override IEnumerable<EntityBuilder> SetupEntities()
     {
         for (float x = -6; x < 6; x += 2f)
         {
             for (float y = -6; y < 6; y += 2f)
             {
                 var entity = new ParticleEmitterEntity(new Vector2(x, y));
-                yield return entity;
+                yield return new EntityBuilder(entity);
             }
         }
     }

@@ -12,19 +12,17 @@ namespace DualBlade.Core.Worlds;
 /// </summary>
 public unsafe ref struct ComponentProxy<T> where T : IComponent
 {
-    private readonly int id;
     private readonly Action<IComponent> updateAction;
     private T value;
 
-    internal ComponentProxy(Action<IComponent> updateAction, T value, int id)
+    public ComponentProxy(Action<IComponent> updateAction, T value)
     {
         this.updateAction = updateAction;
-        this.id = id;
         this.value = value;
     }
 
     public readonly ComponentProxy<TOther> As<TOther>() where TOther : T =>
-        new(updateAction, (TOther)value, id);
+        new(updateAction, (TOther)value);
 
     public ref T Value => ref value;
 

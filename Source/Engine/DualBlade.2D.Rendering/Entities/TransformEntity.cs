@@ -6,18 +6,7 @@ namespace DualBlade._2D.Rendering.Entities;
 
 public partial struct TransformEntity : IEntity
 {
-    public readonly ComponentRef<TransformComponent> Transform
-    {
-        get
-        {
-            var c = this.Component<TransformComponent>();
-            if (c.HasValue)
-            {
-                return c.Value;
-            }
-            throw new InvalidOperationException("Only access this property after the entity was added to the world");
-        }
-    }
+    public readonly ComponentProxy<TransformComponent> Transform => this.Component<TransformComponent>();
 
     public TransformEntity()
     {

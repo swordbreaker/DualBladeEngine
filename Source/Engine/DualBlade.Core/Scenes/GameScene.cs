@@ -11,6 +11,7 @@ public abstract class GameScene : IGameScene
     protected readonly IGameContext GameContext;
     protected readonly ISystemFactory SystemFactory;
     protected readonly IEcsManager EcsManager;
+    private IEntity? rootEntity;
 
     public GameScene(IGameContext context)
     {
@@ -19,24 +20,26 @@ public abstract class GameScene : IGameScene
         SystemFactory = context.ServiceProvider.GetRequiredService<ISystemFactory>();
         EcsManager = context.EcsManager;
 
-        Root = new RootEntity(SetupEntities());
-        //{
-        //    Children = SetupEntities(),
-        //};
+        Root = new EntityBuilder(new RootEntity(), e => rootEntity = e)
+            .AddChildren(SetupEntities());
     }
 
-    public virtual INodeEntity Root { get; }
+    public virtual EntityBuilder Root { get; }
 
     public IEnumerable<ISystem> Systems { get; }
 
-    protected abstract IEnumerable<IEntity> SetupEntities();
+    protected abstract IEnumerable<EntityBuilder> SetupEntities();
     public abstract IEnumerable<ISystem> SetupSystems();
 
     public void Dispose()
     {
         GC.SuppressFinalize(this);
-        GameContext.World.Destroy(Root);
-        GameContext.World.Destroy(Systems);
+
+        if (rootEntity is not null)
+        {
+            GameContext.World.Destroy(rootEntity);
+            GameContext.World.Destroy(Systems);
+        }
     }
 
     protected TSystem CreateSystem<TSystem>() where TSystem : ISystem =>

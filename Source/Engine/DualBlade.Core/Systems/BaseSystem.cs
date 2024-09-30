@@ -1,6 +1,5 @@
 ﻿using DualBlade.Core.Services;
 using DualBlade.Core.Worlds;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DualBlade.Core.Systems;
 

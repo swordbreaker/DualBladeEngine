@@ -3,7 +3,7 @@ using DualBlade.Core.Services;
 
 namespace DualBlade.Core.Systems;
 
-public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameContext), IEntitySystem where TEntity : INodeEntity
+public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameContext), IEntitySystem where TEntity : IEntity
 {
     Type IEntitySystem.EntityType { get; } = typeof(TEntity);
 
@@ -12,7 +12,7 @@ public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameCo
     public virtual void OnDestroy(TEntity entity) { }
     protected virtual void Draw(TEntity entity, GameTime gameTime) { }
 
-    INodeEntity IEntitySystem.Update(IEntity component, GameTime gameTime)
+    IEntity IEntitySystem.Update(IEntity component, GameTime gameTime)
     {
         var ent = (TEntity)component;
 
@@ -39,7 +39,7 @@ public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameCo
         GC.SuppressFinalize(this);
     }
 
-    INodeEntity IEntitySystem.OnAdded(IEntity entity)
+    IEntity IEntitySystem.OnAdded(IEntity entity)
     {
         var e = (TEntity)entity;
         OnAdded(ref e);

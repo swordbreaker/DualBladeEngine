@@ -7,11 +7,12 @@ namespace DualBlade.Core.Services;
 public interface IEcsManager
 {
     EntityProxy<IEntity> GetEntity(IComponent component);
-    void DestroyEntity(IComponent component);
-    ComponentRef<TComponent>? GetAdjacentComponent<TComponent>(IComponent component) where TComponent : IComponent;
-    void TraverseToParent(INodeComponent node, Action<INodeComponent> action);
-    void AddParent<TParent, TChild>(INodeComponent child, INodeComponent parent);
-    void AddChild<TParent, TChild>(INodeComponent parent, INodeComponent child);
+    void DestroyEntity(IEntity entity);
+    void TraverseToParent(IEntity node, Action<IEntity> action);
+    void AddParent<TParent, TChild>(IEntity child, IEntity parent);
+    void AddChild<TParent, TChild>(IEntity parent, IEntity child);
+    public EntityProxy<IEntity> GetParent(IEntity entity);
+    public IEnumerable<IEntity> GetChildren(IEntity entity);
 
 }
 
@@ -22,38 +23,40 @@ public class EcsManager(IWorld world) : IEcsManager
         return world.GetEntityProxy<IEntity>(component.EntityId);
     }
 
-    public void DestroyEntity(IComponent component)
+    public void DestroyEntity(IEntity entity)
     {
-        var entity = GetEntity(component).Value;
         world.Destroy(entity);
     }
 
-
-    public ComponentRef<TComponent>? GetAdjacentComponent<TComponent>(IComponent component) where TComponent : IComponent
+    public void AddChild<TParent, TChild>(IEntity parent, IEntity child)
     {
-        var e = GetEntity(component);
-        return e.Value.Component<TComponent>();
+        parent.Children.Add(child.Id);
+        child.Parent = parent.Id;
     }
 
-    public void AddChild<TParent, TChild>(INodeComponent parent, INodeComponent child)
+    public void AddParent<TParent, TChild>(IEntity child, IEntity parent)
     {
-        child.Parent = world.GetComponent<IComponent>(parent.Id);
-        parent.Children.Add(world.GetComponent<IComponent>(child.Id));
+        child.Parent = parent.Id;
+        parent.Children.Add(child.Id);
     }
 
-    public void AddParent<TParent, TChild>(INodeComponent child, INodeComponent parent)
-    {
-        child.Parent = world.GetComponent<IComponent>(parent.Id);
-        parent.Children.Add(world.GetComponent<IComponent>(child.Id));
-    }
+    public EntityProxy<IEntity> GetParent(IEntity entity) => world.GetEntityProxy<IEntity>(entity.Parent);
 
-    public void TraverseToParent(INodeComponent node, Action<INodeComponent> action)
+    public IEnumerable<IEntity> GetChildren(IEntity entity)
     {
-        action(node);
-        if (node.Parent.HasValue && node.Parent.Value.GetCopy() is INodeComponent nodeComponent)
+        foreach (var child in entity.Children.ToSpan().ToArray())
         {
-            TraverseToParent(nodeComponent, action);
+            yield return world.GetEntityProxy<IEntity>(child).Value;
         }
     }
 
+    public void TraverseToParent(IEntity node, Action<IEntity> action)
+    {
+        action(node);
+        if (node.Parent >= 0)
+        {
+            using var p = world.GetEntityProxy<IEntity>(node.Parent);
+            TraverseToParent(p.Value, action);
+        }
+    }
 }

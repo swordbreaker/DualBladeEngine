@@ -4,24 +4,28 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Factories;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
+using DualBlade.Core.Utils;
+using System.Diagnostics;
 
 namespace DualBlade.Core.Worlds;
 
 public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IWorld
 {
+    private const int MaxComponentTypesOnComponentSystem = 5;
+
     public delegate ComponentRef<IComponent> AddComponentDelegate(IComponent component, int entityId);
     public delegate IComponent GetCopyDelegate(int id);
     public delegate ComponentProxy<IComponent> GetProxyDelegate<TComponent>();
 
+    private delegate void UpdateFunc(IComponentSystem system, Span<IComponent> components);
+
     private readonly SparseCollection<IEntity> _entities = new(100);
-    private readonly SparseCollection<IComponent> _components = new(10000);
     private readonly List<ISystem> _systems = new(100);
     private readonly Dictionary<Type, List<IComponentSystem>> _componentSystems = [];
     private readonly Dictionary<Type, List<IEntitySystem>> _entitySystems = [];
 
     private bool isInitialized = false;
 
-    public IEnumerable<IComponent> Components => _components.Values();
     public IEnumerable<ISystem> Systems => _systems;
     public IEnumerable<IEntity> Entities => _entities.Values();
 
@@ -61,12 +65,12 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
             switch (system)
             {
                 case IComponentSystem componentSystem:
-                    if (!_componentSystems.ContainsKey(componentSystem.CompType))
+                    if (!_componentSystems.ContainsKey(componentSystem.CompTypes.Span[0]))
                     {
-                        _componentSystems[componentSystem.CompType] = [];
+                        _componentSystems[componentSystem.CompTypes.Span[0]] = [];
                     }
 
-                    _componentSystems[componentSystem.CompType].Add(componentSystem);
+                    _componentSystems[componentSystem.CompTypes.Span[0]].Add(componentSystem);
                     break;
                 case IEntitySystem entitySystem:
                     if (!_entitySystems.ContainsKey(entitySystem.EntityType))
@@ -112,25 +116,11 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
         }
     }
 
-    public void AddEntity<TEntity>(TEntity entity) where TEntity : IEntity
+    public TEntity AddEntity<TEntity>(TEntity entity) where TEntity : IEntity
     {
-        // TODO add child entities
-        if (entity is INodeEntity nodeEntity)
-        {
-            foreach (var child in nodeEntity.Children)
-            {
-                AddEntity(child);
-            }
-        }
-
         var id = _entities.NextFreeIndex();
-        entity.Init(AddComponent, id);
+        entity.Init(id);
         _entities.Add(entity);
-
-        foreach (var component in entity.InitialComponents.ToSpan())
-        {
-            entity.Components.Add(AddComponent(component, entity.Id));
-        }
 
         if (_entitySystems.TryGetValue(typeof(TEntity), out var systems))
         {
@@ -139,37 +129,33 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
                 _entities[entity.Id] = system.OnAdded(entity);
             }
         }
+
+        UpdateComponentSystems(entity, (system, components) =>
+        {
+            system.OnAdded(entity, components, out var outEntity, out var outComponents);
+            _entities[entity.Id] = outEntity;
+            SyncEntityComponents(entity, outEntity, outComponents);
+        });
+
+        return (TEntity)_entities[id];
     }
 
     public EntityProxy<TEntity> GetEntityProxy<TEntity>(int id) where TEntity : IEntity =>
-        new(UpdateIEntity, (TEntity)_entities[id], id);
+        new(UpdateEntity, (TEntity)_entities[id], id);
 
-    public void UpdateIEntity(IEntity entity)
+    public void UpdateEntity(IEntity entity)
     {
         _entities[entity.Id] = entity;
     }
 
     public void Destroy(IEntity entity)
     {
-        var nodeComponentRef = entity.Component<INodeComponent>();
-
-        if (nodeComponentRef.HasValue)
+        foreach (var childId in entity.Children.ToSpan())
         {
-            var nodeComponent = nodeComponentRef.Value.GetCopy();
-
-            // get the children before destroying the transform component
-            var children = new List<IEntity>(nodeComponent.Children.Length);
-            foreach (var child in nodeComponent.Children.ToSpan())
+            if (childId >= 0)
             {
-                children.Add(_entities[child.GetCopy().EntityId]);
+                Destroy(_entities[childId]);
             }
-
-            children.ForEach(Destroy);
-        }
-
-        foreach (var component in entity.Components.ToSpan())
-        {
-            Destroy(component.GetCopy());
         }
 
         _entities.Remove(entity.Id);
@@ -181,70 +167,77 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
                 system.OnDestroy(entity);
             }
         }
+
+        UpdateComponentSystems(entity, (system, components) =>
+        {
+            system.OnDestroy(entity, components);
+        });
     }
 
     #endregion
 
-    #region Components
-
-    private ComponentRef<TComponent> AddComponent<TComponent>(TComponent component, int entityId) where TComponent : IComponent
+    private unsafe void UpdateComponentSystems(IEntity entity, UpdateFunc updateFunc)
     {
-        component.Id = _components.NextFreeIndex();
-        component.EntityId = entityId;
-        _components.Add(component);
-
-        if (_componentSystems.TryGetValue(typeof(TComponent), out var systems))
+        for (int i = 0; i < entity.ComponentTypes.Length; i++)
         {
-            foreach (var system in systems)
+            if (_componentSystems.TryGetValue(entity.ComponentTypes.Span[i], out var componentSystems))
             {
-                _components[component.Id] = system.OnAdded(component);
+                UpdateComponentSystemsForEntity(entity, updateFunc, componentSystems, i);
             }
         }
 
-        return new ComponentRef<TComponent>(this, component.Id);
+        //if (entity.ComponentTypes.Length > 0 && _componentSystems.TryGetValue(entity.ComponentTypes.Span[0], out var componentSystems))
+        //{
+        //    UpdateComponentSystemsForEntity(entity, updateFunc, componentSystems);
+        //}
     }
 
-    ComponentRef<TComponent> IWorld.AddComponent<TComponent>(TComponent component, IEntity entity) =>
-        AddComponent(component, entity.Id);
-
-    private TComponent GetComponentCopy<TComponent>(int id) where TComponent : IComponent =>
-        (TComponent)_components[id];
-    TComponent IWorld.GetComponentCopy<TComponent>(int id) => this.GetComponentCopy<TComponent>(id);
-
-    private ComponentProxy<TComponent> GetComponentProxy<TComponent>(int id) where TComponent : IComponent
+    private static unsafe void UpdateComponentSystemsForEntity(IEntity entity, UpdateFunc updateFunc, List<IComponentSystem> componentSystems, int entityStartPointer)
     {
-        var component = (TComponent)_components[id];
-        return new ComponentProxy<TComponent>(UpdateComponent, component, id);
-    }
-
-    ComponentProxy<TComponent> IWorld.GetComponentProxy<TComponent>(int id) => GetComponentProxy<TComponent>(id);
-
-    private ComponentRef<TComponent> GetComponent<TComponent>(int id) where TComponent : IComponent =>
-        new(this, id);
-
-    ComponentRef<TComponent> IWorld.GetComponent<TComponent>(int id) =>
-        GetComponent<TComponent>(id);
-
-    public void UpdateComponent(IComponent component)
-    {
-        _components[component.Id] = component;
-    }
-
-    private void Destroy(IComponent component)
-    {
-        _components.Remove(component.Id);
-
-        if (_componentSystems.TryGetValue(component.GetType(), out var systems))
+        foreach (var system in componentSystems)
         {
-            foreach (var system in systems)
-            {
-                system.OnDestroy(component);
-            }
+            ProcessComponentSystem(entity, updateFunc, entityStartPointer, system);
         }
     }
 
-    void IWorld.Destroy(IComponent component) => Destroy(component);
-    #endregion
+    private static unsafe void ProcessComponentSystem(IEntity entity, UpdateFunc updateFunc, int entityStartPointer, IComponentSystem system)
+    {
+        int i = 1;
+        var entityPointer = entityStartPointer + 1;
+        for (; i < system.CompTypes.Length; i++)
+        {
+            // cancel if one type does not match, because both types are ordered we know that the rest will not match
+            if (entity.ComponentTypes.Span[entityPointer] != system.CompTypes.Span[i])
+            {
+                return;
+            }
+            entityPointer++;
+        }
+
+        var entityEndPointer = entityPointer;
+        var len = i;
+        if (len < system.CompTypes.Length)
+        {
+            return;
+        }
+
+        updateFunc(system, entity.InternalComponents.ToSpan()[entityStartPointer..entityEndPointer]);
+    }
+
+    private void SyncEntityComponents(IEntity entity, IEntity outEntity, Span<IComponent> components)
+    {
+        _entities[entity.Id] = outEntity;
+        foreach (var newComp in components)
+        {
+            for (int i = 0; i < _entities[entity.Id].InternalComponents.Length; i++)
+            {
+                if (newComp.GetType() == _entities[entity.Id].InternalComponents[i].GetType())
+                {
+                    _entities[entity.Id].InternalComponents[i] = newComp;
+                }
+            }
+        }
+    }
 
     public void Update(GameTime gameTime)
     {
@@ -255,17 +248,6 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
             system.Update(gameTime);
         }
 
-        foreach (var component in _components.Values())
-        {
-            if (_componentSystems.TryGetValue(component.GetType(), out var systems))
-            {
-                foreach (var system in systems)
-                {
-                    system.Update(gameTime);
-                    _components[component.Id] = system.Update(component, gameTime);
-                }
-            }
-        }
 
         foreach (var entity in _entities.Values())
         {
@@ -277,6 +259,15 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
                     _entities[entity.Id] = system.Update(entity, gameTime);
                 }
             }
+
+            UpdateComponentSystems(entity, (system, components) =>
+            {
+                system.Update(gameTime);
+                system.Update(entity, components, gameTime, out var outEntity, out var outComponents);
+                _entities[entity.Id] = outEntity;
+
+                SyncEntityComponents(entity, outEntity, outComponents);
+            });
         }
     }
 
@@ -285,19 +276,6 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
         foreach (var system in _systems)
         {
             system.Draw(gameTime);
-        }
-
-        foreach (var component in _components.Values())
-        {
-            if (_componentSystems.TryGetValue(component.GetType(), out var systems))
-            {
-                foreach (var system in systems)
-                {
-                    system.Draw(gameTime);
-                    system.Draw(component, gameTime);
-                    system.AfterDraw(gameTime);
-                }
-            }
         }
 
         foreach (var entity in _entities.Values())
@@ -311,6 +289,13 @@ public sealed class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IW
                     system.AfterDraw(gameTime);
                 }
             }
+
+            UpdateComponentSystems(entity, (system, components) =>
+            {
+                system.Draw(gameTime);
+                system.Draw(entity, components, gameTime);
+                system.AfterDraw(gameTime);
+            });
         }
     }
 }

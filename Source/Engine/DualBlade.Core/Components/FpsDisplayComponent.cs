@@ -15,8 +15,4 @@ public partial struct FpsDisplayComponent : IComponent
     public SpriteFont? Font;
     public Vector2 Position = new(10, 10);
     public Color FontColor = Color.Black;
-
-    public FpsDisplayComponent()
-    {
-    }
 }

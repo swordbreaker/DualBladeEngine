@@ -21,7 +21,6 @@ internal class WorldDebugInfoSystem(IGameContext gameContext) : BaseSystem(gameC
     {
         var displayText = $"Entities: {World.Entities.Count()}";
         displayText += $"\nSystems: {World.Systems.Count()}";
-        displayText += $"\nComponents: {World.Components.Count()}";
 
         GameContext.GameEngine.SpriteBatch.Begin();
         GameContext.GameEngine.SpriteBatch!.DrawString(spriteFont, displayText, position, color);

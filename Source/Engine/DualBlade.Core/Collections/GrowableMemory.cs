@@ -33,6 +33,14 @@ public class GrowableMemory<T>
         return _length++;
     }
 
+    public void AddRange(IEnumerable<T> items)
+    {
+        foreach (var item in items)
+        {
+            Add(item);
+        }
+    }
+
     public void Remove(int index)
     {
         if (index < 0 || index >= Length)
