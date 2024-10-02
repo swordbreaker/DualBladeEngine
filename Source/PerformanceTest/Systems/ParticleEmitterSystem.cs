@@ -27,7 +27,6 @@ public class ParticleEmitterSystem(IGameContext gameContext) : ComponentSystem<P
     private void EmitParticle(Vector2 position)
     {
         var particle = new ParticleEntity(
-            GameContext.GameEngine,
             spriteFactory,
             position,
              new Vector2(random.NextFloat(1f, 10f)),

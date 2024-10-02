@@ -2,7 +2,6 @@
 
 namespace DualBlade.Core.Services;
 
-[GenerateAutomaticInterface]
 public sealed class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceManager) : IWorldToPixelConverter
 {
     /// <summary>

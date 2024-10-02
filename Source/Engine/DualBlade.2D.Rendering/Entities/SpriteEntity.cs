@@ -4,6 +4,7 @@ using DualBlade.Core.Rendering;
 
 namespace DualBlade._2D.Rendering.Entities;
 
+[AddComponent<TransformComponent>]
 public partial struct SpriteEntity : IEntity
 {
     public SpriteEntity(ISprite? sprite = null)
@@ -15,7 +16,6 @@ public partial struct SpriteEntity : IEntity
             renderComponent.SetSprite(sprite);
         }
 
-        AddComponent(new TransformComponent());
         AddComponent(renderComponent);
     }
 }

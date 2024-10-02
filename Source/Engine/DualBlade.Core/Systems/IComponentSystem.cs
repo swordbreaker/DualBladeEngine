@@ -5,11 +5,12 @@ namespace DualBlade.Core.Systems;
 
 public interface IComponentSystem : ISystemWithContext
 {
-    internal Memory<Type> CompTypes { get; }
+    Memory<Type> CompTypes { get; }
 
-    internal void OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents);
-    internal void OnDestroy(IEntity entity, Span<IComponent> component);
-    internal void Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents);
-    internal void Draw(IEntity entity, Span<IComponent> components, GameTime gameTime);
-    void AfterDraw(GameTime gameTime);
+    void OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents);
+    void OnDestroy(IEntity entity, Span<IComponent> component);
+    void LateUpdate(GameTime gameTime);
+    void Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents);
+    void Draw(IEntity entity, Span<IComponent> components, GameTime gameTime);
+    void LateDraw(GameTime gameTime);
 }

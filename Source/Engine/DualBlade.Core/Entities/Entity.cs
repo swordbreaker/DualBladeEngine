@@ -2,8 +2,10 @@
 using DualBlade.Core.Components;
 using DualBlade.Core.Utils;
 using DualBlade.Core.Worlds;
+using DualBlade.Core.Extensions;
 
 namespace DualBlade.Core.Entities;
+
 public struct Entity : IEntity
 {
     /// <inheritdoc />
@@ -71,12 +73,17 @@ public struct Entity : IEntity
     /// <inheritdoc />
     public ComponentProxy<TComponent> AddComponent<TComponent>(TComponent component) where TComponent : IComponent
     {
+        if (ComponentTypes.Span.Contains(typeof(TComponent)))
+        {
+            throw new InvalidOperationException($"Component {typeof(TComponent).Name} already exists on entity {Id}");
+        }
+
         var comps = this.Components.Append(component).OrderBy(x => x.GetType(), new SimpleTypeComparer()).ToArray();
         var types = comps.Select(x => x.GetType()).ToArray();
         this.InternalComponents.Clear();
 
         int compId = -1;
-        for (int i = 0; i < comps.Count(); i++)
+        for (int i = 0; i < comps.Length; i++)
         {
             comps[i].Id = i;
             this.InternalComponents.Add(comps[i]);

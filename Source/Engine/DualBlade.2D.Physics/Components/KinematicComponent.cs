@@ -6,6 +6,5 @@ namespace DualBlade._2D.Physics.Components;
 public partial struct KinematicComponent : IComponent
 {
     public Body PhysicsBody = new();
-
     public Vector2 VerticalVelocity = Vector2.Zero;
 }

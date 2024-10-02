@@ -22,8 +22,7 @@ public class MainScene(IGameContext context) : GameScene(context)
         {
             for (float y = -6; y < 6; y += 2f)
             {
-                var entity = new ParticleEmitterEntity(new Vector2(x, y));
-                yield return new EntityBuilder(entity);
+                yield return CreateEntity(new ParticleEmitterEntity(new Vector2(x, y)));
             }
         }
     }

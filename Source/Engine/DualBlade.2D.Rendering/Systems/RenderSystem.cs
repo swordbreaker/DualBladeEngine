@@ -15,7 +15,7 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
         _gameEngine.BeginDraw();
     }
 
-    public override void AfterDraw(GameTime gameTime)
+    public override void LateDraw(GameTime gameTime)
     {
         _gameEngine.EndDraw();
     }

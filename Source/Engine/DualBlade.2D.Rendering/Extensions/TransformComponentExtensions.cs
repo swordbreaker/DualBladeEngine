@@ -17,7 +17,11 @@ public static class TransformComponentExtensions
 
                 if (e.Parent >= 0)
                 {
-                    parent = ecs.GetParent(e).Value.Component<TransformComponent>().Value;
+                    var grandParent = ecs.GetParent(e);
+                    if (grandParent.Value.TryGetComponent<TransformComponent>(out var granParentTransform))
+                    {
+                        parent = granParentTransform.Value;
+                    }
                 }
 
                 var m = (parent.HasValue)

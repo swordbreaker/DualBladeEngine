@@ -3,11 +3,21 @@ using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Services;
 
-public class EntityBuilder(IEntity current, Action<IEntity>? callback = null, EntityBuilder? parent = null)
+public class EntityBuilder
 {
     private delegate IEntity EntityOperation(IEntity entity, IWorld world);
 
-    private List<EntityBuilder> children = new();
+    private List<EntityBuilder> children = [];
+    protected IEntity current;
+    private readonly Action<IEntity>? callback;
+    private readonly EntityBuilder? parent;
+
+    public EntityBuilder(IEntity current, Action<IEntity>? callback = null, EntityBuilder? parent = null)
+    {
+        this.current = current;
+        this.callback = callback;
+        this.parent = parent;
+    }
 
     private EntityOperation operation => (x, world) =>
     {
@@ -15,7 +25,7 @@ public class EntityBuilder(IEntity current, Action<IEntity>? callback = null, En
         foreach (var child in children)
         {
             var c = child.AddToWorld(world);
-            current.Children.Add(child.AddToWorld(world).Id);
+            x.Children.Add(c.Id);
             childEntities.Add(c);
         }
 
@@ -25,14 +35,15 @@ public class EntityBuilder(IEntity current, Action<IEntity>? callback = null, En
         {
             childEntity.Parent = resultEntity.Id;
             world.UpdateEntity(childEntity);
+            resultEntity.Children.Add(childEntity.Id);
         }
 
         return resultEntity;
     };
 
-    public EntityBuilder AddChild(IEntity entity)
+    public EntityBuilder<TEntity> AddChild<TEntity>(TEntity entity) where TEntity : IEntity
     {
-        var childBuilder = new EntityBuilder(entity, parent: this);
+        var childBuilder = new EntityBuilder<TEntity>(entity, parent: this);
         children.Add(childBuilder);
         return childBuilder;
     }
@@ -51,5 +62,17 @@ public class EntityBuilder(IEntity current, Action<IEntity>? callback = null, En
         var e = operation(current, world);
         callback?.Invoke(e);
         return e;
+    }
+}
+
+public class EntityBuilder<TEntity>(TEntity entity, Action<IEntity>? callback = null, EntityBuilder? parent = null) : EntityBuilder(entity, callback, parent) where TEntity : IEntity
+{
+    public delegate void UpdateEntityAction(ref TEntity entity);
+
+    public void UpdateEntity(UpdateEntityAction updateAction)
+    {
+        var e = (TEntity)this.current;
+        updateAction(ref e);
+        this.current = e;
     }
 }

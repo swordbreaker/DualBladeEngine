@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using System.Text;
 using System.Threading;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DualBlade.Analyzer;
 
@@ -19,13 +20,20 @@ public class EntityGenerator : IIncrementalGenerator
             var symbol = context.SemanticModel.GetDeclaredSymbol(structDeclaration);
             var ns = symbol.ContainingNamespace.ToString();
             var hasDefaultCtor = structDeclaration.Members.OfType<ConstructorDeclarationSyntax>().Any(x => x.ParameterList.Parameters.Count == 0);
-            return (structName: structDeclaration.Identifier.Text, ns, hasDefaultCtor);
+            var componentsToAdd = structDeclaration.AttributeLists.SelectMany(x => x.Attributes)
+                .Select(x => context.SemanticModel.GetTypeInfo(x).Type)
+                .Where(x => x.Name == "AddComponentAttribute")
+                .Select(x => ((INamedTypeSymbol)x).TypeArguments[0])
+                // get full name
+                .Select(x => x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+
+            return (structName: structDeclaration.Identifier.Text, ns, hasDefaultCtor, componentsToAdd);
         });
 
         context.RegisterSourceOutput(componentProvider, (spc, tuple) =>
         {
-            var (structName, ns, hasDefaultCtor) = tuple;
-            var code = GenerateEntityCode(structName, ns, hasDefaultCtor);
+            var (structName, ns, hasDefaultCtor, componentsToAdd) = tuple;
+            var code = GenerateEntityCode(structName, ns, hasDefaultCtor, componentsToAdd);
             code = FormatSource(code);
             spc.AddSource($"{structName}.generated.cs", code);
         });
@@ -38,9 +46,13 @@ public class EntityGenerator : IIncrementalGenerator
             .GetText(Encoding.UTF8)
             .ToString();
 
-    private string GenerateEntityCode(string structName, string ns, bool hasDefaultCtor)
+    private string GenerateEntityCode(string structName, string ns, bool hasDefaultCtor, IEnumerable<string> componentsToAdd)
     {
         var ctor = !hasDefaultCtor ? $"public {structName}() {{ }}" : "";
+
+        // public readonly ComponentProxy<TransformComponent> Transform => this.Component<TransformComponent>();
+        var componentsProperties = string.Join("\n", componentsToAdd.Select(x => $"public readonly ComponentProxy<{x}> {x.Split('.').Last()} => this.Component<{x}>();"));
+        var componentsAddStatement = string.Join("\n", componentsToAdd.Select(x => $"AddComponent(new {x}());"));
 
         return $$"""
             using System;
@@ -51,15 +63,19 @@ public class EntityGenerator : IIncrementalGenerator
             using System.Collections.Generic;
             using System.Linq;
             using DualBlade.Core.Utils;
+            using static DualBlade.Core.Entities.IEntity;
+            using DualBlade.Core.Extensions;
 
             namespace {{ns}};
 
             public partial struct {{structName}} : IEntity
             {
+                {{ctor}}
+
+                {{componentsProperties}}
+
                 /// <inheritdoc />
                 public int Id { get; private set; } = -1;
-
-                {{ctor}}
 
                 /// <inheritdoc />
                 public Memory<Type> ComponentTypes { get; private set; }
@@ -80,6 +96,7 @@ public class EntityGenerator : IIncrementalGenerator
                 public void Init(int id)
                 {
                     this.Id = id;
+                    {{componentsAddStatement}}
                 }
 
                 /// <inheritdoc />
@@ -118,6 +135,11 @@ public class EntityGenerator : IIncrementalGenerator
                 /// <inheritdoc />
                 public ComponentProxy<TComponent> AddComponent<TComponent>(TComponent component) where TComponent : IComponent
                 {
+                    if (ComponentTypes.Span.Contains(typeof(TComponent)))
+                    {
+                        throw new InvalidOperationException($"Component {typeof(TComponent).Name} already exists on entity {Id}");
+                    }
+
                     var comps = this.Components.Append(component).OrderBy(x => x.GetType(), new SimpleTypeComparer()).ToArray();
                     var types = comps.Select(x => x.GetType()).ToArray();
                     this.InternalComponents.Clear();

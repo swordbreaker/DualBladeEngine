@@ -20,6 +20,11 @@ public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameCo
         return ent;
     }
 
+    void IEntitySystem.LateUpdate(GameTime gameTime)
+    {
+        this.LateUpdate(gameTime);
+    }
+
     void IEntitySystem.Draw(IEntity entity, GameTime gameTime)
     {
         this.Draw((TEntity)entity, gameTime);
@@ -31,8 +36,10 @@ public class EntitySystem<TEntity>(IGameContext gameContext) : BaseSystem(gameCo
 
     public override void Update(GameTime gameTime) { }
 
+    public virtual void LateUpdate(GameTime gameTime) { }
+
     public override void Draw(GameTime gameTime) { }
-    public virtual void AfterDraw(GameTime gameTime) { }
+    public virtual void LateDraw(GameTime gameTime) { }
 
     public override void Dispose()
     {

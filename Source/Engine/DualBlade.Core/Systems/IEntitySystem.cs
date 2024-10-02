@@ -9,6 +9,9 @@ public interface IEntitySystem : ISystemWithContext
     internal void OnDestroy(IEntity entity);
 
     internal IEntity Update(IEntity entity, GameTime gameTime);
+
+    internal void LateUpdate(GameTime gameTime);
+
     internal void Draw(IEntity entity, GameTime gameTime);
-    void AfterDraw(GameTime gameTime);
+    void LateDraw(GameTime gameTime);
 }

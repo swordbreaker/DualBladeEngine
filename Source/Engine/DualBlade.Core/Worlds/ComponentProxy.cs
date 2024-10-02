@@ -10,16 +10,10 @@ namespace DualBlade.Core.Worlds;
 /// You cannot store this in a field or return it from a method.
 /// Only use this within a method scope.
 /// </summary>
-public unsafe ref struct ComponentProxy<T> where T : IComponent
+public unsafe ref struct ComponentProxy<T>(Action<IComponent> updateAction, T value) where T : IComponent
 {
-    private readonly Action<IComponent> updateAction;
-    private T value;
-
-    public ComponentProxy(Action<IComponent> updateAction, T value)
-    {
-        this.updateAction = updateAction;
-        this.value = value;
-    }
+    private readonly Action<IComponent> updateAction = updateAction;
+    private T value = value;
 
     public readonly ComponentProxy<TOther> As<TOther>() where TOther : T =>
         new(updateAction, (TOther)value);

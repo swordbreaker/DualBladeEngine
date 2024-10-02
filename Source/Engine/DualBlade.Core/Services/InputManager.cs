@@ -1,4 +1,5 @@
 ﻿using AutomaticInterface;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 
@@ -37,7 +38,16 @@ public sealed class InputManager : IInputManager
         IsRightMousePressed = rPressed;
         IsMiddleMousePressed = mPresse;
 
-        MousePos = mstate.Position.ToVector2();
+        if (TouchState.Count > 0)
+        {
+            var pos = TouchState.First().Position;
+            MousePos = new Vector2(pos.X, pos.Y);
+        }
+        else
+        {
+            MousePos = mstate.Position.ToVector2();
+        }
+
         ScrollWheelValue = mstate.ScrollWheelValue;
         ScrollWheelDelta = mstate.ScrollWheelValue - _oldScrollWheelValue;
         _oldScrollWheelValue = ScrollWheelValue;

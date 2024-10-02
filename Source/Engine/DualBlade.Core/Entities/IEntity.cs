@@ -6,6 +6,8 @@ namespace DualBlade.Core.Entities;
 
 public interface IEntity
 {
+    public delegate void UpdateComponentDelegate<TComponent>(ref TComponent component) where TComponent : IComponent;
+
     public int Id { get; }
 
     /// <summary>

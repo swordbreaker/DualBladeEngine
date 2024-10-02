@@ -9,7 +9,6 @@ namespace PerformanceTest.Entities;
 public partial struct ParticleEntity : IEntity
 {
     public ParticleEntity(
-        IGameEngine gameEngine,
         ISpriteFactory spriteFactory,
         Vector2 pos,
         Vector2 scale,
@@ -22,6 +21,7 @@ public partial struct ParticleEntity : IEntity
             Color = color,
         };
         renderComponent.SetSprite(spriteFactory.CreateWhitePixelSprite());
+
         var particleComponent = new ParticleComponent()
         {
             Acceleration = acceleration,

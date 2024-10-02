@@ -45,6 +45,12 @@ public abstract class GameScene : IGameScene
     protected TSystem CreateSystem<TSystem>() where TSystem : ISystem =>
         SystemFactory.Create<TSystem>();
 
+    protected static EntityBuilder<TEntity> CreateEntity<TEntity>() where TEntity : struct, IEntity =>
+        new(new TEntity());
+
+    protected static EntityBuilder<TEntity> CreateEntity<TEntity>(TEntity entity) where TEntity : struct, IEntity =>
+        new(entity);
+
     protected T Resolve<T>() where T : notnull =>
         GameContext.ServiceProvider.GetRequiredService<T>();
 }
