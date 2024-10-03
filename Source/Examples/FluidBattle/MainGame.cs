@@ -14,7 +14,7 @@ public class MainGame : BaseGame
 {
     public MainGame(IGameCreationContext context) : base(context)
     {
-        this.IsMouseVisible = true;
+        this.IsMouseVisible = false;
     }
 
     protected override void InitializeGlobalSystems()
@@ -24,7 +24,7 @@ public class MainGame : BaseGame
         World.AddSystem<KinematicSystem>();
         World.AddSystem<InputSystem>();
         World.AddSystem<FpsDisplaySystem>();
-        World.AddSystem<DebugColliderSystem>();
+        //World.AddSystem<DebugColliderSystem>();
     }
 
     protected override void Initialize()

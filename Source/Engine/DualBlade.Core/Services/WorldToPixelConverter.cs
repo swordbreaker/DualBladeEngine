@@ -1,4 +1,4 @@
-﻿using AutomaticInterface;
+﻿using System.Drawing;
 
 namespace DualBlade.Core.Services;
 
@@ -15,6 +15,16 @@ public sealed class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceM
             _graphicsDeviceManager.PreferredBackBufferWidth * 0.5f,
             _graphicsDeviceManager.PreferredBackBufferHeight * 0.5f,
             0);
+
+    public RectangleF WorldBounds
+    {
+        get
+        {
+            var w = _graphicsDeviceManager.PreferredBackBufferWidth / (float)TileSize;
+            var h = _graphicsDeviceManager.PreferredBackBufferHeight / (float)TileSize;
+            return new RectangleF(-w / 2, -h / 2, w, h);
+        }
+    }
 
     public Matrix WorldSizeMatrix => Matrix.CreateScale(TileSize);
 

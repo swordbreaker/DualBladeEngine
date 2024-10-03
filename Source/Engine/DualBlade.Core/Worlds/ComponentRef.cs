@@ -12,27 +12,32 @@ namespace DualBlade.Core.Worlds;
 /// <typeparam name="T"></typeparam>
 public readonly struct ComponentRef<T> where T : IComponent
 {
-    private readonly IEntity entity;
+    private readonly int entityId;
     private readonly int id;
+    private readonly IWorld world;
 
-    internal ComponentRef(IEntity entity, int id)
+    internal ComponentRef(int entityId, int id, IWorld world)
     {
-        this.entity = entity;
+        this.entityId = entityId;
         this.id = id;
+        this.world = world;
     }
 
     public ComponentRef<TOther> As<TOther>() where TOther : IComponent =>
-        new(entity, id);
+        new(entityId, id, world);
 
     /// <summary>
     /// Gets a copy of the component.
     /// </summary>s
     public T GetCopy() =>
-        entity.Component<T>().Value;
+        world.GetEntityProxy<IEntity>(entityId).Value.Component<T>();
 
     /// <summary>
     /// Gets a proxy for the component that allows for mutation.
     /// </summary>
-    public ComponentProxy<T> GetProxy() =>
-        entity.Component<T>();
+    public ComponentProxy<T> GetProxy()
+    {
+        var eProxy = world.GetEntityProxy<IEntity>(entityId);
+        return new ComponentProxy<T>(eProxy.Value.UpdateComponent, eProxy.Value.Component<T>());
+    }
 }

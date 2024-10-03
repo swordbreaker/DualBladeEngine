@@ -12,8 +12,9 @@ public interface IEcsManager
     void AddParent<TParent, TChild>(IEntity child, IEntity parent);
     void AddChild<TParent, TChild>(IEntity parent, IEntity child);
     public EntityProxy<IEntity> GetParent(IEntity entity);
-    public IEnumerable<IEntity> GetChildren(IEntity entity);
-
+    public IEnumerable<EntityRef<IEntity>> GetChildren(IEntity entity);
+    void UpdateComponent(IEntity entity, IComponent component);
+    void UpdateEntity(IEntity entity);
 }
 
 public class EcsManager(IWorld world) : IEcsManager
@@ -42,13 +43,30 @@ public class EcsManager(IWorld world) : IEcsManager
 
     public EntityProxy<IEntity> GetParent(IEntity entity) => world.GetEntityProxy<IEntity>(entity.Parent);
 
-    public IEnumerable<IEntity> GetChildren(IEntity entity)
+    public IEnumerable<EntityRef<IEntity>> GetChildren(IEntity entity)
     {
         foreach (var child in entity.Children.ToSpan().ToArray())
         {
-            yield return world.GetEntityProxy<IEntity>(child).Value;
+            yield return world.GetEntityRef<IEntity>(child);
         }
     }
+
+    public void UpdateComponent(IEntity entity, IComponent component)
+    {
+        var e = world.GetEntityRef<IEntity>(entity.Id).GetCopy();
+        e.UpdateComponent(component);
+        world.UpdateEntity(e);
+    }
+
+    public void UpdateEntity(IEntity entity)
+    {
+        world.UpdateEntity(entity);
+    }
+
+    //public IEnumerable<ComponentRef<TComponent>> GetComponentsOfChildren<TComponent>(IEntity entity) where TComponent : IComponent
+    //{
+    //    return GetChildren(entity).Select(x => x.GetProxy().Value.Component<TComponent>());
+    //}
 
     public void TraverseToParent(IEntity node, Action<IEntity> action)
     {

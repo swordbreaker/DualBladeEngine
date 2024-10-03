@@ -1,5 +1,4 @@
 ﻿using AutomaticInterface;
-using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 

@@ -24,13 +24,10 @@ public class FluidPixelSystem(IGameContext context) : ComponentSystem<FluidPixel
     {
         if (Vector2.Distance(transform.Position, flux.Target) < 0.01f)
         {
-            var parent = Ecs.GetParent(entity);
-            var parentTransform = parent.Value.Component<TransformComponent>().Value;
-
             flux.Target = _circleSampler.Sample(flux.MinRadius, flux.MaxRadius);
         }
 
-        var direction = flux.Target - transform.Position;
+        var direction = Normalize(flux.Target - transform.Position);
         transform.Position += direction * Speed * gameTime.DeltaSeconds();
     }
 }

@@ -26,6 +26,7 @@ public interface IWorld
     TEntity AddEntity<TEntity>(TEntity entity) where TEntity : IEntity;
 
     EntityProxy<TEntity> GetEntityProxy<TEntity>(int id) where TEntity : IEntity;
+    EntityRef<TEntity> GetEntityRef<TEntity>(int id) where TEntity : IEntity;
 
     void UpdateEntity(IEntity entity);
 

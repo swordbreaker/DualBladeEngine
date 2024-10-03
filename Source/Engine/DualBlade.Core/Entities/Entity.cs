@@ -35,14 +35,18 @@ public struct Entity : IEntity
     public void Init(int id)
     {
         this.Id = id;
+        foreach (var component in this.InternalComponents.ToSpan())
+        {
+            component.EntityId = this.Id;
+        }
     }
 
     /// <inheritdoc />
-    public readonly ComponentProxy<TComponent> Component<TComponent>() where TComponent : IComponent
+    public readonly TComponent Component<TComponent>() where TComponent : IComponent
     {
         if (InternalComponents.TryFind(x => x is TComponent, out var component))
         {
-            return new ComponentProxy<TComponent>(UpdateComponent, (TComponent)component);
+            return (TComponent)component;
         }
 
         throw new InvalidOperationException($"Component {typeof(TComponent).Name} not found on entity {Id}");
@@ -53,11 +57,11 @@ public struct Entity : IEntity
         InternalComponents.TryFind(x => x is TComponent, out _);
 
     /// <inheritdoc />
-    public readonly bool TryGetComponent<TComponent>(out ComponentProxy<TComponent> componentProxy) where TComponent : IComponent
+    public readonly bool TryGetComponent<TComponent>(out TComponent componentProxy) where TComponent : IComponent
     {
         if (InternalComponents.TryFind(x => x is TComponent, out var comp))
         {
-            componentProxy = new ComponentProxy<TComponent>(UpdateComponent, (TComponent)comp);
+            componentProxy = (TComponent)comp;
             return true;
         }
         componentProxy = default;
@@ -67,6 +71,7 @@ public struct Entity : IEntity
     /// <inheritdoc />
     public readonly void UpdateComponent<TComponent>(TComponent component) where TComponent : IComponent
     {
+        component.EntityId = this.Id;
         InternalComponents[component.Id] = component;
     }
 
@@ -78,6 +83,7 @@ public struct Entity : IEntity
             throw new InvalidOperationException($"Component {typeof(TComponent).Name} already exists on entity {Id}");
         }
 
+        component.EntityId = this.Id;
         var comps = this.Components.Append(component).OrderBy(x => x.GetType(), new SimpleTypeComparer()).ToArray();
         var types = comps.Select(x => x.GetType()).ToArray();
         this.InternalComponents.Clear();

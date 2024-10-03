@@ -20,6 +20,7 @@ namespace FluidBattle;
 [Transient<MainScene>]
 [Transient<DebugColliderSystem>]
 [Singleton<ICircleSampler, CircleSampler>]
+[Singleton<AiAgent>]
 public partial class GameServiceProvider
 {
 }

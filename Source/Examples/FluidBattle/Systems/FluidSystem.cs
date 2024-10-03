@@ -9,14 +9,15 @@ using nkast.Aether.Physics2D.Common;
 using System;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Contacts;
-using static Microsoft.Xna.Framework.Vector2;
 using FluidBattle.Entities;
 using DualBlade._2D.Rendering.Components;
-using System.Diagnostics.Metrics;
 
 namespace FluidBattle.Systems;
+
 public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
 {
+    private readonly IJobQueue jobQueue;
+
     static Random random = new Random();
     private static PerlinNoise2D perlinNoise = new(42);
 
@@ -27,10 +28,17 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
     public FluidSystem(IGameContext gameContext) : base(gameContext)
     {
         maxDistance = MathF.Max(gameContext.GameEngine.GameSize.X, gameContext.GameEngine.GameSize.Y);
+        jobQueue = GetService<IJobQueue>();
     }
 
     protected override void OnAdded(ref IEntity entity, ref KinematicComponent kinematic, ref FluidComponent _)
     {
+        kinematic.PhysicsBody.Tag = entity;
+        foreach (var fixture in kinematic.PhysicsBody.FixtureList)
+        {
+            fixture.Tag = entity;
+        }
+
         kinematic.PhysicsBody.OnCollision += PhysicsBody_OnCollision;
     }
 
@@ -46,28 +54,32 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
             return true;
         }
 
-        using var thisFluidComp = thisFluid.FluidComponentProxy;
-        using var otherFluidComp = otherFluid.FluidComponentProxy;
+        var thisFluidComp = thisFluid.FluidComponentCopy;
+        var otherFluidComp = otherFluid.FluidComponentCopy;
 
-        if (thisFluidComp.Value.Player == otherFluidComp.Value.Player)
+        if (thisFluidComp.Player == otherFluidComp.Player)
         {
             return true;
         }
 
-        var thisSpeed = sender.Body.LinearVelocity.LengthSquared();
-        var otherSpeed = other.Body.LinearVelocity.LengthSquared();
+        var center = other.Body.Position + (sender.Body.Position - other.Body.Position) / 2;
+        var thisToCenter = center - sender.Body.Position;
+        var otherToCenter = center - other.Body.Position;
 
-        var (thisP, otherP) = Softmax(thisSpeed, otherSpeed);
+        var thisDot = Dot(thisToCenter, sender.Body.LinearVelocity);
+        var otherDot = Dot(otherToCenter, other.Body.LinearVelocity);
+
+        var (thisP, otherP) = Softmax(thisDot, otherDot);
 
         var t = random.NextDouble();
 
         if (t < thisP)
         {
-            TransformOther(ref thisFluidComp.Value, ref otherFluidComp.Value, otherFluid);
+            TransformOther(thisFluidComp, otherFluidComp, otherFluid);
         }
         else
         {
-            TransformOther(ref otherFluidComp.Value, ref thisFluidComp.Value, thisFluid);
+            TransformOther(otherFluidComp, thisFluidComp, thisFluid);
         }
 
         return true;
@@ -85,14 +97,20 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
         return (expA / sum, expB / sum);
     }
 
-    private void TransformOther(ref FluidComponent thisFluid, ref FluidComponent otherFluid, IEntity otherEntity)
+    private void TransformOther(FluidComponent thisFluid, FluidComponent otherFluid, IEntity otherEntity)
     {
         otherFluid.Player = thisFluid.Player;
+        otherFluid.Color = thisFluid.Color;
+
         foreach (var child in Ecs.GetChildren(otherEntity))
         {
-            using var childRenderComp = child.Component<RenderComponent>();
-            childRenderComp.Value.Color = thisFluid.Color;
+            var entity = child.GetCopy();
+            var childRenderComp = entity.Component<RenderComponent>();
+            childRenderComp.Color = thisFluid.Color;
+            Ecs.UpdateComponent(entity, childRenderComp);
         }
+
+        Ecs.UpdateComponent(otherEntity, otherFluid);
     }
 
     protected override void Update(ref KinematicComponent kinematic, ref FluidComponent fluid, ref IEntity entity, GameTime gameTime)

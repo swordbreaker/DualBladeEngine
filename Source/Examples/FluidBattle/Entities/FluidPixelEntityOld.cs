@@ -5,7 +5,6 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using FluidBattle.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace FluidBattle.Entities;

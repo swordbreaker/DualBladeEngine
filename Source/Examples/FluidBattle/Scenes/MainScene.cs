@@ -20,6 +20,9 @@ public class MainScene(IGameContext context) : GameScene(context)
         yield return new FollowCursorFluidSystem(GameContext);
         yield return new FluidPixelSystem(GameContext);
         yield return new FluidSystem(GameContext);
+        yield return new AiCursorFluidSystem(GameContext);
+        yield return new AiAgentSystem(GameContext);
+        yield return new PlayerCursorSystem(GameContext);
     }
 
     protected override IEnumerable<EntityBuilder> SetupEntities()
@@ -53,15 +56,15 @@ public class MainScene(IGameContext context) : GameScene(context)
                 1,
                 Color.Purple);
 
-            using (var fluidComponent = fluidEntity.FluidComponentProxy)
-            {
-                fluidComponent.Value.Target = new Vector2(4, 0);
-            }
+            var fluidComponent = fluidEntity.FluidComponentCopy;
+            fluidComponent.Target = new Vector2(-4, 0);
+            fluidEntity.UpdateComponent(fluidComponent);
 
             yield return CreateEntity(fluidEntity)
                 .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(GameContext, scale, radius, Color.Purple))));
         }
 
         yield return CreateEntity(new WallEntity(Vector2.Zero, new Vector2(10, 50), GameContext));
+        yield return CreateEntity(new PlayerCursorEntity(GameContext));
     }
 }

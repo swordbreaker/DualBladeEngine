@@ -36,14 +36,14 @@ public interface IEntity
     /// </summary>
     /// <exception cref="InvalidOperationException">When the component does not exist.</exception>
     /// <returns>An proxy to the component <see cref="ComponentProxy{T}"/> </returns>
-    ComponentProxy<TComponent> Component<TComponent>() where TComponent : IComponent;
+    TComponent Component<TComponent>() where TComponent : IComponent;
 
     /// <summary>
     /// Try get the component from the entity.
     /// </summary>
     /// <param name="componentProxy">A proxy to the component <see cref="ComponentProxy{T}"/></param>
     /// <returns>True when the component exists; else false.</returns>
-    bool TryGetComponent<TComponent>(out ComponentProxy<TComponent> componentProxy) where TComponent : IComponent;
+    bool TryGetComponent<TComponent>(out TComponent component) where TComponent : IComponent;
 
     /// <summary>
     /// Add a component to the entity.

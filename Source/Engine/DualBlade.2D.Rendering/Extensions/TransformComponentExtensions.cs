@@ -20,7 +20,7 @@ public static class TransformComponentExtensions
                     var grandParent = ecs.GetParent(e);
                     if (grandParent.Value.TryGetComponent<TransformComponent>(out var granParentTransform))
                     {
-                        parent = granParentTransform.Value;
+                        parent = granParentTransform;
                     }
                 }
 
@@ -28,7 +28,7 @@ public static class TransformComponentExtensions
                     ? Matrix.CreateScale(parent.Value.Scale.X, parent.Value.Scale.Y, 0) * Matrix.CreateRotationZ(parent.Value.Rotation)
                     : Matrix.Identity;
 
-                position += Vector2.Transform(parentTransform.Value.Position, m);
+                position += Vector2.Transform(parentTransform.Position, m);
             }
         });
 
@@ -43,7 +43,7 @@ public static class TransformComponentExtensions
         {
             if (e.TryGetComponent<TransformComponent>(out var parentTransform))
             {
-                scale *= parentTransform.Value.Scale;
+                scale *= parentTransform.Scale;
             }
         });
 
@@ -58,7 +58,7 @@ public static class TransformComponentExtensions
         {
             if (e.TryGetComponent<TransformComponent>(out var parentTransform))
             {
-                rotation += parentTransform.Value.Rotation;
+                rotation += parentTransform.Rotation;
             }
         });
 

@@ -38,6 +38,9 @@ public partial class World
     public EntityProxy<TEntity> GetEntityProxy<TEntity>(int id) where TEntity : IEntity =>
         new(UpdateEntity, (TEntity)_entities[id], id);
 
+    public EntityRef<TEntity> GetEntityRef<TEntity>(int id) where TEntity : IEntity =>
+        new(id, this);
+
     public void UpdateEntity(IEntity entity)
     {
         _entities[entity.Id] = entity;

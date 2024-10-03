@@ -4,11 +4,13 @@ using DualBlade.Core.Services;
 using FluidBattle.Components;
 using FluidBattle.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xna.Framework;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace FluidBattle.Entities;
 
+[RequiredComponent<RenderComponent>]
+[RequiredComponent<TransformComponent>]
+[RequiredComponent<FluidPixelComponent>]
 public partial struct FluidPixelEntity : IEntity
 {
     public FluidPixelEntity(IGameContext context, float scale, float radius, Color color)

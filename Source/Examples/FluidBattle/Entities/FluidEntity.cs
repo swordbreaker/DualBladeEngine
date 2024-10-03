@@ -5,7 +5,6 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using FluidBattle.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace FluidBattle.Entities;
@@ -29,13 +28,11 @@ public partial struct FluidEntity : IEntity
         var body = physicsManager.CreateBody(transform.Position, bodyType: BodyType.Dynamic);
         body.IgnoreGravity = true;
         body.FixedRotation = true;
-        body.Tag = this;
         body.Mass = 1;
         body.LinearDamping = 0f;
         var fixture = body.CreateCircle(radius, 1);
         fixture.Restitution = 0.01f;
         fixture.Friction = 0f;
-        fixture.Tag = this;
 
         var kinematic = new KinematicComponent
         {
