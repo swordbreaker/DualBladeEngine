@@ -1,4 +1,5 @@
-﻿using DualBlade.Core.Services;
+﻿using DualBlade.Core.Entities;
+using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using DualBlade.GumUi.Components;
 using RenderingLibrary;
@@ -6,9 +7,8 @@ using RenderingLibrary;
 namespace DualBlade.GumUi.Systems;
 public class UiCanvasSystem(IGameContext gameContext) : ComponentSystem<UiCanvasComponent>(gameContext)
 {
-    protected override void Initialize(UiCanvasComponent component)
+    protected override void OnAdded(ref IEntity entity, ref UiCanvasComponent component)
     {
-        base.Initialize(component);
         component.Container.AddToManagers();
     }
 
@@ -24,15 +24,13 @@ public class UiCanvasSystem(IGameContext gameContext) : ComponentSystem<UiCanvas
         SystemManagers.Default.Activity(gameTime.ElapsedGameTime.Milliseconds);
     }
 
-    protected override void Update(UiCanvasComponent component, GameTime gameTime)
+    protected override void Update(ref UiCanvasComponent component, ref IEntity entity, GameTime gameTime)
     {
-        base.Update(component, gameTime);
         FormUtils.Update(gameTime, component.Container);
     }
 
-    protected override void OnDestroy(UiCanvasComponent component)
+    protected override void OnDestroy(UiCanvasComponent component, IEntity entity)
     {
-        base.OnDestroy(component);
         component.Container.RemoveFromManagers();
     }
 }

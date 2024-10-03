@@ -3,13 +3,12 @@ using DualBlade.GumUi.Components;
 using MonoGameGum.GueDeriving;
 namespace DualBlade.GumUi.Entities;
 
-public class UiCanvasEntity : Entity
+public partial struct UiCanvasEntity : IEntity
 {
     public UiCanvasEntity(ContainerRuntime containerRuntime)
     {
         var canvasComponent = new UiCanvasComponent()
         {
-            Entity = this,
             Container = containerRuntime
         };
 

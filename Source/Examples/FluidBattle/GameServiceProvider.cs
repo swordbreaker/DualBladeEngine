@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using FluidBattle.Scenes;
 using DualBlade._2D.Physics;
 using FluidBattle.Systems;
+using FluidBattle.Services;
 
 namespace FluidBattle;
 
@@ -18,6 +19,7 @@ namespace FluidBattle;
 [Singleton<MainGame>]
 [Transient<MainScene>]
 [Transient<DebugColliderSystem>]
+[Singleton<ICircleSampler, CircleSampler>]
 public partial class GameServiceProvider
 {
 }

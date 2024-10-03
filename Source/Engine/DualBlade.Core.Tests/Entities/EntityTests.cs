@@ -87,7 +87,7 @@ public class EntityTests
         //transformComponent.Entity.Should().Be(entity);
     }
 
-    public class DummyEntity : IEntity
+    public partial struct DummyEntity : IEntity
     {
         public DummyEntity(Func<INodeEntity, IComponent> factory)
         {

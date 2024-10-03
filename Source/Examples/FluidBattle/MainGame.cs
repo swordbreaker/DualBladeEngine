@@ -24,7 +24,7 @@ public class MainGame : BaseGame
         World.AddSystem<KinematicSystem>();
         World.AddSystem<InputSystem>();
         World.AddSystem<FpsDisplaySystem>();
-        //World.AddSystem<DebugColliderSystem>();
+        World.AddSystem<DebugColliderSystem>();
     }
 
     protected override void Initialize()

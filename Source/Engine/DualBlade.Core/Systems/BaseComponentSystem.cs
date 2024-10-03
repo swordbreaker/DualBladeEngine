@@ -1,11 +1,6 @@
 ﻿using DualBlade.Core.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DualBlade.Core.Systems;
 public abstract class BaseComponentSystem(IGameContext gameContext) : BaseSystem(gameContext), IComponentSystem
@@ -24,11 +19,17 @@ public abstract class BaseComponentSystem(IGameContext gameContext) : BaseSystem
         GC.SuppressFinalize(this);
     }
 
-    public abstract void OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents);
+    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents) =>
+        throw new NotImplementedException();
 
-    public abstract void OnDestroy(IEntity entity, Span<IComponent> component);
+    void IComponentSystem.OnDestroy(IEntity entity, Span<IComponent> component)
+    {
+    }
 
-    public abstract void Draw(IEntity entity, Span<IComponent> components, GameTime gameTime);
+    void IComponentSystem.Draw(IEntity entity, Span<IComponent> components, GameTime gameTime)
+    {
+    }
 
-    public abstract void Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents);
+    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents) =>
+        throw new NotImplementedException();
 }

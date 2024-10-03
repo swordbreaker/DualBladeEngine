@@ -17,9 +17,9 @@ public class MainScene(IGameContext context) : GameScene(context)
 
     public override IEnumerable<ISystem> SetupSystems()
     {
-        yield return new FollowCursorFluidSystem(context);
-        yield return new FluidPixelSystem(context);
-        yield return new FluidSystem(context);
+        yield return new FollowCursorFluidSystem(GameContext);
+        yield return new FluidPixelSystem(GameContext);
+        yield return new FluidSystem(GameContext);
     }
 
     protected override IEnumerable<EntityBuilder> SetupEntities()
@@ -31,14 +31,35 @@ public class MainScene(IGameContext context) : GameScene(context)
 
         for (var i = 0; i < 300; i++)
         {
-            var fluidPixelEntity = new FluidEntity(
+            var fluidEntity = new FluidEntity(
                 GameContext,
                 new Vector2(random.NextFloat(-1, 1), random.NextFloat(-1, 1)),
                 radius,
-                scale);
+                scale,
+                0,
+                Color.Red);
 
-            yield return CreateEntity(fluidPixelEntity)
-                .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(GameContext, scale, radius))));
+            yield return CreateEntity(fluidEntity)
+                .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(GameContext, scale, radius, Color.Red))));
+        }
+
+        for (var i = 0; i < 100; i++)
+        {
+            var fluidEntity = new FluidEntity(
+                GameContext,
+                new Vector2(random.NextFloat(4, 5), random.NextFloat(-1, 1)),
+                radius,
+                scale,
+                1,
+                Color.Purple);
+
+            using (var fluidComponent = fluidEntity.FluidComponentProxy)
+            {
+                fluidComponent.Value.Target = new Vector2(4, 0);
+            }
+
+            yield return CreateEntity(fluidEntity)
+                .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(GameContext, scale, radius, Color.Purple))));
         }
 
         yield return CreateEntity(new WallEntity(Vector2.Zero, new Vector2(10, 50), GameContext));

@@ -10,11 +10,13 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace FluidBattle.Entities;
 
-[AddComponent<FluidComponent>]
+[RequiredComponent<FluidComponent>]
 public partial struct FluidEntity : IEntity
 {
-    public FluidEntity(IGameContext context, Vector2 position, float radius, float scale)
+    public FluidEntity(IGameContext context, Vector2 position, float radius, float scale, int player, Color color)
     {
+        InitComponents();
+
         var physicsManager = context.ServiceProvider.GetRequiredService<IPhysicsManager>();
         var worldToPixel = context.GameEngine.WorldToPixelConverter;
 
@@ -23,17 +25,17 @@ public partial struct FluidEntity : IEntity
             Position = position
         };
 
-        //var pixelRadius = radius / worldToPixel.TileSize;
-
         // Create a physics body
         var body = physicsManager.CreateBody(transform.Position, bodyType: BodyType.Dynamic);
         body.IgnoreGravity = true;
         body.FixedRotation = true;
+        body.Tag = this;
         body.Mass = 1;
         body.LinearDamping = 0f;
         var fixture = body.CreateCircle(radius, 1);
         fixture.Restitution = 0.01f;
         fixture.Friction = 0f;
+        fixture.Tag = this;
 
         var kinematic = new KinematicComponent
         {
@@ -42,5 +44,6 @@ public partial struct FluidEntity : IEntity
 
         AddComponent(transform);
         AddComponent(kinematic);
+        AddComponent(new FluidComponent { Player = player, Color = color });
     }
 }

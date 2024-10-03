@@ -3,7 +3,8 @@ using MonoGameGum.GueDeriving;
 
 namespace DualBlade.GumUi.Components;
 
-public class UiCanvasComponent : NodeComponent
+
+public partial struct UiCanvasComponent : IComponent
 {
     public required ContainerRuntime Container { get; init; }
 }

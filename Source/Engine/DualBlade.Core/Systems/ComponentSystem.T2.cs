@@ -23,7 +23,7 @@ public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gam
         GC.SuppressFinalize(this);
     }
 
-    public override void OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents)
     {
         GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
 
@@ -33,19 +33,19 @@ public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gam
         outEntity = entity;
     }
 
-    public override void OnDestroy(IEntity entity, Span<IComponent> components)
+    void IComponentSystem.OnDestroy(IEntity entity, Span<IComponent> components)
     {
         GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
         OnDestroy(c1, c2, entity);
     }
 
-    public override void Draw(IEntity entity, Span<IComponent> components, GameTime gameTime)
+    void IComponentSystem.Draw(IEntity entity, Span<IComponent> components, GameTime gameTime)
     {
         GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
         this.Draw(c1, c2, entity, gameTime);
     }
 
-    public override void Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents)
     {
         GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
         Update(ref c1, ref c2, ref entity, gameTime);

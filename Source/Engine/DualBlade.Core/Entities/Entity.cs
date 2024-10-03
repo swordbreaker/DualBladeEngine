@@ -104,7 +104,7 @@ public struct Entity : IEntity
         var types = comps.Select(x => x.GetType()).ToArray();
         this.InternalComponents.Clear();
 
-        for (int i = 0; i < comps.Count(); i++)
+        for (int i = 0; i < comps.Length; i++)
         {
             comps[i].Id = i;
             this.InternalComponents.Add(comps[i]);

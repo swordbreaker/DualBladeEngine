@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\Engine\DualBlade.Analyzer\DualBlade.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\Engine\DualBlade.Core\DualBlade.Core.csproj" />
     <ProjectReference Include="..\..\Engine\DualBlade.MyraUi\DualBlade.MyraUi.csproj" />
+    <ProjectReference Include="..\..\Engine\DualBlade.Analyzer\DualBlade.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

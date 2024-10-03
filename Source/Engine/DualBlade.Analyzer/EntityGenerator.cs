@@ -9,6 +9,13 @@ using System.Collections.Generic;
 
 namespace DualBlade.Analyzer;
 
+public record struct ComponentInfo(
+    string StructName,
+    string Namespace,
+    bool HasDefaultCtor,
+    IEnumerable<string> ComponentsToAdd,
+    IEnumerable<string> requiredComponents);
+
 [Generator]
 public class EntityGenerator : IIncrementalGenerator
 {
@@ -20,20 +27,31 @@ public class EntityGenerator : IIncrementalGenerator
             var symbol = context.SemanticModel.GetDeclaredSymbol(structDeclaration);
             var ns = symbol.ContainingNamespace.ToString();
             var hasDefaultCtor = structDeclaration.Members.OfType<ConstructorDeclarationSyntax>().Any(x => x.ParameterList.Parameters.Count == 0);
-            var componentsToAdd = structDeclaration.AttributeLists.SelectMany(x => x.Attributes)
+
+            var attributes = structDeclaration.AttributeLists
+                .SelectMany(x => x.Attributes)
                 .Select(x => context.SemanticModel.GetTypeInfo(x).Type)
+                .ToList();
+
+            var componentsToAdd = attributes
                 .Where(x => x.Name == "AddComponentAttribute")
                 .Select(x => ((INamedTypeSymbol)x).TypeArguments[0])
                 // get full name
                 .Select(x => x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
-            return (structName: structDeclaration.Identifier.Text, ns, hasDefaultCtor, componentsToAdd);
+            var requireComponents = attributes
+                .Where(x => x.Name == "RequiredComponentAttribute")
+                .Select(x => ((INamedTypeSymbol)x).TypeArguments[0])
+                // get full name
+                .Select(x => x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+
+            return new ComponentInfo(structDeclaration.Identifier.Text, ns, hasDefaultCtor, componentsToAdd, requireComponents);
         });
 
-        context.RegisterSourceOutput(componentProvider, (spc, tuple) =>
+        context.RegisterSourceOutput(componentProvider, (spc, info) =>
         {
-            var (structName, ns, hasDefaultCtor, componentsToAdd) = tuple;
-            var code = GenerateEntityCode(structName, ns, hasDefaultCtor, componentsToAdd);
+            var (structName, ns, hasDefaultCtor, componentsToAdd, requiredComponents) = info;
+            var code = GenerateEntityCode(structName, ns, hasDefaultCtor, componentsToAdd, requiredComponents);
             code = FormatSource(code);
             spc.AddSource($"{structName}.generated.cs", code);
         });
@@ -46,12 +64,14 @@ public class EntityGenerator : IIncrementalGenerator
             .GetText(Encoding.UTF8)
             .ToString();
 
-    private string GenerateEntityCode(string structName, string ns, bool hasDefaultCtor, IEnumerable<string> componentsToAdd)
+    private string GenerateEntityCode(string structName, string ns, bool hasDefaultCtor, IEnumerable<string> componentsToAdd, IEnumerable<string> requiredComponents)
     {
         var ctor = !hasDefaultCtor ? $"public {structName}() {{ }}" : "";
 
-        // public readonly ComponentProxy<TransformComponent> Transform => this.Component<TransformComponent>();
-        var componentsProperties = string.Join("\n", componentsToAdd.Select(x => $"public readonly ComponentProxy<{x}> {x.Split('.').Last()} => this.Component<{x}>();"));
+        var addComponentsProperties = string.Join("\n", componentsToAdd.Select(x => $"public readonly ComponentProxy<{x}> {x.Split('.').Last()}Proxy => this.Component<{x}>();"));
+        var reqComponentProperties = string.Join("\n", requiredComponents.Select(x => $"public readonly ComponentProxy<{x}> {x.Split('.').Last()}Proxy => this.Component<{x}>();"));
+
+        var componentsProperties = addComponentsProperties + reqComponentProperties;
         var componentsAddStatement = string.Join("\n", componentsToAdd.Select(x => $"AddComponent(new {x}());"));
 
         return $$"""
@@ -65,11 +85,15 @@ public class EntityGenerator : IIncrementalGenerator
             using DualBlade.Core.Utils;
             using static DualBlade.Core.Entities.IEntity;
             using DualBlade.Core.Extensions;
+            using System.Runtime.InteropServices;
 
             namespace {{ns}};
 
-            public partial struct {{structName}} : IEntity
+            [StructLayout(LayoutKind.Auto)]
+            public partial struct {{structName}}
             {
+                private bool _componentsAreInitialized;
+
                 {{ctor}}
 
                 {{componentsProperties}}
@@ -96,7 +120,14 @@ public class EntityGenerator : IIncrementalGenerator
                 public void Init(int id)
                 {
                     this.Id = id;
+                    InitComponents();
+                }
+
+                private void InitComponents()
+                {
+                    if(_componentsAreInitialized) return;
                     {{componentsAddStatement}}
+                    _componentsAreInitialized = true;
                 }
 
                 /// <inheritdoc />

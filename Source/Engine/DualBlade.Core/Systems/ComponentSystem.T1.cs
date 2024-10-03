@@ -19,7 +19,7 @@ public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : Ba
         GC.SuppressFinalize(this);
     }
 
-    public override void OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents)
     {
         var c = (TComponent)components[0];
         OnAdded(ref entity, ref c);
@@ -28,13 +28,13 @@ public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : Ba
         outEntity = entity;
     }
 
-    public override void OnDestroy(IEntity entity, Span<IComponent> component) =>
+    void IComponentSystem.OnDestroy(IEntity entity, Span<IComponent> component) =>
             OnDestroy((TComponent)component[0], entity);
 
-    public override void Draw(IEntity entity, Span<IComponent> components, GameTime gameTime) =>
+    void IComponentSystem.Draw(IEntity entity, Span<IComponent> components, GameTime gameTime) =>
         this.Draw((TComponent)components[0], entity, gameTime);
 
-    public override void Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents)
     {
         var c = (TComponent)components[0];
         Update(ref c, ref entity, gameTime);

@@ -34,13 +34,12 @@ internal sealed class SceneManager(IGameContext gameContext, IServiceProvider se
 
     public void AddScene(IGameScene gameScene)
     {
-        gameScene.Root.AddToWorld(world);
-
         foreach (var system in gameScene.Systems)
         {
             world.AddSystem(system);
         }
 
+        gameScene.Root.AddToWorld(world);
         _activeScenes.Add(gameScene);
     }
 }

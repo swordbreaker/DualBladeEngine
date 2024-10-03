@@ -1,18 +1,20 @@
 ﻿using DualBlade._2D.Rendering.Components;
-using DualBlade._2D.Rendering.Extensions;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Extensions;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using FluidBattle.Components;
+using FluidBattle.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using System;
 
 namespace FluidBattle.Systems;
 public class FluidPixelSystem(IGameContext context) : ComponentSystem<FluidPixelComponent, TransformComponent>(context)
 {
+    private ICircleSampler _circleSampler = context.ServiceProvider.GetRequiredService<ICircleSampler>();
+
     private static readonly Random Random = new();
     private static float Speed = 0.1f;
 
@@ -25,9 +27,7 @@ public class FluidPixelSystem(IGameContext context) : ComponentSystem<FluidPixel
             var parent = Ecs.GetParent(entity);
             var parentTransform = parent.Value.Component<TransformComponent>().Value;
 
-            var radius = Random.NextFloat(0.05f, flux.Radius + 0.1f);
-            var angle = Random.NextFloat(0, MathHelper.TwoPi);
-            flux.Target = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
+            flux.Target = _circleSampler.Sample(flux.MinRadius, flux.MaxRadius);
         }
 
         var direction = flux.Target - transform.Position;
