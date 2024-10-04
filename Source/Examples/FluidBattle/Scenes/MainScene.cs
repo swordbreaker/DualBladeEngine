@@ -4,8 +4,6 @@ using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using FluidBattle.Entities;
 using FluidBattle.Systems;
-using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

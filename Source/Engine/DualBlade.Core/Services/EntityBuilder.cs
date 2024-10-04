@@ -25,7 +25,6 @@ public class EntityBuilder
         foreach (var child in children)
         {
             var c = child.AddToWorld(world);
-            x.Children.Add(c.Id);
             childEntities.Add(c);
         }
 

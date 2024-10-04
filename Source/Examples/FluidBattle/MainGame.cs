@@ -5,9 +5,9 @@ using DualBlade.Core.Components;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using FluidBattle.Scenes;
-using FluidBattle.Systems;
 using DualBlade.Core.Entities;
 using Microsoft.Xna.Framework.Graphics;
+using DualBlade.MyraUi.Systems;
 
 namespace FluidBattle;
 public class MainGame : BaseGame
@@ -24,6 +24,7 @@ public class MainGame : BaseGame
         World.AddSystem<KinematicSystem>();
         World.AddSystem<InputSystem>();
         World.AddSystem<FpsDisplaySystem>();
+        World.AddSystem<MyraDesktopSystem>();
         //World.AddSystem<DebugColliderSystem>();
     }
 
@@ -35,6 +36,7 @@ public class MainGame : BaseGame
         e.AddComponent(new FpsDisplayComponent { Font = GameEngine.Load<SpriteFont>("DefaultFont") });
 
         World.AddEntities(e);
-        this.SceneManager.AddSceneExclusively<MainScene>();
+        this.SceneManager.AddSceneExclusively<MainMenuScene>();
+        //this.SceneManager.AddSceneExclusively<MainScene>();
     }
 }

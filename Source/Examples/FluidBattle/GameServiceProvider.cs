@@ -18,6 +18,7 @@ namespace FluidBattle;
 [Import<I2DPhysicsServiceModule>]
 [Singleton<MainGame>]
 [Transient<MainScene>]
+[Transient<MainMenuScene>]
 [Transient<DebugColliderSystem>]
 [Singleton<ICircleSampler, CircleSampler>]
 [Singleton<AiAgent>]
