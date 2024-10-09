@@ -3,20 +3,23 @@
 namespace DualBlade.Core.Worlds;
 public partial class World
 {
-    public void AddSystems(params ISystem[] systems)
+    public IEnumerable<ISystem> AddSystems(params ISystem[] systems)
     {
         foreach (var system in systems)
         {
-            AddSystem(system);
+            if (AddSystem(system))
+            {
+                yield return system;
+            }
         }
     }
 
-    public void AddSystem<TSystem>() where TSystem : ISystem
+    public bool AddSystem<TSystem>() where TSystem : ISystem
     {
-        AddSystem(systemFactory.Create<TSystem>());
+        return AddSystem(systemFactory.Create<TSystem>());
     }
 
-    public void AddSystem(ISystem system)
+    public bool AddSystem(ISystem system)
     {
         if (!_systems.Contains(system))
         {
@@ -47,7 +50,11 @@ public partial class World
             {
                 system.Initialize();
             }
+
+            return true;
         }
+
+        return false;
     }
 
     public void Destroy(ISystem system)

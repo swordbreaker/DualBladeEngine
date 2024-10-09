@@ -20,8 +20,10 @@ public class MainMenuScene : GameScene
         yield return CreateEntity(new MainMenuEntity(GameContext));
     }
 
-    protected override void OnDispose()
+    public override void Dispose()
     {
+        base.Dispose();
+        GC.SuppressFinalize(this);
         GameContext.Game.IsMouseVisible = false;
     }
 }

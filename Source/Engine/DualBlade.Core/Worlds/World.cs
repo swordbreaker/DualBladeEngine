@@ -47,7 +47,7 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
             system.Update(gameTime);
         }
 
-        // collect and draw
+        // collect and update
         CollectComponentSystems();
         CollectEntitySystems();
 
@@ -61,7 +61,7 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
             system.Update(gameTime);
         }
 
-        // draw for entities
+        // update for entities
         foreach (var (system, entity) in _entitySystemsData.ToSpan())
         {
             _entities[entity.Id] = system.Update(entity, gameTime);

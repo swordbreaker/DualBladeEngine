@@ -14,9 +14,9 @@ public interface IWorld
     void Draw(GameTime gameTime);
 
     #region Systems
-    void AddSystems(params ISystem[] systems);
-    void AddSystem<TSystem>() where TSystem : ISystem;
-    void AddSystem(ISystem system);
+    IEnumerable<ISystem> AddSystems(params ISystem[] systems);
+    bool AddSystem<TSystem>() where TSystem : ISystem;
+    bool AddSystem(ISystem system);
     void Destroy(ISystem system);
     void Destroy(IEnumerable<ISystem> systems);
     #endregion

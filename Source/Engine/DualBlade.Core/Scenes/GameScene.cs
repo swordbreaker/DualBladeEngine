@@ -31,22 +31,9 @@ public abstract class GameScene : IGameScene
     protected abstract IEnumerable<EntityBuilder> SetupEntities();
     public abstract IEnumerable<ISystem> SetupSystems();
 
-    protected virtual void OnDispose()
-    {
-    }
-
-    public void Dispose()
+    public virtual void Dispose()
     {
         GC.SuppressFinalize(this);
-        OnDispose();
-
-        if (rootEntity is not null)
-        {
-            GameContext.World.Destroy(rootEntity);
-
-            // TODO when system was already in the world when the scene was added, it should not be destroyed
-            GameContext.World.Destroy(Systems);
-        }
     }
 
     protected TSystem CreateSystem<TSystem>() where TSystem : ISystem =>

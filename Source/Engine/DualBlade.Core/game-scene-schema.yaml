@@ -1,0 +1,27 @@
+﻿properties:
+    AdditionalUsings:
+        type: array
+        items:
+            type: string
+    Entities:
+        type: array
+        items:
+            type: object
+            properties:
+                Type:
+                    type: string
+                Name:
+                    type: string
+                Components:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            Type:
+                                type: string
+                            Properties:
+                                type: object
+                Children:
+                    type: array
+                    items:
+                        type: object
