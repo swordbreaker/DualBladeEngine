@@ -3,7 +3,7 @@ using DualBlade.Core.Entities;
 using Microsoft.Xna.Framework;
 
 namespace DualBlade.Editor.Player.Components;
-public class SelectableComponent : IComponent
+public partial struct SelectableComponent : IComponent
 {
     public bool IsSelected { get; set; }
     public Rectangle Rect { get; set; }

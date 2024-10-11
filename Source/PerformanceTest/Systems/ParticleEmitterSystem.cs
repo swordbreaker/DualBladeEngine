@@ -29,10 +29,10 @@ public class ParticleEmitterSystem(IGameContext gameContext) : ComponentSystem<P
         var particle = new ParticleEntity(
             spriteFactory,
             position,
-             new Vector2(random.NextFloat(1f, 10f)),
-             Color.Lerp(Color.Red, Color.Yellow, random.NextSingle()),
-             new Vector2(0, -9.81f),
-             new Vector2(random.Next(-5, 5), random.NextFloat(1, 5)));
+            new Vector2(random.NextFloat(1f, 10f)),
+            Color.Lerp(Color.Red, Color.Yellow, random.NextSingle()),
+            new Vector2(0, -9.81f),
+            new Vector2(random.Next(-5, 5), random.NextFloat(1, 5)));
 
         World.AddEntity(particle);
     }

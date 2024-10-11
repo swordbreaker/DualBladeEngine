@@ -1,7 +1,6 @@
 ﻿using DualBlade._2D.Rendering.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Rendering;
-using DualBlade.Core.Services;
 using Microsoft.Xna.Framework;
 using PerformanceTest.Components;
 

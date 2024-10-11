@@ -5,18 +5,10 @@ using DualBlade.Core.Systems;
 using System.Collections.Generic;
 
 namespace DualBlade.Editor.Player.Yaml;
-internal class EmptyScene : GameScene
+internal class EmptyScene(IGameContext context, EntityBuilder root) : GameScene(context)
 {
-    private IEntity _root;
-
-    public EmptyScene(IGameContext context) : base(context)
-    {
-    }
-
-    public override IEntity Root => this._root;
-
-    public void SetRoot(IEntity root) => this._root = root;
+    public override EntityBuilder Root => root;
 
     public override IEnumerable<ISystem> SetupSystems() => [];
-    protected override IEnumerable<IEntity> SetupEntities() => [];
+    protected override IEnumerable<EntityBuilder> SetupEntities() => [root];
 }

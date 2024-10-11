@@ -1,37 +1,30 @@
 ﻿using DualBlade._2D.Rendering.Components;
 using DualBlade._2D.Rendering.Extensions;
-using DualBlade.Core.Extensions;
+using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using DualBlade.Editor.Player.Components;
-using FunctionalMonads.Monads.MaybeMonad;
 using Microsoft.Xna.Framework;
-using System;
 
 namespace DualBlade.Editor.Player.Systems;
 
 internal class RenderSelectSystem(IGameContext gameContext) : ComponentSystem<RenderComponent>(gameContext)
 {
-
-    protected override void Initialize(RenderComponent component)
+    protected override void OnAdded(ref IEntity entity, ref RenderComponent component)
     {
-        base.Initialize(component);
-        var selectable = component.Entity.AddComponent<SelectableComponent>();
-        selectable.Rect = CreateRect(component);
+        var selectable = new SelectableComponent
+        {
+            Rect = CreateRect(ref component, ref entity)
+        };
+        entity.AddComponent(selectable);
     }
 
-    protected override void Update(RenderComponent component, GameTime gameTime)
-    {
-        base.Update(component, gameTime);
-
-    }
-
-    private Rectangle CreateRect(RenderComponent component)
+    private Rectangle CreateRect(ref RenderComponent component, ref IEntity entity)
     {
         var size = component.Sprite.Size;
-        var transform = component.Entity.GetComponent<TransformComponent>();
-        var pos = GameContext.GameEngine.WorldToPixelConverter.WorldPointToPixel(transform.AbsolutePosition());
-        var scale = transform.AbsoluteScale();
+        var transform = entity.Component<TransformComponent>();
+        var pos = GameContext.GameEngine.WorldToPixelConverter.WorldPointToPixel(Ecs.AbsolutePosition(entity));
+        var scale = Ecs.AbsoluteScale(entity);
         var origin = GameContext.GameEngine.WorldToPixelConverter.WorldSizeToPixel(component.Origin);
 
         var pixelSize = GameContext.GameEngine.WorldToPixelConverter.WorldSizeToPixel(size * scale);

@@ -11,6 +11,7 @@ public class SceneParser
         }
         catch (Exception)
         {
+            throw;
             return null;
         }
     }

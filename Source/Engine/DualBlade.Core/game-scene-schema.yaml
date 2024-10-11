@@ -12,6 +12,14 @@
                     type: string
                 Name:
                     type: string
+                Ctor:
+                    type: array
+                    items:
+                        type: object
+                Properties:
+                    type: array
+                    items:
+                        type: object
                 Components:
                     type: array
                     items:

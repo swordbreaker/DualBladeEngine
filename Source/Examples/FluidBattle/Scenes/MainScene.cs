@@ -3,15 +3,17 @@ using DualBlade.Core.Scenes;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using FluidBattle.Entities;
+using FluidBattle.Factories;
 using FluidBattle.Systems;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FluidBattle.Scenes;
 
 public class MainScene(IGameContext context) : GameScene(context)
 {
     private readonly Random random = new();
+    private readonly FluidFactory fluidFactory = context.ServiceProvider.GetRequiredService<FluidFactory>();
 
     public override IEnumerable<ISystem> SetupSystems()
     {
@@ -30,39 +32,25 @@ public class MainScene(IGameContext context) : GameScene(context)
         var radius = 6f / worldToPixel.TileSize;
         var scale = 4;
 
-        for (var i = 0; i < 300; i++)
+        foreach (var fluid in fluidFactory.CreateFluids(20, new Vector2(-2, 0), 0.5f, 0, Color.Red))
         {
-            var fluidEntity = new FluidEntity(
-                GameContext,
-                new Vector2(random.NextFloat(-1, 1), random.NextFloat(-1, 1)),
-                radius,
-                scale,
-                0,
-                Color.Red);
-
-            yield return CreateEntity(fluidEntity)
-                .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(GameContext, scale, radius, Color.Red))));
+            yield return fluid;
         }
 
-        for (var i = 0; i < 100; i++)
+        foreach (var fluid in fluidFactory.CreateFluids(100, new Vector2(2, 0), 0.5f, 1, Color.Purple))
         {
-            var fluidEntity = new FluidEntity(
-                GameContext,
-                new Vector2(random.NextFloat(4, 5), random.NextFloat(-1, 1)),
-                radius,
-                scale,
-                1,
-                Color.Purple);
-
-            var fluidComponent = fluidEntity.FluidComponentCopy;
-            fluidComponent.Target = new Vector2(-4, 0);
-            fluidEntity.UpdateComponent(fluidComponent);
-
-            yield return CreateEntity(fluidEntity)
-                .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(GameContext, scale, radius, Color.Purple))));
+            yield return fluid;
         }
 
-        yield return CreateEntity(new WallEntity(Vector2.Zero, new Vector2(10, 50), GameContext));
+        for (var i = 0; i < 20; i++)
+        {
+            var x = random.NextFloat(-5, 5);
+            var y = random.NextFloat(-4, 4);
+
+            yield return fluidFactory.CreateFluid(new Vector2(x, y), -1, Color.Gray);
+        }
+
+        //yield return CreateEntity(new WallEntity(Vector2.Zero, new Vector2(10, 50), GameContext));
         yield return CreateEntity(new PlayerCursorEntity(GameContext));
     }
 }

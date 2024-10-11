@@ -6,27 +6,32 @@ public class SceneParserTests
 {
     private const string TestYaml =
 """
-- Type: TransformEntity
-  Name: Ball
-  Position: [0, 0]
-  Rotation: 0
-  Scale: [1, 1]
-  Components:
-  - Type: RenderComponent
-    Properties:
-        Texture: ball
-  Children:
-  - Type: TransformEntity
-    Name: Ball
-    Position: [0, 0]
-    Rotation: 0
-    Scale: [1, 1]
-    Components:
-    - Type: RenderComponent
-      Properties:
-        Texture: ball
-        Color: White
-        Origin: [0, 0]
+Entities:
+    - Type: TransformEntity
+      Name: Ball
+      Components:
+      - Type: TransformComponent
+        Properties:
+            Position: [0, 0]
+            Rotation: 0
+            Scale: [1, 1]
+      - Type: RenderComponent
+        Properties:
+            Texture: ball
+      Children:
+      - Type: TransformEntity
+        Name: Ball
+        Components:
+        - Type: TransformComponent
+          Properties:
+            Position: [0, 0]
+            Rotation: 0
+            Scale: [1, 1]
+        - Type: RenderComponent
+          Properties:
+            Texture: ball
+            Color: White
+            Origin: [0, 0]
 """;
 
     [Fact]

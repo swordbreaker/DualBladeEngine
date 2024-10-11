@@ -7,8 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Myra.Graphics2D;
 using FontStashSharp.RichText;
 using FluidBattle.Scenes;
+using DualBlade.Scenes;
 
 namespace FluidBattle.Entities;
+
 public partial struct MainMenuEntity : IEntity
 {
     public MainMenuEntity(IGameContext gameContext)
@@ -38,7 +40,11 @@ public partial struct MainMenuEntity : IEntity
 
         // Hook up events
         startButton.Click += (sender, args) =>
-            jobQueue.Enqueue(() => gameContext.SceneManager.AddSceneExclusively(new MainScene(gameContext)));
+            jobQueue.Enqueue(() =>
+            {
+                gameContext.SceneManager.AddSceneExclusively(new MainScene(gameContext));
+                gameContext.SceneManager.AddScene(new Level1(gameContext));
+            });
 
         quitButton.Click += (sender, args) =>
             gameContext.Game.Exit();

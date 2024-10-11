@@ -16,15 +16,13 @@ public class EditorUiSystem(IGameContext context, SystemProvider systemProvider,
 {
     private readonly IInputManager input = context.GameEngine.InputManager;
 
-    protected override void Update(EditorUiEntity entity, GameTime gameTime)
+    protected override void Update(ref EditorUiEntity entity, GameTime gameTime)
     {
-        base.Update(entity, gameTime);
-
         if (input.IsKeyJustPressed(Keys.Home) && !entity.ControlWindow.Visible)
         {
-            if (entity.GetComponent<MyraDesktopComponent>()?.Desktop is Desktop desktop)
+            if (entity.TryGetComponent<MyraDesktopComponent>(out var myraDesktopComponent))
             {
-                entity.ControlWindow.Show(desktop);
+                entity.ControlWindow.Show(myraDesktopComponent.Desktop);
             }
         }
 

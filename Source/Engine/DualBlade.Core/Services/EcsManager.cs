@@ -9,8 +9,8 @@ public interface IEcsManager
     EntityProxy<IEntity> GetEntity(IComponent component);
     void DestroyEntity(IEntity entity);
     void TraverseToParent(IEntity node, Action<IEntity> action);
-    void AddParent<TParent, TChild>(IEntity child, IEntity parent);
-    void AddChild<TParent, TChild>(IEntity parent, IEntity child);
+    void AddParent(IEntity child, IEntity parent);
+    void AddChild(IEntity parent, IEntity child);
     public EntityProxy<IEntity> GetParent(IEntity entity);
     public IEnumerable<EntityRef<IEntity>> GetChildren(IEntity entity);
     void UpdateComponent(IEntity entity, IComponent component);
@@ -29,13 +29,13 @@ public class EcsManager(IWorld world) : IEcsManager
         world.Destroy(entity);
     }
 
-    public void AddChild<TParent, TChild>(IEntity parent, IEntity child)
+    public void AddChild(IEntity parent, IEntity child)
     {
         parent.Children.Add(child.Id);
         child.Parent = parent.Id;
     }
 
-    public void AddParent<TParent, TChild>(IEntity child, IEntity parent)
+    public void AddParent(IEntity child, IEntity parent)
     {
         child.Parent = parent.Id;
         parent.Children.Add(child.Id);

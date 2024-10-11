@@ -15,7 +15,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
-using ToolsUtilities;
 
 namespace Editor;
 public class EditorGame : BaseGame
@@ -56,7 +55,7 @@ public class EditorGame : BaseGame
         base.Initialize();
 
         sceneGenerator = new SceneGenerator(Context);
-        var path = @"E:\\GameDev\DualBladeEngine\Source\Examples\ExampleGame\Scenes\TestScene.scene.yaml";
+        var path = @"E:\\GameDev\DualBladeEngine\Source\Examples\FluidBattle\Scenes\Level1.scene.yaml";
         sceneRoot = new SceneParser().ParseScene(System.IO.File.ReadAllText(path));
         var scene = sceneGenerator.Create(sceneRoot);
 
@@ -111,8 +110,7 @@ public class EditorGame : BaseGame
 
     private void AddEditorScene(IGameScene gameScene)
     {
-        var root = gameScene.Root;
-        World.AddEntity(root);
+        gameScene.Root.AddToWorld(World);
     }
 
     protected override void Draw(GameTime gameTime)

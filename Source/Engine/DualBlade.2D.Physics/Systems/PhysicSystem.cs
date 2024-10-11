@@ -1,5 +1,4 @@
 ﻿using DualBlade._2D.Physics.Services;
-using DualBlade.Core.Extensions;
 using DualBlade.Core.Systems;
 
 namespace DualBlade._2D.Physics.Systems;

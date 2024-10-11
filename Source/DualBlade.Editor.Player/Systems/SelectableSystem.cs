@@ -1,10 +1,12 @@
-﻿using DualBlade.Core.Services;
+﻿using DualBlade.Core.Entities;
+using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using DualBlade.Editor.Player.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using System;
+using System.Collections.Generic;
 
 namespace DualBlade.Editor.Player.Systems;
 
@@ -18,20 +20,24 @@ public class SelectableSystem(IGameContext gameContext) : ComponentSystem<Select
 
     private Rectangle selectionRect = Rectangle.Empty;
 
+    private readonly List<Action> _drawCalls = new();
+
     public override void Update(GameTime gameTime)
     {
         HandleSelectionRect();
         base.Update(gameTime);
     }
 
-    protected override void Update(SelectableComponent component, GameTime gameTime)
+    protected override void Update(ref SelectableComponent component, ref IEntity entity, GameTime gameTime)
     {
-        base.Update(component, gameTime);
-
         var shiftPresed = input.IsKeyPressed(Keys.LeftShift);
         var ctrlPressed = input.IsKeyPressed(Keys.LeftControl);
 
-        if (input.IsLeftMouseJustPressed)
+        if (input.IsLeftMouseJustReleased && selectionRect.Size.ToVector2().LengthSquared() > 2)
+        {
+            component.IsSelected = selectionRect.Contains(component.Rect);
+        }
+        else if (input.IsLeftMouseJustPressed)
         {
             if (component.Rect.Contains(input.MousePos))
             {
@@ -62,16 +68,6 @@ public class SelectableSystem(IGameContext gameContext) : ComponentSystem<Select
         {
             selectionRect = CreateSelectionRect(SelectRectStartPos, SelectRectEndPos);
         }
-
-        if (input.IsLeftMouseJustReleased && selectionRect.Size.ToVector2().LengthSquared() > 2)
-        {
-            drawSelectRect = false;
-
-            foreach (var component in World.GetComponents<SelectableComponent>())
-            {
-                component.IsSelected = selectionRect.Contains(component.Rect);
-            }
-        }
     }
 
     private Rectangle CreateSelectionRect(Vector2 start, Vector2 end)
@@ -87,26 +83,30 @@ public class SelectableSystem(IGameContext gameContext) : ComponentSystem<Select
         return new Rectangle(min.ToPoint(), (max - min).ToPoint());
     }
 
-    public override void Draw(GameTime gameTime)
+    public override void LateDraw(GameTime gameTime)
     {
         GameContext.GameEngine.BeginDraw();
-        base.Draw(gameTime);
-
         if (drawSelectRect)
         {
             GameContext.GameEngine.SpriteBatch.FillRectangle(
                 selectionRect,
                 new Color(Color.Blue, 0.5f));
         }
+
+        foreach (var drawCall in _drawCalls)
+        {
+            drawCall();
+        }
         GameContext.GameEngine.EndDraw();
+        _drawCalls.Clear();
     }
 
-    protected override void Draw(SelectableComponent component, GameTime gameTime)
+    protected override void Draw(SelectableComponent component, IEntity entity, GameTime gameTime)
     {
-        base.Draw(component, gameTime);
+        base.Draw(component, entity, gameTime);
         if (component.IsSelected)
         {
-            GameContext.GameEngine.SpriteBatch.DrawRectangle(component.Rect, Color.Purple, 2);
+            _drawCalls.Add(() => GameContext.GameEngine.SpriteBatch.DrawRectangle(component.Rect, Color.Purple, 2));
         }
     }
 }

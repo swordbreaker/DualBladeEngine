@@ -1,5 +1,4 @@
 ﻿using DualBlade.Core.Components;
-using Microsoft.Xna.Framework;
 
 namespace FluidBattle.Components;
 

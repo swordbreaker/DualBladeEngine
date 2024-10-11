@@ -1,29 +1,29 @@
-﻿$schema: https://raw.githubusercontent.com/swordbreaker/DualBlade/2D/master/DualBlade._2D/SceneSchema.yaml
+﻿$schema: https://raw.githubusercontent.com/swordbreaker/DualBladeEngine/refs/heads/main/Source/Engine/DualBlade.Core/game-scene-schema.yaml
 AdditionalUsings:
-- DualBlade._2D.Rendering.Entities
+  - DualBlade._2D.Rendering.Entities
 Entities:
-- Type: TransformEntity
-  Name: BallParent
-  Components:
-  - Type: TransformComponent
-    Properties:
-        Position: [0, 0]
-        Rotation: 0
-        Scale: [1, 1]
-  - Type: RenderComponent
-    Properties:
-        Texture: ball
-  Children:
   - Type: TransformEntity
-    Name: Balla
+    Name: BallParent
     Components:
-    - Type: TransformComponent
-      Properties:
-        Position: [1, 2]
-        Rotation: 0
-        Scale: [1, 1]
-    - Type: RenderComponent
-      Properties:
-        Texture: ball
-        Color: White
-        Origin: [0, 0]
+      - Type: TransformComponent
+        Properties:
+          Position: [0, 0]
+          Rotation: 0
+          Scale: [1, 1]
+      - Type: RenderComponent
+        Properties:
+          Texture: ball
+    Children:
+      - Type: TransformEntity
+        Name: Balla
+        Components:
+          - Type: TransformComponent
+            Properties:
+              Position: [1, 2]
+              Rotation: 0
+              Scale: [1, 1]
+          - Type: RenderComponent
+            Properties:
+              Texture: ball
+              Color: White
+              Origin: [0, 0]

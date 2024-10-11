@@ -62,16 +62,28 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
             return true;
         }
 
-        var center = other.Body.Position + (sender.Body.Position - other.Body.Position) / 2;
-        var thisToCenter = center - sender.Body.Position;
-        var otherToCenter = center - other.Body.Position;
+        float thisP;
+        if (thisFluidComp.Player < 0)
+        {
+            thisP = 0;
+        }
+        else if (otherFluidComp.Player < 0)
+        {
+            thisP = 1;
+        }
+        else
+        {
+            var center = other.Body.Position + (sender.Body.Position - other.Body.Position) / 2;
+            var thisToCenter = center - sender.Body.Position;
+            var otherToCenter = center - other.Body.Position;
 
-        var thisDot = Dot(thisToCenter, sender.Body.LinearVelocity);
-        var otherDot = Dot(otherToCenter, other.Body.LinearVelocity);
+            var thisDot = Dot(thisToCenter, sender.Body.LinearVelocity);
+            var otherDot = Dot(otherToCenter, other.Body.LinearVelocity);
+            (thisP, _) = Softmax(thisDot, otherDot);
 
-        var (thisP, otherP) = Softmax(thisDot, otherDot);
+        }
 
-        var t = random.NextDouble();
+        var t = random.NextSingle();
 
         if (t < thisP)
         {
@@ -115,6 +127,11 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
 
     protected override void Update(ref KinematicComponent kinematic, ref FluidComponent fluid, ref IEntity entity, GameTime gameTime)
     {
+        if (fluid.Player < 0)
+        {
+            return;
+        }
+
         var pos = kinematic.PhysicsBody.Position;
         var time = (float)gameTime.TotalGameTime.TotalSeconds;
 

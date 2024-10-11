@@ -1,0 +1,35 @@
+﻿$schema: https://raw.githubusercontent.com/swordbreaker/DualBladeEngine/refs/heads/main/Source/Engine/DualBlade.Core/game-scene-schema.yaml
+AdditionalUsings:
+  - FluidBattle.Entities
+  - FluidBattle.Components
+Entities:
+  - Type: WallEntity
+    Name: Wall1
+    Ctor:
+      - new Vector2(0, 0)
+      - new Vector2(200, 20)
+      - GameContext
+  - Type: WallEntity
+    Name: Wall2
+    Ctor:
+      - new Vector2(0, -2)
+      - new Vector2(200, 20)
+      - GameContext
+  - Type: WallEntity
+    Name: Wall3
+    Ctor:
+      - new Vector2(0, 2)
+      - new Vector2(200, 20)
+      - GameContext
+  - Type: WallEntity
+    Name: Wall4
+    Ctor:
+      - new Vector2(0, 4)
+      - new Vector2(200, 20)
+      - GameContext
+  - Type: WallEntity
+    Name: Wall5
+    Ctor:
+      - new Vector2(0, 6)
+      - new Vector2(200, 20)
+      - GameContext

@@ -9,12 +9,16 @@ using Editor;
 using Editor.Systems;
 using Jab;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
+        var assembly = Assembly.LoadFrom("FluidBattle.dll");
+
         var provider = new ServiceProvider();
         var game = provider.GetRequiredService<EditorGame>();
         game.Run();

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace DualBlade.Editor.Player.Entities;
 
-public class EditorUiEntity : NodeEntity
+public partial struct EditorUiEntity : IEntity
 {
     public Window ControlWindow { get; }
     public StackPanel SystemStackPanel { get; }
@@ -34,7 +34,6 @@ public class EditorUiEntity : NodeEntity
             MaxWidth = 800,
         };
 
-
         SystemStackPanel = new VerticalStackPanel()
         {
             Spacing = 8,
@@ -56,7 +55,8 @@ public class EditorUiEntity : NodeEntity
         desktop.Root = root;
         window.Show(desktop);
         ControlWindow.Show(desktop);
-        AddComponent(new MyraDesktopComponent() { Desktop = desktop, Entity = this });
+
+        AddComponent(new MyraDesktopComponent() { Desktop = desktop });
     }
 
     private void PropertyGrid_PropertyChanged(object sender, Myra.Events.GenericEventArgs<string> e) => throw new NotImplementedException();

@@ -8,6 +8,7 @@ using FluidBattle.Scenes;
 using DualBlade._2D.Physics;
 using FluidBattle.Systems;
 using FluidBattle.Services;
+using FluidBattle.Factories;
 
 namespace FluidBattle;
 
@@ -22,6 +23,7 @@ namespace FluidBattle;
 [Transient<DebugColliderSystem>]
 [Singleton<ICircleSampler, CircleSampler>]
 [Singleton<AiAgent>]
+[Singleton<FluidFactory>]
 public partial class GameServiceProvider
 {
 }
