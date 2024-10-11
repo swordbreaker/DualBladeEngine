@@ -8,7 +8,7 @@ public class SceneParser
         {
             var data = new YamlDotNet.Serialization.Deserializer().Deserialize<SceneRoot>(text);
             return data;
-        }
+        } 
         catch (Exception)
         {
             throw;

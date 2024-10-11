@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 internal class Program
 {
@@ -35,7 +36,7 @@ internal class Program
 [Transient<CameraSystem>]
 [Transient<RenderSelectSystem>]
 [Transient<SelectableSystem>]
-internal partial class ServiceProvider
+public partial class ServiceProvider
 {
 }
 

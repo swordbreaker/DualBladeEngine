@@ -39,9 +39,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DualBlade.MyraUi", "Engine\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceTest", "PerformanceTest\PerformanceTest.csproj", "{985A631E-2ADC-41CE-9866-36F8A18C24C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluidBattle", "Examples\FluidBattle\FluidBattle.csproj", "{0904E91A-BF54-4683-BB6D-CA082175254D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluidBattle", "Examples\FluidBattle\FluidBattle.csproj", "{0904E91A-BF54-4683-BB6D-CA082175254D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluidBattle.Desktop", "Examples\FluidBattle.Desktop\FluidBattle.Desktop.csproj", "{6AD6262C-CC0A-4AF0-809A-2647A70A6076}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluidBattle.Desktop", "Examples\FluidBattle.Desktop\FluidBattle.Desktop.csproj", "{6AD6262C-CC0A-4AF0-809A-2647A70A6076}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dualblade.Editor.Ui", "Editor\Dualblade.Editor.Ui\Dualblade.Editor.Ui.csproj", "{48897587-DB41-40BB-8D56-8959A08CFD41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +117,10 @@ Global
 		{6AD6262C-CC0A-4AF0-809A-2647A70A6076}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AD6262C-CC0A-4AF0-809A-2647A70A6076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AD6262C-CC0A-4AF0-809A-2647A70A6076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48897587-DB41-40BB-8D56-8959A08CFD41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48897587-DB41-40BB-8D56-8959A08CFD41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48897587-DB41-40BB-8D56-8959A08CFD41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48897587-DB41-40BB-8D56-8959A08CFD41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +143,7 @@ Global
 		{985A631E-2ADC-41CE-9866-36F8A18C24C1} = {B09D6F6C-8EE4-492A-8042-414AA634696D}
 		{0904E91A-BF54-4683-BB6D-CA082175254D} = {B09D6F6C-8EE4-492A-8042-414AA634696D}
 		{6AD6262C-CC0A-4AF0-809A-2647A70A6076} = {B09D6F6C-8EE4-492A-8042-414AA634696D}
+		{48897587-DB41-40BB-8D56-8959A08CFD41} = {956EE22A-8968-4EC5-89DD-3A4BD059A957}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C4B5F4E-B197-493D-B69D-6079DCA995B7}
