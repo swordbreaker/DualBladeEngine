@@ -41,6 +41,9 @@ public partial class World
 
                     _entitySystems[entitySystem.EntityType].Add(entitySystem);
                     break;
+                case FixedSystem fixedSystem:
+                    _fixedSystems.Add(fixedSystem);
+                    break;
                 default:
                     _systems.Add(system);
                     break;

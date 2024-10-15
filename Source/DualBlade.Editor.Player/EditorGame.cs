@@ -55,8 +55,8 @@ public class EditorGame : BaseGame
         base.Initialize();
 
         sceneGenerator = new SceneGenerator(Context);
-        // var path = @"E:\\GameDev\DualBladeEngine\Source\Examples\FluidBattle\Scenes\Level1.scene.yaml";
-        var path = "/home/tobi/code/DualBladeEngine/Source/Examples/FluidBattle/Scenes/Level1.scene.yaml";
+        var path = @"E:\\GameDev\DualBladeEngine\Source\Examples\FluidBattle\Scenes\Level1.scene.yaml";
+        //var path = "/home/tobi/code/DualBladeEngine/Source/Examples/FluidBattle/Scenes/Level1.scene.yaml";
         sceneRoot = new SceneParser().ParseScene(System.IO.File.ReadAllText(path));
         var scene = sceneGenerator.Create(sceneRoot);
 

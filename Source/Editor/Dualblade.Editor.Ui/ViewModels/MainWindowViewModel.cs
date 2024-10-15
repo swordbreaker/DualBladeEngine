@@ -17,9 +17,9 @@ public partial class MainWindowViewModel(TopLevel topLevel) : ViewModelBase
     public ICommand StartCommand { get; } = new RelayCommand(async () =>
     {
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(
-            new(){
+            new()
+            {
                 Title = "Open Assembly",
-                FileTypeFilter = [new("dll")]
             }
         );
 

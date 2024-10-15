@@ -88,7 +88,7 @@ public class SelectableSystem(IGameContext gameContext) : ComponentSystem<Select
         GameContext.GameEngine.BeginDraw();
         if (drawSelectRect)
         {
-            GameContext.GameEngine.SpriteBatch.FillRectangle(
+            GameContext.GameEngine.SpriteBatch.DrawRectangle(
                 selectionRect,
                 new Color(Color.Blue, 0.5f));
         }

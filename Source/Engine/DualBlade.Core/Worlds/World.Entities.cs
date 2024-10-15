@@ -1,6 +1,7 @@
 ﻿using DualBlade.Core.Entities;
 
 namespace DualBlade.Core.Worlds;
+
 public partial class World
 {
     public void AddEntities(params IEntity[] entities)

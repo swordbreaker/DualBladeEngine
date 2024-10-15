@@ -1,5 +1,4 @@
-﻿using DualBlade.Core.Components;
-using DualBlade.Core.Entities;
+﻿using DualBlade.Core.Entities;
 using DualBlade.Core.Systems;
 
 namespace DualBlade.Core.Worlds;

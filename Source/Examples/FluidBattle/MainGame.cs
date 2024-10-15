@@ -8,6 +8,8 @@ using FluidBattle.Scenes;
 using DualBlade.Core.Entities;
 using Microsoft.Xna.Framework.Graphics;
 using DualBlade.MyraUi.Systems;
+using Microsoft.Extensions.DependencyInjection;
+using DualBlade._2D.Physics.Services;
 
 namespace FluidBattle;
 public class MainGame : BaseGame
@@ -20,7 +22,7 @@ public class MainGame : BaseGame
     protected override void InitializeGlobalSystems()
     {
         World.AddSystem<RenderSystem>();
-        World.AddSystem<PhysicSystem>();
+        World.AddSystem(new PhysicSystem(this.ServiceProvider.GetRequiredService<IPhysicsManager>()));
         World.AddSystem<KinematicSystem>();
         World.AddSystem<InputSystem>();
         World.AddSystem<FpsDisplaySystem>();

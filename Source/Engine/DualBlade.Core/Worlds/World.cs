@@ -15,10 +15,13 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
 
     private readonly SparseCollection<IEntity> _entities = new(100);
     private readonly List<ISystem> _systems = new(100);
+    private readonly List<FixedSystem> _fixedSystems = new();
     private readonly Dictionary<Type, List<IComponentSystem>> _componentSystems = [];
     private readonly Dictionary<Type, List<IEntitySystem>> _entitySystems = [];
 
     private bool isInitialized = false;
+
+    private TimeSpan lastFixedUpdate = TimeSpan.Zero;
 
     public IEnumerable<ISystem> Systems => _systems;
     public IEnumerable<IEntity> Entities => _entities.Values();
@@ -92,6 +95,17 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         {
             system.LateUpdate(gameTime);
         }
+
+        // 30 FPS
+        if (gameTime.TotalGameTime.Subtract(lastFixedUpdate).TotalMilliseconds > 33)
+        {
+            foreach (var fixedSystem in _fixedSystems)
+            {
+                fixedSystem.Update(new GameTime(gameTime.TotalGameTime, gameTime.TotalGameTime.Subtract(lastFixedUpdate)));
+            }
+
+            lastFixedUpdate = gameTime.TotalGameTime;
+        }
     }
 
     public void Draw(GameTime gameTime)
@@ -132,10 +146,6 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         foreach (var system in _activeEntitySystems)
         {
             system.LateDraw(gameTime);
-        }
-
-        foreach (var system in _activeComponentSystems)
-        {
         }
     }
 }
