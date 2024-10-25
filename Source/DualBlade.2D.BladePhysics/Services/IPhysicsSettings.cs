@@ -10,7 +10,7 @@ public interface IGridSettings
 {
 }
 
-public interface IUniformGirdSettings
+public interface IUniformGirdSettings : IGridSettings
 {
     int CellSize { get; }
     float Width { get; }

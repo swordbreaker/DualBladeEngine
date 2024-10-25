@@ -1,7 +1,7 @@
 ﻿using DualBlade._2D.BladePhysics.Models;
 
 namespace DualBlade._2D.BladePhysics.Services;
-public class PhysicsManager
+public class PhysicsManager : IPhysicsManager
 {
     private readonly UniformGrid uniformGrid;
 

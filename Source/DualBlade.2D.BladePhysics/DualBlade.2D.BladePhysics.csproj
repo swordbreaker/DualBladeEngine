@@ -5,12 +5,15 @@
     <RootNamespace>DualBlade._2D.BladePhysics</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsAotCompatible>True</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Engine\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" />
     <ProjectReference Include="..\Engine\DualBlade.Analyzer\DualBlade.Analyzer.csproj" />
     <ProjectReference Include="..\Engine\DualBlade.Core\DualBlade.Core.csproj" />
+    <PackageReference Include="Jab" Version="0.10.2" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
