@@ -96,8 +96,8 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
             system.LateUpdate(gameTime);
         }
 
-        // 30 FPS
-        if (gameTime.TotalGameTime.Subtract(lastFixedUpdate).TotalMilliseconds > 33)
+        // 15 FPS
+        if (gameTime.TotalGameTime.Subtract(lastFixedUpdate).TotalMilliseconds > 66)
         {
             foreach (var fixedSystem in _fixedSystems)
             {

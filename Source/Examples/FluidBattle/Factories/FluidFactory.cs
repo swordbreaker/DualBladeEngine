@@ -8,7 +8,7 @@ namespace FluidBattle.Factories;
 internal class FluidFactory(IGameContext gameContext)
 {
     private const float scale = 4;
-    private readonly float radius = 6f / gameContext.GameEngine.WorldToPixelConverter.TileSize;
+    private readonly float radius = 9f / gameContext.GameEngine.WorldToPixelConverter.TileSize;
     private readonly Random random = new();
 
     public EntityBuilder<FluidEntity> CreateFluid(Vector2 position, int player, Color color)
@@ -27,7 +27,7 @@ internal class FluidFactory(IGameContext gameContext)
 
         var builder = new EntityBuilder<FluidEntity>(fluidEntity);
         builder
-            .AddChildren(Enumerable.Range(0, 8).Select(x => new EntityBuilder(new FluidPixelEntity(gameContext, scale, radius, color))));
+            .AddChildren(Enumerable.Range(0, 20).Select(x => new EntityBuilder(new FluidPixelEntity(gameContext, scale, radius, color))));
 
         return builder;
     }
@@ -37,7 +37,8 @@ internal class FluidFactory(IGameContext gameContext)
         for (var i = 0; i < count; i++)
         {
             var r = random.NextFloat(0, radius);
-            var pos = position + new Vector2(MathF.Cos(r), MathF.Sin(r));
+            var angle = random.NextFloat(0, MathF.PI * 2);
+            var pos = position + new Vector2(r * MathF.Cos(angle), r * MathF.Sin(angle));
 
             yield return CreateFluid(pos, player, color);
         }

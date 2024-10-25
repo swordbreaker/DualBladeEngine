@@ -37,7 +37,7 @@
     <ProjectReference Include="..\Engine\DualBlade.Analyzer\DualBlade.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine\DualBlade.2D.Physics\DualBlade.2D.Physics.csproj" />
+    <ProjectReference Include="..\Engine\DualBlade.2D.Physics\DualBlade.2D.AetherPhysics.csproj" />
     <ProjectReference Include="..\Engine\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" />
     <ProjectReference Include="..\Engine\DualBlade.Core\DualBlade.Core.csproj" />
     <ProjectReference Include="..\Engine\DualBlade.GumUi\DualBlade.GumUi.csproj" />

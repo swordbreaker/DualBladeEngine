@@ -3,6 +3,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>obj/Generated</CompilerGeneratedFilesOutputPath>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <TieredCompilation>false</TieredCompilation>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <TieredCompilation>false</TieredCompilation>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Scenes\Level1.scene.yaml" />
@@ -16,7 +21,7 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Jab" Version="0.10.2" />
-    <ProjectReference Include="..\..\Engine\DualBlade.2D.Physics\DualBlade.2D.Physics.csproj" />
+    <ProjectReference Include="..\..\Engine\DualBlade.2D.Physics\DualBlade.2D.AetherPhysics.csproj" />
     <ProjectReference Include="..\..\Engine\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" />
     <ProjectReference Include="..\..\Engine\DualBlade.Core\DualBlade.Core.csproj" />
     <ProjectReference Include="..\..\Engine\DualBlade.MyraUi\DualBlade.MyraUi.csproj" />
