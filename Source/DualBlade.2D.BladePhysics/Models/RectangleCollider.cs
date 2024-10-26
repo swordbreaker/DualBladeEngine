@@ -22,6 +22,8 @@ public struct RectangleCollider : ICollider
     public bool IsTrigger { get; set; } = false;
     public bool IsStatic { get; set; } = false;
     public bool IsKinematic { get; set; } = true;
+    public Vector2 Offset { get; set; } = Vector2.Zero;
+    public Vector2 Scale { get; set; } = Vector2.One;
 
     public readonly bool HitTest(ICollider collider, out CollisionInfo info)
     {
@@ -29,7 +31,7 @@ public struct RectangleCollider : ICollider
         return collider switch
         {
             RectangleCollider other => HitTest(other, out info),
-            RadiusCollider other => HitTest(other, out info),
+            CircleCollider other => HitTest(other, out info),
             _ => false
         };
     }
@@ -38,10 +40,15 @@ public struct RectangleCollider : ICollider
     {
         info = default;
 
-        var dx = Center.X - collider.Center.X;
-        var dy = Center.Y - collider.Center.Y;
-        var halfWidth = (Size.X + collider.Size.X) / 2;
-        var halfHeight = (Size.Y + collider.Size.Y) / 2;
+        var thisCenter = Center + Offset;
+        var otherCenter = collider.Center + collider.Offset;
+        var thisSize = Size * Scale;
+        var otherSize = collider.Size * collider.Scale;
+
+        var dx = thisCenter.X - otherCenter.X;
+        var dy = thisCenter.Y - otherCenter.Y;
+        var halfWidth = (thisSize.X + otherSize.X) / 2;
+        var halfHeight = (thisSize.Y + otherSize.Y) / 2;
 
         if (dx > halfWidth || dy > halfHeight)
         {
@@ -66,10 +73,10 @@ public struct RectangleCollider : ICollider
 
         info.Collider = this;
         info.OtherCollider = collider;
-        info.ContactPoint = Center + info.Normal * Size / 2;
+        info.ContactPoint = thisCenter + info.Normal * thisSize / 2;
 
         return true;
     }
 
-    private readonly bool HitTest(RadiusCollider collider, out CollisionInfo info) => collider.HitTest(this, out info);
+    private readonly bool HitTest(CircleCollider collider, out CollisionInfo info) => collider.HitTest(this, out info);
 }

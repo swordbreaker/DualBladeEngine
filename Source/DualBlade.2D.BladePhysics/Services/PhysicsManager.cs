@@ -15,10 +15,10 @@ public class PhysicsManager : IPhysicsManager
         }
     }
 
-    public void Add(ICollider collider, Vector2 pos) =>
-        uniformGrid.Insert(collider, pos);
+    public void Add(ICollider collider) =>
+        uniformGrid.Insert(collider);
 
-    public void Remove(ICollider collider, Vector2 pos) => uniformGrid.Remove(collider, pos);
+    public void Remove(ICollider collider) => uniformGrid.Remove(collider);
 
     public void Update(ICollider collider, Vector2 oldPos, Vector2 newPos) =>
         uniformGrid.Update(collider, oldPos, newPos);

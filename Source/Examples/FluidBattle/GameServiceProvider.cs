@@ -5,10 +5,11 @@ using DualBlade._2D.Rendering;
 using DualBlade.MyraUi;
 using System.Collections.Generic;
 using FluidBattle.Scenes;
-using DualBlade._2D.Physics;
 using FluidBattle.Systems;
 using FluidBattle.Services;
 using FluidBattle.Factories;
+using DualBlade._2D.BladePhysics;
+using DualBlade._2D.BladePhysics.Services;
 
 namespace FluidBattle;
 
@@ -16,7 +17,7 @@ namespace FluidBattle;
 [Import<ICoreServiceModule>]
 [Import<I2DRenderingServiceModule>]
 [Import<IMyraUiServiceModule>]
-[Import<I2DPhysicsServiceModule>]
+[Import<I2DBladePhysicsServiceModule>]
 [Singleton<MainGame>]
 [Transient<MainScene>]
 [Transient<MainMenuScene>]
@@ -24,6 +25,7 @@ namespace FluidBattle;
 [Singleton<ICircleSampler, CircleSampler>]
 [Singleton<AiAgent>]
 [Singleton<FluidFactory>]
+[Singleton<IPhysicsSettings, >]
 public partial class GameServiceProvider
 {
 }

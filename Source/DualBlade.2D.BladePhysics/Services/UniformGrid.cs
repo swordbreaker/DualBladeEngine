@@ -1,12 +1,15 @@
-﻿using DualBlade._2D.BladePhysics.Models;
-using DualBlade.Core.Extensions;
+﻿using DualBlade._2D.BladePhysics.Extensions;
+using DualBlade._2D.BladePhysics.Models;
 
 namespace DualBlade._2D.BladePhysics.Services;
 public class UniformGrid
 {
     private List<ICollider>[,] grid = new List<ICollider>[0, 0];
-    private float cellSize;
-    private int rows, cols;
+    private readonly float cellSize;
+    private readonly int rows;
+    private readonly int cols;
+
+    // TODO make possible for negative coordinates
 
     public UniformGrid(float cellSize, float width, float height)
     {
@@ -24,10 +27,9 @@ public class UniformGrid
         }
     }
 
-    public void Insert(ICollider collider, Vector2 position)
+    public void Insert(ICollider collider)
     {
-        var bounds = collider.Bounds;
-        bounds.Offset(position.ToPointF());
+        var bounds = collider.AbsoluteBounds();
 
         int minX = (int)(bounds.X / cellSize);
         int minY = (int)(bounds.Y / cellSize);
@@ -46,10 +48,9 @@ public class UniformGrid
         }
     }
 
-    public void Remove(ICollider collider, Vector2 position)
+    public void Remove(ICollider collider)
     {
-        var bounds = collider.Bounds;
-        bounds.Offset(position.ToPointF());
+        var bounds = collider.AbsoluteBounds();
 
         int minX = (int)(bounds.X / cellSize);
         int minY = (int)(bounds.Y / cellSize);
@@ -70,8 +71,7 @@ public class UniformGrid
 
     public void Update(ICollider collider, Vector2 oldPos, Vector2 newPos)
     {
-        var bounds = collider.Bounds;
-        bounds.Offset(oldPos.ToPointF());
+        var bounds = collider.AbsoluteBounds();
 
         int oldMinX = (int)(bounds.X / cellSize);
         int oldMinY = (int)(bounds.Y / cellSize);
@@ -85,14 +85,14 @@ public class UniformGrid
 
         if (oldMinX != newMinX || oldMinY != newMinY || oldMaxX != newMaxX || oldMaxY != newMaxY)
         {
-            Remove(collider, oldPos);
-            Insert(collider, newPos);
+            Remove(collider);
+            Insert(collider);
         }
     }
 
     public IEnumerable<ICollider> Query(ICollider collider)
     {
-        var bounds = collider.Bounds;
+        var bounds = collider.AbsoluteBounds();
         return Query(bounds.X, bounds.Y, bounds.Width, bounds.Height);
     }
 

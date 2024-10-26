@@ -4,6 +4,9 @@ namespace DualBlade._2D.BladePhysics.Models;
 
 public interface ICollider
 {
+    Vector2 Offset { get; set; }
+    Vector2 Scale { get; set; }
+
     Vector2 Center { get; set; }
     RectangleF Bounds { get; }
 

@@ -8,7 +8,7 @@ namespace FluidBattle.Factories;
 internal class FluidFactory(IGameContext gameContext)
 {
     private const float scale = 4;
-    private readonly float radius = 9f / gameContext.GameEngine.WorldToPixelConverter.TileSize;
+    private readonly float radius = 9f / gameContext.GameEngine.WorldToPixelConverter.TileSize; // TileSize: 32
     private readonly Random random = new();
 
     public EntityBuilder<FluidEntity> CreateFluid(Vector2 position, int player, Color color)
