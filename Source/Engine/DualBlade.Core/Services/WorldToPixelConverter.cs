@@ -2,7 +2,7 @@
 
 namespace DualBlade.Core.Services;
 
-public sealed class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceManager) : IWorldToPixelConverter
+public sealed class WorldToPixelConverter(GraphicsDeviceManager graphicsDeviceManager) : IWorldToPixelConverter
 {
     /// <summary>
     /// The size of a tile in pixels.
@@ -12,16 +12,16 @@ public sealed class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceM
     public Matrix WorldMatrix =>
         Matrix.CreateScale(TileSize, -TileSize, TileSize) *
         Matrix.CreateTranslation(
-            _graphicsDeviceManager.PreferredBackBufferWidth * 0.5f,
-            _graphicsDeviceManager.PreferredBackBufferHeight * 0.5f,
+            graphicsDeviceManager.PreferredBackBufferWidth * 0.5f,
+            graphicsDeviceManager.PreferredBackBufferHeight * 0.5f,
             0);
 
     public RectangleF WorldBounds
     {
         get
         {
-            var w = _graphicsDeviceManager.PreferredBackBufferWidth / (float)TileSize;
-            var h = _graphicsDeviceManager.PreferredBackBufferHeight / (float)TileSize;
+            var w = graphicsDeviceManager.PreferredBackBufferWidth / (float)TileSize;
+            var h = graphicsDeviceManager.PreferredBackBufferHeight / (float)TileSize;
             return new RectangleF(-w / 2, -h / 2, w, h);
         }
     }
@@ -32,7 +32,8 @@ public sealed class WorldToPixelConverter(GraphicsDeviceManager _graphicsDeviceM
 
     public Vector2 WorldSizeToPixel(Vector2 worldSize) => Vector2.Transform(worldSize, WorldSizeMatrix);
 
-    public Vector2 PixelPointToWorld(Vector2 pixelCoordinate) => Vector2.Transform(pixelCoordinate, Matrix.Invert(WorldMatrix));
+    public Vector2 PixelPointToWorld(Vector2 pixelCoordinate) =>
+        Vector2.Transform(pixelCoordinate, Matrix.Invert(WorldMatrix));
 
     public Vector2 PixelSizeToWorld(Vector2 pixelSize) => Vector2.Transform(pixelSize, Matrix.Invert(WorldSizeMatrix));
 }

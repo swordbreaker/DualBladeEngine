@@ -5,11 +5,11 @@ using DualBlade._2D.Rendering;
 using DualBlade.MyraUi;
 using System.Collections.Generic;
 using FluidBattle.Scenes;
-using FluidBattle.Systems;
 using FluidBattle.Services;
 using FluidBattle.Factories;
 using DualBlade._2D.BladePhysics;
 using DualBlade._2D.BladePhysics.Services;
+using DualBlade._2D.BladePhysics.Systems;
 
 namespace FluidBattle;
 
@@ -25,7 +25,7 @@ namespace FluidBattle;
 [Singleton<ICircleSampler, CircleSampler>]
 [Singleton<AiAgent>]
 [Singleton<FluidFactory>]
-[Singleton<IPhysicsSettings, >]
+[Singleton<IPhysicsSettings, PhysicsSettings>]
 public partial class GameServiceProvider
 {
 }

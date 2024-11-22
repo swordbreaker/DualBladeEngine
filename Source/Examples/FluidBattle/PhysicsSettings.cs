@@ -1,14 +1,10 @@
 ﻿using DualBlade._2D.BladePhysics.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FluidBattle;
+
 public class PhysicsSettings : IPhysicsSettings
 {
-    public IGridSettings GridSettings { get; } = new UniformGirdSettings(CellSize: 9 / 32, Width: );
+    public IGridSettings GridSettings { get; } = new UniformGirdSettings(CellSize: 0.1f, Width: 10, Height: 10);
 
     public Vector2 Gravity { get; } = Vector2.Zero;
 }

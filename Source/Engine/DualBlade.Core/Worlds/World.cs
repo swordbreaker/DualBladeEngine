@@ -10,7 +10,9 @@ namespace DualBlade.Core.Worlds;
 public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IWorld
 {
     public delegate ComponentRef<IComponent> AddComponentDelegate(IComponent component, int entityId);
+
     public delegate IComponent GetCopyDelegate(int id);
+
     public delegate ComponentProxy<IComponent> GetProxyDelegate<TComponent>();
 
     private readonly SparseCollection<IEntity> _entities = new(100);
@@ -80,7 +82,8 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
 
         foreach (var (system, entity, start, end) in _componentSystemData.ToSpan())
         {
-            system.Update(entity, entity.InternalComponents.ToSpan()[start..end], gameTime, out var outEntity, out var outComponents);
+            system.Update(entity, entity.InternalComponents.ToSpan()[start..end], gameTime, out var outEntity,
+                out var outComponents);
             _entities[entity.Id] = outEntity;
             SyncEntityComponents(entity, outEntity, outComponents);
         }
@@ -101,7 +104,8 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         {
             foreach (var fixedSystem in _fixedSystems)
             {
-                fixedSystem.Update(new GameTime(gameTime.TotalGameTime, gameTime.TotalGameTime.Subtract(lastFixedUpdate)));
+                fixedSystem.Update(new GameTime(gameTime.TotalGameTime,
+                    gameTime.TotalGameTime.Subtract(lastFixedUpdate)));
             }
 
             lastFixedUpdate = gameTime.TotalGameTime;

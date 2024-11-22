@@ -7,7 +7,10 @@ namespace DualBlade.Core.Tests.Worlds;
 
 public partial struct Class1 : INodeEntity
 {
-    public Class1() { }
+    public Class1()
+    {
+    }
+
     public INodeComponent NodeComponent { get; init; }
     public IEnumerable<INodeEntity> Children { get; } = new List<INodeEntity>();
     public INodeEntity? Parent { get; }

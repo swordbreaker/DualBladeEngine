@@ -1,5 +1,4 @@
-﻿using DualBlade._2D.Physics.Systems;
-using DualBlade._2D.Rendering.Systems;
+﻿using DualBlade._2D.Rendering.Systems;
 using DualBlade.Core;
 using DualBlade.Core.Components;
 using DualBlade.Core.Services;
@@ -8,10 +7,10 @@ using FluidBattle.Scenes;
 using DualBlade.Core.Entities;
 using Microsoft.Xna.Framework.Graphics;
 using DualBlade.MyraUi.Systems;
-using Microsoft.Extensions.DependencyInjection;
-using DualBlade._2D.Physics.Services;
+using DualBlade._2D.BladePhysics.Systems;
 
 namespace FluidBattle;
+
 public class MainGame : BaseGame
 {
     public MainGame(IGameCreationContext context) : base(context)
@@ -22,12 +21,12 @@ public class MainGame : BaseGame
     protected override void InitializeGlobalSystems()
     {
         World.AddSystem<RenderSystem>();
-        World.AddSystem(new PhysicSystem(this.ServiceProvider.GetRequiredService<IPhysicsManager>()));
-        World.AddSystem<KinematicSystem>();
         World.AddSystem<InputSystem>();
         World.AddSystem<FpsDisplaySystem>();
         World.AddSystem<MyraDesktopSystem>();
-        //World.AddSystem<DebugColliderSystem>();
+        World.AddSystem<ColliderSystem>();
+        World.AddSystem<RigidBodySystem>();
+        World.AddSystem<DebugColliderSystem>();
     }
 
     protected override void Initialize()

@@ -37,15 +37,15 @@ public class MainScene(IGameContext context) : GameScene(context)
             yield return fluid;
         }
 
-        foreach (var fluid in fluidFactory.CreateFluids(100, new Vector2(2, 0), 1f, 1, Color.Purple))
+        foreach (var fluid in fluidFactory.CreateFluids(50, new Vector2(2, 0), 1f, 1, Color.Purple))
         {
             yield return fluid;
         }
 
-        foreach (var fluid in fluidFactory.CreateFluids(150, new Vector2(2, 0), 1f, 2, Color.Green))
-        {
-            yield return fluid;
-        }
+        // foreach (var fluid in fluidFactory.CreateFluids(150, new Vector2(2, 0), 1f, 2, Color.Green))
+        // {
+        //     yield return fluid;
+        // }
 
         for (var i = 0; i < 20; i++)
         {

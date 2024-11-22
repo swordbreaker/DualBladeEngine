@@ -1,22 +1,22 @@
-﻿using DualBlade._2D.Physics.Components;
-using DualBlade._2D.Physics.Services;
+﻿using DualBlade._2D.BladePhysics.Components;
+using DualBlade._2D.BladePhysics.Models;
 using DualBlade._2D.Rendering.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using FluidBattle.Components;
-using Microsoft.Extensions.DependencyInjection;
-using nkast.Aether.Physics2D.Dynamics;
 
 namespace FluidBattle.Entities;
 
+[RequiredComponent<TransformComponent>]
 [RequiredComponent<FluidComponent>]
+[RequiredComponent<ColliderComponent>]
+[RequiredComponent<RigidBody>]
 public partial struct FluidEntity : IEntity
 {
     public FluidEntity(IGameContext context, Vector2 position, float radius, float scale, int player, Color color)
     {
         InitComponents();
 
-        var physicsManager = context.ServiceProvider.GetRequiredService<IPhysicsManager>();
         var worldToPixel = context.GameEngine.WorldToPixelConverter;
 
         var transform = new TransformComponent
@@ -24,23 +24,11 @@ public partial struct FluidEntity : IEntity
             Position = position
         };
 
-        // Create a physics body
-        var body = physicsManager.CreateBody(transform.Position, bodyType: BodyType.Dynamic);
-        body.IgnoreGravity = true;
-        body.FixedRotation = true;
-        body.Mass = 1;
-        body.LinearDamping = 0f;
-        var fixture = body.CreateCircle(radius, 1);
-        fixture.Restitution = 0.01f;
-        fixture.Friction = 0f;
-
-        var kinematic = new KinematicComponent
-        {
-            PhysicsBody = body
-        };
+        var collider = new CircleCollider(Zero, radius);
 
         AddComponent(transform);
-        AddComponent(kinematic);
+        AddComponent(new ColliderComponent(collider));
         AddComponent(new FluidComponent { Player = player, Color = color });
+        AddComponent(new RigidBody { Mass = 1, CollectCollisionEvents = true });
     }
 }

@@ -1,22 +1,22 @@
-﻿using DualBlade._2D.Physics.Components;
-using DualBlade.Core.Entities;
+﻿using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using DualBlade.Core.Utils;
 using FluidBattle.Components;
-using Microsoft.Xna.Framework;
-using nkast.Aether.Physics2D.Common;
-using System;
-using nkast.Aether.Physics2D.Dynamics;
-using nkast.Aether.Physics2D.Dynamics.Contacts;
 using FluidBattle.Entities;
 using DualBlade._2D.Rendering.Components;
+using DualBlade._2D.BladePhysics.Components;
+using DualBlade._2D.Rendering.Extensions;
+using DualBlade._2D.BladePhysics.Models;
+using DualBlade._2D.BladePhysics.Services;
+using System.Linq;
 
 namespace FluidBattle.Systems;
 
-public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
+public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
 {
     private readonly IJobQueue jobQueue;
+    private readonly IPhysicsManager physicsManager;
 
     static Random random = new Random();
     private static PerlinNoise2D perlinNoise = new(42);
@@ -29,33 +29,31 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
     {
         maxDistance = MathF.Max(gameContext.GameEngine.GameSize.X, gameContext.GameEngine.GameSize.Y);
         jobQueue = GetService<IJobQueue>();
+        physicsManager = GetService<IPhysicsManager>();
     }
 
-    protected override void OnAdded(ref IEntity entity, ref KinematicComponent kinematic, ref FluidComponent _)
+    protected override void OnAdded(ref IEntity entity, ref RigidBody body, ref FluidComponent fluid)
     {
-        kinematic.PhysicsBody.Tag = entity;
-        foreach (var fixture in kinematic.PhysicsBody.FixtureList)
+        if (entity.TryGetComponent<ColliderComponent>(out var colliderComponent))
         {
-            fixture.Tag = entity;
+            foreach (var collider in colliderComponent.Colliders)
+            {
+                collider.Tag = entity;
+            }
         }
-
-        kinematic.PhysicsBody.OnCollision += PhysicsBody_OnCollision;
     }
 
-    protected override void OnDestroy(KinematicComponent component, FluidComponent component2, IEntity entity)
+    private bool OnCollision(FluidEntity thisEntity, FluidComponent thisFluidComp, RigidBody thisBody, CollisionInfo info)
     {
-        component.PhysicsBody.OnCollision -= PhysicsBody_OnCollision;
-    }
-
-    private bool PhysicsBody_OnCollision(Fixture sender, Fixture other, Contact contact)
-    {
-        if (sender.Tag is not FluidEntity thisFluid || other.Tag is not FluidEntity otherFluid)
+        if (info.Collider.Tag is not FluidEntity otherEntity)
         {
             return true;
         }
 
-        var thisFluidComp = thisFluid.FluidComponentCopy;
-        var otherFluidComp = otherFluid.FluidComponentCopy;
+        var otherFluidComp = otherEntity.FluidComponentCopy;
+        var otherBody = otherEntity.RigidBodyCopy;
+        var thisTransform = thisEntity.TransformComponentCopy;
+        var otherTransform = otherEntity.TransformComponentCopy;
 
         if (thisFluidComp.Player == otherFluidComp.Player)
         {
@@ -73,25 +71,24 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
         }
         else
         {
-            var center = other.Body.Position + (sender.Body.Position - other.Body.Position) / 2;
-            var thisToCenter = center - sender.Body.Position;
-            var otherToCenter = center - other.Body.Position;
+            var center = otherTransform.Position + (thisTransform.Position - otherTransform.Position) / 2;
+            var thisToCenter = center - thisTransform.Position;
+            var otherToCenter = center - otherTransform.Position;
 
-            var thisDot = Dot(thisToCenter, sender.Body.LinearVelocity);
-            var otherDot = Dot(otherToCenter, other.Body.LinearVelocity);
+            var thisDot = Dot(thisToCenter, thisBody.Velocity);
+            var otherDot = Dot(otherToCenter, otherBody.Velocity);
             (thisP, _) = Softmax(thisDot, otherDot);
-
         }
 
         var t = random.NextSingle();
 
         if (t < thisP)
         {
-            TransformOther(thisFluidComp, otherFluidComp, otherFluid);
+            TransformOther(thisFluidComp, otherFluidComp, otherEntity);
         }
         else
         {
-            TransformOther(otherFluidComp, thisFluidComp, thisFluid);
+            TransformOther(otherFluidComp, thisFluidComp, thisEntity);
         }
 
         return true;
@@ -125,14 +122,14 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
         Ecs.UpdateComponent(otherEntity, otherFluid);
     }
 
-    protected override void Update(ref KinematicComponent kinematic, ref FluidComponent fluid, ref IEntity entity, GameTime gameTime)
+    protected override void Update(ref RigidBody body, ref FluidComponent fluid, ref IEntity entity, GameTime gameTime)
     {
         if (fluid.Player < 0)
         {
             return;
         }
 
-        var pos = kinematic.PhysicsBody.Position;
+        var pos = Ecs.AbsolutePosition(entity);
         var time = (float)gameTime.TotalGameTime.TotalSeconds;
 
         var generalFlow = Normalize(fluid.Target - pos) * FlowStrength;
@@ -143,8 +140,14 @@ public class FluidSystem : ComponentSystem<KinematicComponent, FluidComponent>
             * NoiseStrength;
 
         float distanceToTarget = Distance(pos, fluid.Target);
-        float speedFactor = MathUtils.Clamp(1 - distanceToTarget / maxDistance, 0, 1);
 
-        kinematic.PhysicsBody.LinearVelocity = (generalFlow + noise) * speedFactor;
+        float speedFactor = Math.Clamp(1 - distanceToTarget / maxDistance, 0, 1);
+
+        body.Velocity = (generalFlow + noise) * speedFactor;
+
+        foreach (var info in physicsManager.GetNewCollisions(body).Where(x => x.Collider.Tag is FluidEntity))
+        {
+            OnCollision((FluidEntity)entity, fluid, body, info);
+        }
     }
 }
