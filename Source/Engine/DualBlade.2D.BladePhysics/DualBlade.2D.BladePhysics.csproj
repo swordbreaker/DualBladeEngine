@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DualBlade._2D.BladePhysics</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>True</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\DualBlade.Core\DualBlade.Core.csproj" PrivateAssets="All" />
+    <PackageReference Include="MonoGame.Extended" Version="4.0.3" PrivateAssets="All" />
+    <PackageReference Include="Jab" Version="0.10.2" PrivateAssets="All" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <ProjectReference Include="..\DualBlade.Analyzer\DualBlade.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
