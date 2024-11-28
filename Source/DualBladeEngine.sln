@@ -47,6 +47,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dualblade.Editor.Ui", "Edit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DualBlade.2D.BladePhysics", "Engine\DualBlade.2D.BladePhysics\DualBlade.2D.BladePhysics.csproj", "{C5B445BC-A442-4186-B83B-2633787A7444}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.PhysicsTest", "Examples\Example.PhysicsTest\Example.PhysicsTest.csproj", "{B89426C1-7EBA-436A-AD78-DFCF57D294F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualBlade.2d.BladePhysics.Tests", "Engine\DualBlade.2d.BladePhysics.Tests\DualBlade.2d.BladePhysics.Tests.csproj", "{659437F5-EC9C-4B49-8AD3-A085A653DA03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +131,14 @@ Global
 		{C5B445BC-A442-4186-B83B-2633787A7444}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5B445BC-A442-4186-B83B-2633787A7444}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5B445BC-A442-4186-B83B-2633787A7444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B89426C1-7EBA-436A-AD78-DFCF57D294F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B89426C1-7EBA-436A-AD78-DFCF57D294F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B89426C1-7EBA-436A-AD78-DFCF57D294F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B89426C1-7EBA-436A-AD78-DFCF57D294F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{659437F5-EC9C-4B49-8AD3-A085A653DA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{659437F5-EC9C-4B49-8AD3-A085A653DA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{659437F5-EC9C-4B49-8AD3-A085A653DA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{659437F5-EC9C-4B49-8AD3-A085A653DA03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,6 +163,8 @@ Global
 		{6AD6262C-CC0A-4AF0-809A-2647A70A6076} = {B09D6F6C-8EE4-492A-8042-414AA634696D}
 		{48897587-DB41-40BB-8D56-8959A08CFD41} = {956EE22A-8968-4EC5-89DD-3A4BD059A957}
 		{C5B445BC-A442-4186-B83B-2633787A7444} = {CD3FFB21-3624-4207-A3CA-AE4F8FE81AD3}
+		{B89426C1-7EBA-436A-AD78-DFCF57D294F1} = {B09D6F6C-8EE4-492A-8042-414AA634696D}
+		{659437F5-EC9C-4B49-8AD3-A085A653DA03} = {E041BF8A-FBC4-4BFD-85C6-5A96C480495A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C4B5F4E-B197-493D-B69D-6079DCA995B7}

@@ -5,13 +5,11 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 
 namespace FluidBattle.Entities;
+
 public partial struct WallEntity : IEntity
 {
     public WallEntity(Vector2 pos, Vector2 size, IGameContext context)
     {
-        var spriteFactory = context.GameEngine.SpriteFactory;
-        var worldToPixelConverter = context.GameEngine.WorldToPixelConverter;
-
         var transform = new TransformComponent
         {
             Position = pos,
@@ -23,10 +21,10 @@ public partial struct WallEntity : IEntity
             Color = Color.Black
         };
 
-        render.SetSprite(context.GameEngine.SpriteFactory.CreateWhitePixelSprite());
+        var sprite = context.GameEngine.SpriteFactory.CreateWhitePixelSprite();
+        render.SetSprite(sprite);
 
-        var pixelSize = render.Sprite.Size * size;
-        var collider = new RectangleCollider(Zero, Vector2.One);
+        var collider = new RectangleCollider(Zero, context.GameEngine.WorldToPixelConverter.PixelSizeToWorld(Vector2.One));
 
         AddComponent(transform);
         AddComponent(render);

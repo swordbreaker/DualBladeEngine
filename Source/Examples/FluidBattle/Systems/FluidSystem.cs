@@ -43,7 +43,8 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
         }
     }
 
-    private bool OnCollision(FluidEntity thisEntity, FluidComponent thisFluidComp, RigidBody thisBody, CollisionInfo info)
+    private bool OnCollision(FluidEntity thisEntity, FluidComponent thisFluidComp, RigidBody thisBody,
+        CollisionInfo info)
     {
         if (info.Collider.Tag is not FluidEntity otherEntity)
         {
@@ -97,11 +98,11 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
     private static (float, float) Softmax(float a, float b)
     {
         // Subtract the max value for numerical stability
-        float max = MathF.Max(a, b);
-        float expA = MathF.Exp(a - max);
-        float expB = MathF.Exp(b - max);
+        var max = MathF.Max(a, b);
+        var expA = MathF.Exp(a - max);
+        var expB = MathF.Exp(b - max);
 
-        float sum = expA + expB;
+        var sum = expA + expB;
 
         return (expA / sum, expB / sum);
     }
@@ -131,17 +132,13 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
 
         var pos = Ecs.AbsolutePosition(entity);
         var time = (float)gameTime.TotalGameTime.TotalSeconds;
-
         var generalFlow = Normalize(fluid.Target - pos) * FlowStrength;
-
         var noise = new Vector2(
-            perlinNoise.Noise(pos.X, time),
-            perlinNoise.Noise(pos.Y, time))
-            * NoiseStrength;
-
-        float distanceToTarget = Distance(pos, fluid.Target);
-
-        float speedFactor = Math.Clamp(1 - distanceToTarget / maxDistance, 0, 1);
+                        perlinNoise.Noise(pos.X, time),
+                        perlinNoise.Noise(pos.Y, time))
+                    * NoiseStrength;
+        var distanceToTarget = Distance(pos, fluid.Target);
+        var speedFactor = Math.Clamp(1 - distanceToTarget / maxDistance, 0, 1);
 
         body.Velocity = (generalFlow + noise) * speedFactor;
 

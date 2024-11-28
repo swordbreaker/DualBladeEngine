@@ -5,7 +5,8 @@ using DualBlade.Core.Utils;
 
 namespace DualBlade.Core.Systems;
 
-public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gameContext) : BaseComponentSystem(gameContext), IComponentSystem
+public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gameContext)
+    : BaseComponentSystem(gameContext), IComponentSystem
     where TComponent1 : IComponent
     where TComponent2 : IComponent
 {
@@ -13,19 +14,37 @@ public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gam
         .Order(new SimpleTypeComparer())
         .ToArray();
 
-    protected virtual void Update(ref TComponent1 component1, ref TComponent2 component2, ref IEntity entity, GameTime gameTime) { }
-    protected virtual void Draw(TComponent1 component1, TComponent2 component2, IEntity entity, GameTime gameTime) { }
-    protected virtual void OnAdded(ref IEntity entity, ref TComponent1 component, ref TComponent2 component2) { }
-    protected virtual void OnDestroy(TComponent1 component, TComponent2 component2, IEntity entity) { }
+    protected virtual void Update(ref TComponent1 component1, ref TComponent2 component2, ref IEntity entity,
+        GameTime gameTime)
+    {
+    }
+
+    protected virtual void FixedUpdate(ref TComponent1 component1, ref TComponent2 component2, ref IEntity entity,
+        GameTime gameTime)
+    {
+    }
+
+    protected virtual void Draw(TComponent1 component1, TComponent2 component2, IEntity entity, GameTime gameTime)
+    {
+    }
+
+    protected virtual void OnAdded(ref IEntity entity, ref TComponent1 component, ref TComponent2 component2)
+    {
+    }
+
+    protected virtual void OnDestroy(TComponent1 component, TComponent2 component2, IEntity entity)
+    {
+    }
 
     public override void Dispose()
     {
         GC.SuppressFinalize(this);
     }
 
-    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity,
+        out Span<IComponent> outComponents)
     {
-        GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
+        GetComponentsTyped(components, out var c1, out var c2);
 
         OnAdded(ref entity, ref c1, ref c2);
 
@@ -35,7 +54,7 @@ public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gam
 
     void IComponentSystem.OnDestroy(IEntity entity, Span<IComponent> components)
     {
-        GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
+        GetComponentsTyped(components, out var c1, out var c2);
         OnDestroy(c1, c2, entity);
     }
 
@@ -45,7 +64,8 @@ public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gam
         this.Draw(c1, c2, entity, gameTime);
     }
 
-    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity,
+        out Span<IComponent> outComponents)
     {
         GetComponentsTyped(components, out TComponent1 c1, out TComponent2 c2);
         Update(ref c1, ref c2, ref entity, gameTime);
@@ -54,20 +74,33 @@ public abstract class ComponentSystem<TComponent1, TComponent2>(IGameContext gam
         outEntity = entity;
     }
 
-    private static void GetComponentsTyped(Span<IComponent> components, out TComponent1 component1, out TComponent2 component2)
+    void IComponentSystem.FixedUpdate(IEntity entity, Span<IComponent> components, GameTime gameTime,
+        out IEntity outEntity,
+        out Span<IComponent> outComponents)
+    {
+        GetComponentsTyped(components, out var c1, out var c2);
+        FixedUpdate(ref c1, ref c2, ref entity, gameTime);
+
+        outComponents = new IComponent[] { c1, c2 };
+        outEntity = entity;
+    }
+
+    private static void GetComponentsTyped(Span<IComponent> components, out TComponent1 component1,
+        out TComponent2 component2)
     {
         component1 = default!;
         component2 = default!;
 
-        for (int i = 0; i < components.Length; i++)
+        foreach (var component in components)
         {
-            if (components[i] is TComponent1 t1)
+            switch (component)
             {
-                component1 = t1;
-            }
-            else if (components[i] is TComponent2 t2)
-            {
-                component2 = t2;
+                case TComponent1 t1:
+                    component1 = t1;
+                    break;
+                case TComponent2 t2:
+                    component2 = t2;
+                    break;
             }
         }
     }

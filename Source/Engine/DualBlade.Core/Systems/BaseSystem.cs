@@ -19,7 +19,19 @@ public class BaseSystem(IGameContext gameContext) : ISystemWithContext
         GC.SuppressFinalize(this);
     }
 
-    public virtual void Draw(GameTime gameTime) { }
-    public virtual void Initialize() { }
-    public virtual void Update(GameTime gameTime) { }
+    public virtual void Draw(GameTime gameTime)
+    {
+    }
+
+    public virtual void Initialize()
+    {
+    }
+
+    public virtual void Update(GameTime gameTime)
+    {
+    }
+
+    public virtual void FixedUpdate(GameTime gameTime)
+    {
+    }
 }

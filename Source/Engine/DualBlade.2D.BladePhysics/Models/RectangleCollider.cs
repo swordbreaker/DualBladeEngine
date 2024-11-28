@@ -24,7 +24,7 @@ public struct RectangleCollider : ICollider
     public bool IsKinematic { get; set; } = true;
     public Vector2 Offset { get; set; } = Vector2.Zero;
     public Vector2 Scale { get; set; } = Vector2.One;
-    public object Tag { get; set; }
+    public object Tag { get; set; } = new object();
 
     public readonly bool HitTest(ICollider collider, out CollisionInfo info)
     {

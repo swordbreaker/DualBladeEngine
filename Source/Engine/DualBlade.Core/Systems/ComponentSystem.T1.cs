@@ -4,22 +4,39 @@ using DualBlade.Core.Services;
 
 namespace DualBlade.Core.Systems;
 
-public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : BaseComponentSystem(gameContext), IComponentSystem
+public abstract class ComponentSystem<TComponent>(IGameContext gameContext)
+    : BaseComponentSystem(gameContext), IComponentSystem
     where TComponent : IComponent
 {
     public override Memory<Type> CompTypes { get; } = new Type[] { typeof(TComponent) };
 
-    protected virtual void Update(ref TComponent component, ref IEntity entity, GameTime gameTime) { }
-    protected virtual void Draw(TComponent component, IEntity entity, GameTime gameTime) { }
-    protected virtual void OnAdded(ref IEntity entity, ref TComponent component) { }
-    protected virtual void OnDestroy(TComponent component, IEntity entity) { }
+    protected virtual void Update(ref TComponent component, ref IEntity entity, GameTime gameTime)
+    {
+    }
+
+    protected virtual void FixedUpdate(ref TComponent component, ref IEntity entity, GameTime gameTime)
+    {
+    }
+
+    protected virtual void Draw(TComponent component, IEntity entity, GameTime gameTime)
+    {
+    }
+
+    protected virtual void OnAdded(ref IEntity entity, ref TComponent component)
+    {
+    }
+
+    protected virtual void OnDestroy(TComponent component, IEntity entity)
+    {
+    }
 
     public override void Dispose()
     {
         GC.SuppressFinalize(this);
     }
 
-    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.OnAdded(IEntity entity, Span<IComponent> components, out IEntity outEntity,
+        out Span<IComponent> outComponents)
     {
         var c = (TComponent)components[0];
         OnAdded(ref entity, ref c);
@@ -29,15 +46,26 @@ public abstract class ComponentSystem<TComponent>(IGameContext gameContext) : Ba
     }
 
     void IComponentSystem.OnDestroy(IEntity entity, Span<IComponent> component) =>
-            OnDestroy((TComponent)component[0], entity);
+        OnDestroy((TComponent)component[0], entity);
 
     void IComponentSystem.Draw(IEntity entity, Span<IComponent> components, GameTime gameTime) =>
         this.Draw((TComponent)components[0], entity, gameTime);
 
-    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity, out Span<IComponent> outComponents)
+    void IComponentSystem.Update(IEntity entity, Span<IComponent> components, GameTime gameTime, out IEntity outEntity,
+        out Span<IComponent> outComponents)
     {
         var c = (TComponent)components[0];
         Update(ref c, ref entity, gameTime);
+
+        outComponents = new IComponent[] { c };
+        outEntity = entity;
+    }
+
+    void IComponentSystem.FixedUpdate(IEntity entity, Span<IComponent> components, GameTime gameTime,
+        out IEntity outEntity, out Span<IComponent> outComponents)
+    {
+        var c = (TComponent)components[0];
+        FixedUpdate(ref c, ref entity, gameTime);
 
         outComponents = new IComponent[] { c };
         outEntity = entity;

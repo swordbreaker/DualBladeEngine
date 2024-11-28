@@ -28,6 +28,7 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
     public override void LateDraw(GameTime gameTime)
     {
         _gameEngine.BeginDraw();
+
         foreach (var renderData in collectedRenderData)
         {
             _gameEngine.Draw(
@@ -38,10 +39,12 @@ public class RenderSystem(IGameContext gameContext) : ComponentSystem<RenderComp
                 rotation: renderData.AbsoluteRotation,
                 origin: renderData.Origin);
         }
+
         _gameEngine.EndDraw();
     }
 
-    protected override void Draw(RenderComponent render, TransformComponent transform, IEntity entity, GameTime gameTime)
+    protected override void Draw(RenderComponent render, TransformComponent transform, IEntity entity,
+        GameTime gameTime)
     {
         var position = Ecs.AbsolutePosition(entity);
         var origin = render.Origin;

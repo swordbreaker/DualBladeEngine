@@ -44,27 +44,25 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
         float layerDepth = 0f)
     {
         color ??= Color.White;
-        origin ??= new Vector2(texture.Width / 2, texture.Height / 2);
+        origin ??= new Vector2(texture.Width / 2f, texture.Height / 2f);
         scale ??= Vector2.One;
 
         if (SpriteBatch is null)
             throw new InvalidOperationException("SpriteBatch is not initialized");
 
         position = WorldToPixelConverter.WorldPointToPixel(position);
-        origin = origin is null
-            ? new Vector2(texture.Width / 2, texture.Height / 2)
-            : WorldToPixelConverter.WorldSizeToPixel(origin.Value);
+        origin = WorldToPixelConverter.WorldSizeToPixel(origin.Value);
 
         SpriteBatch.Draw(
-                texture,
-                position,
-                sourceRectangle: sourceRectangle,
-                color: color.Value,
-                rotation: rotation,
-                origin: origin.Value,
-                scale: scale.Value,
-                effects: effects,
-                layerDepth: layerDepth);
+            texture,
+            position,
+            sourceRectangle: sourceRectangle,
+            color: color.Value,
+            rotation: rotation,
+            origin: origin.Value,
+            scale: scale.Value,
+            effects: effects,
+            layerDepth: layerDepth);
     }
 
     public void EndDraw()

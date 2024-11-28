@@ -43,13 +43,8 @@ public class EcsManager(IWorld world) : IEcsManager
 
     public EntityProxy<IEntity> GetParent(IEntity entity) => world.GetEntityProxy<IEntity>(entity.Parent);
 
-    public IEnumerable<EntityRef<IEntity>> GetChildren(IEntity entity)
-    {
-        foreach (var child in entity.Children.ToSpan().ToArray())
-        {
-            yield return world.GetEntityRef<IEntity>(child);
-        }
-    }
+    public IEnumerable<EntityRef<IEntity>> GetChildren(IEntity entity) =>
+        entity.Children.ToSpan().ToArray().Select(world.GetEntityRef<IEntity>);
 
     public void UpdateComponent(IEntity entity, IComponent component)
     {

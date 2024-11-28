@@ -75,12 +75,7 @@ public class PhysicsManager : IPhysicsManager
                 $"RigidBody does not collect collision events, set {nameof(RigidBody)}.{nameof(RigidBody.CollectCollisionEvents)} to true");
         }
 
-        if (addedCollisions.TryGetValue(rigidBody, out var collisions))
-        {
-            return collisions;
-        }
-
-        return [];
+        return addedCollisions.TryGetValue(rigidBody, out var collisions) ? collisions : [];
     }
 
     public IEnumerable<CollisionInfo> GetRemovedCollisions(RigidBody rigidBody)
@@ -91,11 +86,6 @@ public class PhysicsManager : IPhysicsManager
                 $"RigidBody does not collect collision events, set {nameof(RigidBody)}.{nameof(RigidBody.CollectCollisionEvents)} to true");
         }
 
-        if (removedCollisions.TryGetValue(rigidBody, out var collisions))
-        {
-            return collisions;
-        }
-
-        return [];
+        return removedCollisions.TryGetValue(rigidBody, out var collisions) ? collisions : [];
     }
 }

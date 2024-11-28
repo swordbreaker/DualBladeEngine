@@ -32,12 +32,12 @@ public class MainScene(IGameContext context) : GameScene(context)
         var radius = 6f / worldToPixel.TileSize;
         var scale = 4;
 
-        foreach (var fluid in fluidFactory.CreateFluids(50, new Vector2(-2, 0), 1f, 0, Color.Red))
+        foreach (var fluid in fluidFactory.CreateFluids(50, new Vector2(-2, 0), 3f, 0, Color.Red))
         {
             yield return fluid;
         }
 
-        foreach (var fluid in fluidFactory.CreateFluids(50, new Vector2(2, 0), 1f, 1, Color.Purple))
+        foreach (var fluid in fluidFactory.CreateFluids(50, new Vector2(2, 0), 3f, 1, Color.Purple))
         {
             yield return fluid;
         }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace FluidBattle.Factories;
+
 internal class FluidFactory(IGameContext gameContext)
 {
     private const float scale = 4;
@@ -27,7 +28,8 @@ internal class FluidFactory(IGameContext gameContext)
 
         var builder = new EntityBuilder<FluidEntity>(fluidEntity);
         builder
-            .AddChildren(Enumerable.Range(0, 20).Select(x => new EntityBuilder(new FluidPixelEntity(gameContext, scale, radius, color))));
+            .AddChildren(Enumerable.Range(0, 20)
+                .Select(x => new EntityBuilder(new FluidPixelEntity(gameContext, scale, radius, color))));
 
         return builder;
     }

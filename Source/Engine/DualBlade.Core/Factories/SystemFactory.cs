@@ -11,5 +11,6 @@ public sealed class SystemFactory(IGameContext gameContext) : ISystemFactory
     public TSystem Create<TSystem>() where TSystem : ISystem =>
         gameContext.ServiceProvider.GetRequiredService<TSystem>();
 
-    public TSystem Create<TSystem>(Func<Resolver, TSystem> factory) => factory(gameContext.ServiceProvider.GetRequiredService);
+    public TSystem Create<TSystem>(Func<Resolver, TSystem> factory) =>
+        factory(gameContext.ServiceProvider.GetRequiredService);
 }

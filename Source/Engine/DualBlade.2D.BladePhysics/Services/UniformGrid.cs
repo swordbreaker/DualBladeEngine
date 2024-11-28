@@ -8,6 +8,9 @@ namespace DualBlade._2D.BladePhysics.Services;
 public class UniformGrid
 {
     private List<ICollider>[,] grid = new List<ICollider>[0, 0];
+
+    private Dictionary<ICollider, (Vector2i min, Vector2i max)> colliderToMinMax = new();
+
     private readonly float cellSize;
     private readonly int rows;
     private readonly int cols;
@@ -32,7 +35,7 @@ public class UniformGrid
 
     private (int minX, int minY, int maxX, int maxY) GetMinMax(RectangleF bounds)
     {
-        var newBounds = new RectangleF(bounds.X + offset.X, bounds.Y + offset.Y, bounds.Width, bounds.Height);
+        var newBounds = bounds with { X = bounds.X + offset.X, Y = bounds.Y + offset.Y };
 
         var minX = (int)(newBounds.X / cellSize);
         var minY = (int)(newBounds.Y / cellSize);
@@ -42,13 +45,13 @@ public class UniformGrid
         return (minX, minY, maxX, maxY);
     }
 
-    private void Foreach(RectangleF bounds, Action<List<ICollider>> action)
+    private void Foreach(ICollider collider, Action<List<ICollider>> action)
     {
-        var (minX, minY, maxX, maxY) = GetMinMax(bounds);
+        var (min, max) = colliderToMinMax[collider];
 
-        for (var y = minY; y <= maxY; y++)
+        for (var y = min.Y; y <= max.Y; y++)
         {
-            for (var x = minX; x <= maxX; x++)
+            for (var x = min.X; x <= max.X; x++)
             {
                 if (x >= 0 && x < cols && y >= 0 && y < rows)
                 {
@@ -60,40 +63,53 @@ public class UniformGrid
 
     public void Insert(ICollider collider)
     {
-        Foreach(collider.AbsoluteBounds(), colliders => colliders.Add(collider));
+        var (minX, minY, maxX, maxY) = GetMinMax(collider.AbsoluteBounds());
+        colliderToMinMax[collider] = (new Vector2(minX, minY), new Vector2(maxX, maxY));
+
+        Foreach(collider, colliders => colliders.Add(collider));
     }
 
     public void Remove(ICollider collider)
     {
-        Foreach(collider.AbsoluteBounds(), colliders => colliders.Remove(collider));
+        Foreach(collider, colliders => colliders.Remove(collider));
+        colliderToMinMax.Remove(collider);
     }
 
     public void Update(ICollider collider, Vector2 oldPos, Vector2 newPos)
     {
         var bounds = collider.AbsoluteBounds();
-        var (oldMinX, oldMinY, oldMaxX, oldMaxY) = GetMinMax(bounds);
+        var (oldMin, oldMax) = colliderToMinMax[collider];
 
-        var newBound = new RectangleF(newPos.X, newPos.Y, bounds.Width, bounds.Height);
+        var newBound = bounds with { X = newPos.X, Y = newPos.Y };
         var (newMinX, newMinY, newMaxX, newMaxY) = GetMinMax(newBound);
 
-        if (oldMinX != newMinX || oldMinY != newMinY || oldMaxX != newMaxX || oldMaxY != newMaxY)
+        if (oldMin.X != newMinX || oldMin.Y != newMinY || oldMax.X != newMaxX || oldMax.Y != newMaxY)
         {
             Remove(collider);
+            colliderToMinMax.Remove(collider);
+            colliderToMinMax.Add(collider, (new(newMinX, newMinY), new(newMaxX, newMaxY)));
+
             Insert(collider);
         }
     }
 
     public IEnumerable<ICollider> Query(ICollider collider)
     {
-        var bounds = collider.AbsoluteBounds();
-        return Query(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        var (min, max) = colliderToMinMax[collider];
+        return Query(min.X, min.Y, max.X, max.Y);
     }
 
-    public IEnumerable<ICollider> Query(RectangleF bounds)
+    private IEnumerable<ICollider> Query(RectangleF bounds)
     {
         HashSet<ICollider> result = [];
         var (minX, minY, maxX, maxY) = GetMinMax(bounds);
 
+        return Query(minX, minY, maxX, maxY);
+    }
+
+    private IEnumerable<ICollider> Query(int minX, int minY, int maxX, int maxY)
+    {
+        HashSet<ICollider> result = [];
         for (var y = minY; y <= maxY; y++)
         {
             for (var x = minX; x <= maxX; x++)
@@ -106,12 +122,6 @@ public class UniformGrid
         }
 
         return result;
-    }
-
-    public IEnumerable<ICollider> Query(float x, float y, float width, float height)
-    {
-        var rect = new RectangleF(x, y, width, height);
-        return Query(rect);
     }
 
     public void Clear()

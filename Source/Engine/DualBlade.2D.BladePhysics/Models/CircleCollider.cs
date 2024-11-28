@@ -23,7 +23,7 @@ public struct CircleCollider : ICollider
     public bool IsStatic { get; set; } = false;
     public bool IsKinematic { get; set; } = true;
     public Vector2 Offset { get; set; }
-    public Vector2 Scale { get; set; }
+    public Vector2 Scale { get; set; } = Vector2.One;
     public object Tag { get; set; }
 
     public readonly bool HitTest(ICollider collider, out CollisionInfo info)

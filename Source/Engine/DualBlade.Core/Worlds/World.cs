@@ -102,6 +102,14 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         // 15 FPS
         if (gameTime.TotalGameTime.Subtract(lastFixedUpdate).TotalMilliseconds > 66)
         {
+            foreach (var (system, entity, start, end) in _componentSystemData.ToSpan())
+            {
+                system.FixedUpdate(entity, entity.InternalComponents.ToSpan()[start..end], gameTime, out var outEntity,
+                    out var outComponents);
+                _entities[entity.Id] = outEntity;
+                SyncEntityComponents(entity, outEntity, outComponents);
+            }
+
             foreach (var fixedSystem in _fixedSystems)
             {
                 fixedSystem.Update(new GameTime(gameTime.TotalGameTime,
@@ -123,9 +131,10 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         CollectComponentSystems();
         CollectEntitySystems();
 
+        // draw foreach system
         foreach (var system in _activeComponentSystems)
         {
-            // TODO Fix this
+            system.Draw(gameTime);
         }
 
         foreach (var system in _activeEntitySystems)
@@ -139,14 +148,18 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
             system.Draw(entity, gameTime);
         }
 
+        // draw foreach component in component system
         foreach (var (system, entity, start, end) in _componentSystemData.ToSpan())
         {
-            system.Draw(gameTime);
             system.Draw(entity, entity.InternalComponents.ToSpan()[start..end], gameTime);
-            system.LateDraw(gameTime);
         }
 
         // Late draw
+        foreach (var system in _activeComponentSystems)
+        {
+            system.LateDraw(gameTime);
+        }
+
         foreach (var system in _activeEntitySystems)
         {
             system.LateDraw(gameTime);

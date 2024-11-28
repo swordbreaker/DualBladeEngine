@@ -6,7 +6,6 @@ using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Particles.Profiles;
 
 namespace DualBlade._2D.BladePhysics.Systems;
 
@@ -16,21 +15,25 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
     private readonly IGameEngine gameEngine = context.GameEngine;
     private readonly IWorldToPixelConverter worldToPixelConverter = context.GameEngine.WorldToPixelConverter;
 
+    private readonly List<Action> drawActions = new();
+
     protected override void Draw(ColliderComponent component, IEntity entity, GameTime gameTime)
     {
         foreach (var collider in component.Colliders)
         {
-            Draw(collider);
+            drawActions.Add(() => Draw(collider));
         }
     }
 
     public override void Draw(GameTime gameTime)
     {
-        spriteBatch.Begin(SpriteSortMode.Deferred, transformMatrix: gameEngine.CameraService.PixelTransformMatrix);
+        drawActions.Clear();
     }
 
     public override void LateDraw(GameTime gameTime)
     {
+        spriteBatch.Begin(SpriteSortMode.Deferred, transformMatrix: gameEngine.CameraService.PixelTransformMatrix);
+        drawActions.ForEach(x => x());
         spriteBatch.End();
     }
 
@@ -42,7 +45,7 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
             {
                 var pos = worldToPixelConverter.WorldPointToPixel(circle.Center + circle.Offset);
 
-                spriteBatch.DrawCircle(pos, circle.Radius * circle.Scale.X, 10, Color.Purple);
+                spriteBatch.DrawCircle(pos, circle.Radius * circle.Scale.X, 10, Color.Yellow);
             }
                 break;
             case RectangleCollider box:

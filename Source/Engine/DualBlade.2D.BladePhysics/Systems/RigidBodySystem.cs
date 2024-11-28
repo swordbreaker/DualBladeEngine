@@ -15,27 +15,25 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
 
     protected override void OnAdded(ref IEntity entity, ref RigidBody body, ref TransformComponent transform)
     {
-        if (entity.TryGetComponent<ColliderComponent>(out var colliderComponent))
+        if (!entity.TryGetComponent<ColliderComponent>(out var colliderComponent)) return;
+
+        foreach (var collider in colliderComponent.Colliders)
         {
-            foreach (var collider in colliderComponent.Colliders)
-            {
-                physicsManager.Add(collider);
-            }
+            physicsManager.Add(collider);
         }
     }
 
     protected override void OnDestroy(RigidBody body, TransformComponent transform, IEntity entity)
     {
-        if (entity.TryGetComponent<ColliderComponent>(out var colliderComponent))
+        if (!entity.TryGetComponent<ColliderComponent>(out var colliderComponent)) return;
+
+        foreach (var collider in colliderComponent.Colliders)
         {
-            foreach (var collider in colliderComponent.Colliders)
-            {
-                physicsManager.Remove(collider);
-            }
+            physicsManager.Remove(collider);
         }
     }
 
-    protected override void Update(ref RigidBody body, ref TransformComponent transform, ref IEntity entity,
+    protected override void FixedUpdate(ref RigidBody body, ref TransformComponent transform, ref IEntity entity,
         GameTime gameTime)
     {
         var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -70,17 +68,17 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
     {
         foreach (var c in collider.Colliders)
         {
-            if (physicsManager.CalculateCollisions(c).FirstOrDefault() is CollisionInfo info)
+            if (physicsManager.CalculateCollisions(c).FirstOrDefault() is var info)
             {
                 yield return info;
             }
         }
     }
 
-    private Vector2 CalculateImpulse(RigidBody body, CollisionInfo info)
+    private static Vector2 CalculateImpulse(RigidBody body, CollisionInfo info)
     {
         // Calculate impulse based on collision info and object properties
-        var restitution = 0.5f; // Coefficient of restitution
+        const float restitution = 0.5f; // Coefficient of restitution
         var j = -(1 + restitution) * Vector2.Dot(body.Velocity, info.Normal);
         j /= 1 / body.Mass;
         return j * info.Normal;
