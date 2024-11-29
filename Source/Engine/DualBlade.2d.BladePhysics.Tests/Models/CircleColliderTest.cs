@@ -61,7 +61,7 @@ public class CircleColliderTest
     public void HitTestOnRectangleReturnsTrueAndCorrectInfoOnCollision()
     {
         // arrange
-        var circle1 = new CircleCollider(Vector2.Zero, 0.6f);
+        var circle1 = new CircleCollider(Vector2.Zero, 0.8f);
         var rectangle = new RectangleCollider(new Vector2(1, 0), Vector2.One * 0.6f);
 
         // act
@@ -71,6 +71,6 @@ public class CircleColliderTest
         Assert.True(isColliding);
         info.Collider.Should().Be(circle1);
         info.Normal.Should().Be(new Vector2(1, 0));
-        info.ContactPoint.Should().Be(new Vector2(0.6f, 0));
+        info.ContactPoint.Should().Be(new Vector2(0.7f, 0));
     }
 }
