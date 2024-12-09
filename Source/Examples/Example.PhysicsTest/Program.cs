@@ -1,2 +1,5 @@
-﻿using var game = new Example.PhysicsTest.Game1();
-game.Run();
+﻿using Example.PhysicsTest;
+using Microsoft.Extensions.DependencyInjection;
+
+var serviceProvider = new GameServiceProvider();
+serviceProvider.GetRequiredService<MainGame>().Run();

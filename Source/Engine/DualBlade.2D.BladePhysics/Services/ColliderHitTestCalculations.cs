@@ -15,13 +15,13 @@ public static class ColliderHitTestCalculations
         var distance = Vector2.Distance(aCenter, bCenter);
         var radiusSum = aRadius + bRadius;
 
-        var direction = bCenter - aCenter;
+        var direction = aCenter - bCenter;
         var normal = (direction.LengthSquared() > 0)
-            ? Vector2.Normalize(bCenter - aCenter)
+            ? Vector2.Normalize(direction)
             : direction;
 
         var penetrationDepth = radiusSum - distance;
-        var contactPoint = aCenter + normal * aRadius;
+        var contactPoint = aCenter - normal * aRadius;
 
         info = new CollisionInfo
         {
@@ -44,13 +44,13 @@ public static class ColliderHitTestCalculations
 
         var closestX = Math.Max(rectBounds.Left, Math.Min(circleCenter.X, rectBounds.Right));
         var closestY = Math.Max(rectBounds.Top, Math.Min(circleCenter.Y, rectBounds.Bottom));
-        var distanceX = closestX - circleCenter.X;
-        var distanceY = closestY - circleCenter.Y;
+        var distanceX = circleCenter.X - closestX;
+        var distanceY = circleCenter.Y - closestY;
         var distance = MathF.Sqrt(distanceX * distanceX + distanceY * distanceY);
 
         var normal = Vector2.Normalize(new Vector2(distanceX, distanceY));
         var penetrationDepth = radius - distance;
-        var contactPoint = circleCenter + new Vector2(distanceX, distanceY);
+        var contactPoint = circleCenter - new Vector2(distanceX, distanceY);
 
         info = new CollisionInfo
         {
@@ -86,22 +86,27 @@ public static class ColliderHitTestCalculations
         var overlapX = halfWidth - Math.Abs(dx);
         var overlapY = halfHeight - Math.Abs(dy);
 
-        if (overlapX < overlapY)
+        var direction = centerA - centerB;
+        info.Normal = Vector2.Normalize(direction);
+        info.PenetrationDepth = Math.Min(overlapX, overlapY);
+
+        var contactX = info.Normal.X switch
         {
-            var normalX = dx < 0 ? -1 : 1;
-            info.Normal = new Vector2(normalX, 0);
-            info.PenetrationDepth = overlapX;
-        }
-        else
+            > 0 => rectA.Bounds.Left,
+            < 0 => rectA.Bounds.Right,
+            _ => MathF.Max(rectA.Bounds.Left, rectB.Bounds.Left) + overlapX / 2,
+        };
+
+        var contactY = info.Normal.Y switch
         {
-            var normalY = dy < 0 ? -1 : 1;
-            info.Normal = new Vector2(0, normalY);
-            info.PenetrationDepth = overlapY;
-        }
+            > 0 => rectA.Bounds.Top,
+            < 0 => rectA.Bounds.Bottom,
+            _ => MathF.Max(rectA.Bounds.Top, rectB.Bounds.Top) + overlapY / 2,
+        };
 
         info.Collider = rectA;
         info.OtherCollider = rectB;
-        info.ContactPoint = centerA + info.Normal * sizeA / 2;
+        info.ContactPoint = new Vector2(contactX, contactY);
 
         return true;
     }

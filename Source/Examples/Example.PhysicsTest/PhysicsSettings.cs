@@ -1,6 +1,6 @@
 ﻿using DualBlade._2D.BladePhysics.Services;
 
-namespace FluidBattle;
+namespace Example.PhysicsTest;
 
 public class PhysicsSettings : IPhysicsSettings
 {

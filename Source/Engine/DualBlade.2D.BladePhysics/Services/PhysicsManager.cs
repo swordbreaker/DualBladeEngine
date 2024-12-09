@@ -7,9 +7,9 @@ public class PhysicsManager : IPhysicsManager
 {
     private readonly UniformGrid? uniformGrid;
 
-    private readonly Dictionary<RigidBody, List<CollisionInfo>> rigidBodyToCollisions = new();
-    private readonly Dictionary<RigidBody, List<CollisionInfo>> addedCollisions = new();
-    private readonly Dictionary<RigidBody, List<CollisionInfo>> removedCollisions = new();
+    private readonly Dictionary<int, List<CollisionInfo>> rigidBodyToCollisions = new();
+    private readonly Dictionary<int, List<CollisionInfo>> addedCollisions = new();
+    private readonly Dictionary<int, List<CollisionInfo>> removedCollisions = new();
 
     public PhysicsManager(IPhysicsSettings physicsSettings)
     {
@@ -42,7 +42,7 @@ public class PhysicsManager : IPhysicsManager
 
     public void SetCollisions(RigidBody rigidBody, IEnumerable<CollisionInfo> collisions)
     {
-        if (rigidBody.CollectCollisionEvents && rigidBodyToCollisions.TryGetValue(rigidBody, out var oldCollisionInfo))
+        if (rigidBody.CollectCollisionEvents && rigidBodyToCollisions.TryGetValue(rigidBody.Id, out var oldCollisionInfo))
         {
             var oldCollisions = oldCollisionInfo.Select(x => x.Collider).ToHashSet();
             var newCollisions = collisions.Select(x => x.Collider).ToHashSet();
@@ -50,16 +50,16 @@ public class PhysicsManager : IPhysicsManager
             var added = newCollisions.Except(oldCollisions);
             var removed = oldCollisions.Except(newCollisions);
 
-            addedCollisions[rigidBody] = collisions.Where(x => added.Contains(x.Collider)).ToList();
-            removedCollisions[rigidBody] = collisions.Where(x => removed.Contains(x.Collider)).ToList();
+            addedCollisions[rigidBody.Id] = collisions.Where(x => added.Contains(x.Collider)).ToList();
+            removedCollisions[rigidBody.Id] = collisions.Where(x => removed.Contains(x.Collider)).ToList();
         }
 
-        rigidBodyToCollisions[rigidBody] = collisions.ToList();
+        rigidBodyToCollisions[rigidBody.Id] = collisions.ToList();
     }
 
     public IEnumerable<CollisionInfo> GetCollisions(RigidBody rigidBody)
     {
-        if (rigidBodyToCollisions.TryGetValue(rigidBody, out var collisions))
+        if (rigidBodyToCollisions.TryGetValue(rigidBody.Id, out var collisions))
         {
             return collisions;
         }
@@ -75,7 +75,7 @@ public class PhysicsManager : IPhysicsManager
                 $"RigidBody does not collect collision events, set {nameof(RigidBody)}.{nameof(RigidBody.CollectCollisionEvents)} to true");
         }
 
-        return addedCollisions.TryGetValue(rigidBody, out var collisions) ? collisions : [];
+        return addedCollisions.TryGetValue(rigidBody.Id, out var collisions) ? collisions : [];
     }
 
     public IEnumerable<CollisionInfo> GetRemovedCollisions(RigidBody rigidBody)
@@ -86,6 +86,6 @@ public class PhysicsManager : IPhysicsManager
                 $"RigidBody does not collect collision events, set {nameof(RigidBody)}.{nameof(RigidBody.CollectCollisionEvents)} to true");
         }
 
-        return removedCollisions.TryGetValue(rigidBody, out var collisions) ? collisions : [];
+        return removedCollisions.TryGetValue(rigidBody.Id, out var collisions) ? collisions : [];
     }
 }

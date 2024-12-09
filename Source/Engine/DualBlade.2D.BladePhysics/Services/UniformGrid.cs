@@ -9,7 +9,7 @@ public class UniformGrid
 {
     private List<ICollider>[,] grid = new List<ICollider>[0, 0];
 
-    private Dictionary<ICollider, (Vector2i min, Vector2i max)> colliderToMinMax = new();
+    private Dictionary<Guid, (Vector2i min, Vector2i max)> colliderToMinMax = new();
 
     private readonly float cellSize;
     private readonly int rows;
@@ -47,7 +47,9 @@ public class UniformGrid
 
     private void Foreach(ICollider collider, Action<List<ICollider>> action)
     {
-        var (min, max) = colliderToMinMax[collider];
+        if (!colliderToMinMax.TryGetValue(collider.Id, out var minMax)) return;
+
+        var (min, max) = minMax;
 
         for (var y = min.Y; y <= max.Y; y++)
         {
@@ -64,21 +66,21 @@ public class UniformGrid
     public void Insert(ICollider collider)
     {
         var (minX, minY, maxX, maxY) = GetMinMax(collider.AbsoluteBounds());
-        colliderToMinMax[collider] = (new Vector2(minX, minY), new Vector2(maxX, maxY));
+        colliderToMinMax[collider.Id] = (new Vector2(minX, minY), new Vector2(maxX, maxY));
 
         Foreach(collider, colliders => colliders.Add(collider));
     }
 
     public void Remove(ICollider collider)
     {
-        Foreach(collider, colliders => colliders.Remove(collider));
-        colliderToMinMax.Remove(collider);
+        Foreach(collider, colliders => colliders.RemoveAll(c => c.Id == collider.Id));
+        colliderToMinMax.Remove(collider.Id);
     }
 
     public void Update(ICollider collider, Vector2 oldPos, Vector2 newPos)
     {
         var bounds = collider.AbsoluteBounds();
-        var (oldMin, oldMax) = colliderToMinMax[collider];
+        var (oldMin, oldMax) = colliderToMinMax[collider.Id];
 
         var newBound = bounds with { X = newPos.X, Y = newPos.Y };
         var (newMinX, newMinY, newMaxX, newMaxY) = GetMinMax(newBound);
@@ -86,8 +88,8 @@ public class UniformGrid
         if (oldMin.X != newMinX || oldMin.Y != newMinY || oldMax.X != newMaxX || oldMax.Y != newMaxY)
         {
             Remove(collider);
-            colliderToMinMax.Remove(collider);
-            colliderToMinMax.Add(collider, (new(newMinX, newMinY), new(newMaxX, newMaxY)));
+            colliderToMinMax.Remove(collider.Id);
+            colliderToMinMax.Add(collider.Id, (new(newMinX, newMinY), new(newMaxX, newMaxY)));
 
             Insert(collider);
         }
@@ -95,8 +97,8 @@ public class UniformGrid
 
     public IEnumerable<ICollider> Query(ICollider collider)
     {
-        var (min, max) = colliderToMinMax[collider];
-        return Query(min.X, min.Y, max.X, max.Y);
+        var (min, max) = colliderToMinMax[collider.Id];
+        return Query(min.X, min.Y, max.X, max.Y).Where(c => c.Id != collider.Id);
     }
 
     private IEnumerable<ICollider> Query(RectangleF bounds)

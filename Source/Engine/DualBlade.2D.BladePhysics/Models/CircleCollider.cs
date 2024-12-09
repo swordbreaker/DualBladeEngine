@@ -10,11 +10,13 @@ public struct CircleCollider : ICollider
     {
     }
 
-    public CircleCollider(Vector2 center, float radius)
+    public CircleCollider(Vector2 center, float radius) : this()
     {
         Center = center;
         Radius = radius;
     }
+
+    public Guid Id { get; } = Guid.NewGuid();
 
     public float Radius { get; set; } = 1f;
     public Vector2 Center { get; set; } = Vector2.Zero;

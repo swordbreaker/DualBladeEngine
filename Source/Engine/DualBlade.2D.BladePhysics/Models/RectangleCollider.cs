@@ -15,6 +15,8 @@ public struct RectangleCollider : ICollider
         Size = size;
     }
 
+    public Guid Id { get; } = Guid.NewGuid();
+
     public Vector2 Center { get; set; } = Vector2.Zero;
 
     public Vector2 Size { get; set; } = Vector2.One;

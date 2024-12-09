@@ -28,9 +28,9 @@ public class CircleColliderTest
         var isColliding = circle1.HitTest(circle2, out var info);
 
         // assert
-        Assert.True(isColliding);
+        isColliding.Should().BeTrue();
         info.Collider.Should().Be(circle1);
-        info.Normal.Should().Be(new Vector2(1, 0));
+        info.Normal.Should().Be(new Vector2(-1, 0));
         info.ContactPoint.Should().Be(new Vector2(0.6f, 0));
     }
 
@@ -54,7 +54,7 @@ public class CircleColliderTest
         var isColliding = circle1.HitTest(circle2, out var _);
 
         // assert
-        Assert.False(isColliding);
+        isColliding.Should().BeFalse();
     }
 
     [Fact]
@@ -68,9 +68,9 @@ public class CircleColliderTest
         var isColliding = circle1.HitTest(rectangle, out var info);
 
         // assert
-        Assert.True(isColliding);
+        isColliding.Should().BeTrue();
         info.Collider.Should().Be(circle1);
-        info.Normal.Should().Be(new Vector2(1, 0));
+        info.Normal.Should().Be(new Vector2(-1, 0));
         info.ContactPoint.Should().Be(new Vector2(0.7f, 0));
     }
 }

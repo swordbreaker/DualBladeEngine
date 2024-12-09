@@ -4,6 +4,8 @@ namespace DualBlade._2D.BladePhysics.Models;
 
 public interface ICollider
 {
+    Guid Id { get; }
+
     object Tag { get; set; }
 
     Vector2 Offset { get; set; }

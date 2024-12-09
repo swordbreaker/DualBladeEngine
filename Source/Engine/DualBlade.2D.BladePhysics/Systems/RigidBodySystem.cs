@@ -68,7 +68,7 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
     {
         foreach (var c in collider.Colliders)
         {
-            if (physicsManager.CalculateCollisions(c).FirstOrDefault() is var info)
+            if (physicsManager.CalculateCollisions(c).FirstOrDefault() is { Collider: not null } info)
             {
                 yield return info;
             }
@@ -80,7 +80,7 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         // Calculate impulse based on collision info and object properties
         const float restitution = 0.5f; // Coefficient of restitution
         var j = -(1 + restitution) * Vector2.Dot(body.Velocity, info.Normal);
-        j /= 1 / body.Mass;
+        j /= 1 / (body.Mass + 0.000001f);
         return j * info.Normal;
     }
 }
