@@ -35,7 +35,7 @@ public struct RectangleCollider : ICollider
         return collider switch
         {
             RectangleCollider other => ColliderHitTestCalculations.HitTest(this, other, out info),
-            CircleCollider other => ColliderHitTestCalculations.HitTest(other, this, out info),
+            CircleCollider other => ColliderHitTestCalculations.HitTest(this, other, out info),
             _ => false
         };
     }

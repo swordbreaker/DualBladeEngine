@@ -26,7 +26,7 @@ public class MainGame : BaseGame
         World.AddSystem<MyraDesktopSystem>();
         World.AddSystem<ColliderSystem>();
         World.AddSystem<RigidBodySystem>();
-        World.AddSystem<DebugColliderSystem>();
+        //World.AddSystem<DebugColliderSystem>();
     }
 
     protected override void Initialize()

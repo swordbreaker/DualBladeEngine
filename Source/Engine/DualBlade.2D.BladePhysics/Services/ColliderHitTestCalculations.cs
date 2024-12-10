@@ -35,8 +35,16 @@ public static class ColliderHitTestCalculations
         return distance <= radiusSum;
     }
 
+    public static bool HitTest(RectangleCollider rectangle, CircleCollider circle, out CollisionInfo info)
+    {
+        return HitTest(circle, rectangle, false, out info);
+    }
+
     public static bool HitTest(CircleCollider circle, RectangleCollider rectangle, out CollisionInfo info)
     {
+        return HitTest(circle, rectangle, true, out info);
+
+
         var circleCenter = circle.Center + circle.Offset;
         var radius = circle.Radius * circle.Scale.X;
 
@@ -64,9 +72,49 @@ public static class ColliderHitTestCalculations
         return distance < radius;
     }
 
+    private static bool HitTest(CircleCollider circle, RectangleCollider rectangle, bool isCirclePrimary, out CollisionInfo info)
+    {
+        var circleCenter = circle.Center + circle.Offset;
+        var radius = circle.Radius * circle.Scale.X;
+
+        var rectBounds = rectangle.AbsoluteBounds();
+
+        var closestX = Math.Max(rectBounds.Left, Math.Min(circleCenter.X, rectBounds.Right));
+        var closestY = Math.Max(rectBounds.Top, Math.Min(circleCenter.Y, rectBounds.Bottom));
+        var distanceX = circleCenter.X - closestX;
+        var distanceY = circleCenter.Y - closestY;
+        var distance = MathF.Sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        var normal = (isCirclePrimary)
+            ? Vector2.Normalize(new Vector2(distanceX, distanceY))
+            : Vector2.Normalize(new Vector2(-distanceX, -distanceY));
+
+        var penetrationDepth = radius - distance;
+        var contactPoint = new Vector2(closestX, closestY);
+
+        info = new CollisionInfo
+        {
+            Collider = isCirclePrimary ? circle : rectangle,
+            OtherCollider = isCirclePrimary ? rectangle : circle,
+            Normal = normal,
+            PenetrationDepth = penetrationDepth,
+            ContactPoint = contactPoint
+        };
+
+        return distance < radius;
+    }
+
     public static bool HitTest(RectangleCollider rectA, RectangleCollider rectB, out CollisionInfo info)
     {
         info = default;
+
+        var boundsA = rectA.AbsoluteBounds();
+        var boundsB = rectB.AbsoluteBounds();
+
+        if (!boundsA.IntersectsWith(boundsB))
+        {
+            return false;
+        }
 
         var centerA = rectA.Center + rectA.Offset;
         var centerB = rectB.Center + rectB.Offset;
@@ -92,16 +140,16 @@ public static class ColliderHitTestCalculations
 
         var contactX = info.Normal.X switch
         {
-            > 0 => rectA.Bounds.Left,
-            < 0 => rectA.Bounds.Right,
-            _ => MathF.Max(rectA.Bounds.Left, rectB.Bounds.Left) + overlapX / 2,
+            > 0 => boundsA.Right,
+            < 0 => boundsB.Left,
+            _ => MathF.Max(boundsA.Left, boundsB.Left) + overlapX / 2,
         };
 
         var contactY = info.Normal.Y switch
         {
-            > 0 => rectA.Bounds.Top,
-            < 0 => rectA.Bounds.Bottom,
-            _ => MathF.Max(rectA.Bounds.Top, rectB.Bounds.Top) + overlapY / 2,
+            > 0 => boundsA.Top,
+            < 0 => boundsA.Bottom,
+            _ => MathF.Max(boundsA.Top, boundsB.Top) + overlapY / 2,
         };
 
         info.Collider = rectA;

@@ -31,6 +31,8 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
         {
             drawActions.Add(() => Draw(collider));
         }
+
+        //drawActions.Add(DrawGrid);
     }
 
     public override void Draw(GameTime gameTime)
@@ -44,6 +46,25 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
         drawActions.ForEach(x => x());
         spriteBatch.End();
     }
+
+    private void DrawGrid()
+    {
+        var p = (PhysicsManager)physicsManager;
+
+        for (var y = 0; y <= p.uniformGrid.rows; y++)
+        {
+            for (var x = 0; x <= p.uniformGrid.cols; x++)
+            {
+                var pos = new Vector2(x, y) * p.uniformGrid.cellSize - p.uniformGrid.offset;
+
+                var pixelPos = worldToPixelConverter.WorldPointToPixel(pos);
+                var scale = worldToPixelConverter.WorldSizeToPixel(new Vector2(p.uniformGrid.cellSize));
+
+                spriteBatch.DrawRectangle(new RectangleF(pixelPos, scale), Color.Azure);
+            }
+        }
+    }
+
     private void Draw(RigidBody rigidBody)
     {
         var collisions = physicsManager.GetNewCollisions(rigidBody);
@@ -52,6 +73,8 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
         {
             var pos = worldToPixelConverter.WorldPointToPixel(collision.ContactPoint);
             spriteBatch.DrawCircle(pos, 5, 10, Color.Red);
+
+            spriteBatch.DrawLine(pos, collision.Normal * collision.PenetrationDepth, Color.Yellow);
         }
     }
 
@@ -72,6 +95,8 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
                     var bounds = box.AbsoluteBounds();
                     var pos = worldToPixelConverter.WorldPointToPixel(bounds.Location.ToVector2());
                     var scale = worldToPixelConverter.WorldSizeToPixel(bounds.Size.ToVector2());
+
+                    pos -= new Vector2(0, scale.Y);
                     spriteBatch.DrawRectangle(new RectangleF(pos.X, pos.Y, scale.X, scale.Y),
                         Color.Purple);
                 }

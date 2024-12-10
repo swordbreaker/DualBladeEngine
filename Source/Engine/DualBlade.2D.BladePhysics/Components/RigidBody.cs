@@ -1,4 +1,5 @@
-﻿using DualBlade.Core.Components;
+﻿using DualBlade._2D.BladePhysics.Models;
+using DualBlade.Core.Components;
 
 namespace DualBlade._2D.BladePhysics.Components;
 public partial struct RigidBody : IComponent
@@ -7,4 +8,6 @@ public partial struct RigidBody : IComponent
     public Vector2 Acceleration;
     public float Mass = 1;
     public bool CollectCollisionEvents;
+
+    internal Vector2 CorrectionVector;
 }

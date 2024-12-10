@@ -5,11 +5,11 @@ namespace DualBlade._2D.BladePhysics.Services;
 
 public class PhysicsManager : IPhysicsManager
 {
-    private readonly UniformGrid? uniformGrid;
+    internal readonly UniformGrid? uniformGrid;
 
-    private readonly Dictionary<int, List<CollisionInfo>> rigidBodyToCollisions = new();
-    private readonly Dictionary<int, List<CollisionInfo>> addedCollisions = new();
-    private readonly Dictionary<int, List<CollisionInfo>> removedCollisions = new();
+    private readonly Dictionary<int, List<CollisionInfo>> rigidBodyToCollisions = [];
+    private readonly Dictionary<int, List<CollisionInfo>> addedCollisions = [];
+    private readonly Dictionary<int, List<CollisionInfo>> removedCollisions = [];
 
     public PhysicsManager(IPhysicsSettings physicsSettings)
     {

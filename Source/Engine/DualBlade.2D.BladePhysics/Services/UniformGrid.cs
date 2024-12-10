@@ -9,12 +9,12 @@ public class UniformGrid
 {
     private List<ICollider>[,] grid = new List<ICollider>[0, 0];
 
-    private Dictionary<Guid, (Vector2i min, Vector2i max)> colliderToMinMax = new();
+    private Dictionary<Guid, (Vector2i min, Vector2i max)> colliderToMinMax = [];
 
-    private readonly float cellSize;
-    private readonly int rows;
-    private readonly int cols;
-    private readonly Vector2 offset;
+    internal readonly float cellSize;
+    internal readonly int rows;
+    internal readonly int cols;
+    internal readonly Vector2 offset;
 
     public UniformGrid(float cellSize, float width, float height)
     {
