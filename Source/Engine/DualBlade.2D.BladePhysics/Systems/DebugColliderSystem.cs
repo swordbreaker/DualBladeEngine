@@ -74,7 +74,7 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
             var pos = worldToPixelConverter.WorldPointToPixel(collision.ContactPoint);
             spriteBatch.DrawCircle(pos, 5, 10, Color.Red);
 
-            spriteBatch.DrawLine(pos, collision.Normal * collision.PenetrationDepth, Color.Yellow);
+            spriteBatch.DrawLine(pos, pos + collision.Normal * collision.PenetrationDepth, Color.Black, 3);
         }
     }
 

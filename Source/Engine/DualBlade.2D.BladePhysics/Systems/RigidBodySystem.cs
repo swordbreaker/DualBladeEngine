@@ -100,7 +100,7 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         // A value of 1 represents a perfectly elastic collision, where objects rebound with the same relative speed but in opposite directions.
         // A value of 0 indicates a perfectly inelastic collision, where objects do not rebound and end up touching.
         // Most real-world collisions fall between 0 and 1, indicating partial conservation of kinetic energy.
-        const float restitution = 0.5f; // Coefficient of restitution
+        const float restitution = 0f; // Coefficient of restitution
         var j = -(1 + restitution) * Vector2.Dot(body.Velocity, info.Normal);
         j /= 1 / (body.Mass + 0.000001f);
         return j * info.Normal;
