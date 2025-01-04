@@ -3,6 +3,7 @@ using DualBlade._2D.BladePhysics.Models;
 using DualBlade._2D.Rendering.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
+using Example.PhysicsTest.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,5 +40,6 @@ public partial struct SquareEntity : IEntity
         AddComponent(renderer);
         AddComponent(collider);
         AddComponent(rigidBody);
+        AddComponent(new ConstantVelocityComponent { Velocity = velocity });
     }
 }

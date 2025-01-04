@@ -23,8 +23,6 @@ public struct CircleCollider : ICollider
 
     public readonly RectangleF Bounds => new(Center.X - Radius, Center.Y - Radius, Radius * 2, Radius * 2);
     public bool IsTrigger { get; set; } = false;
-    public bool IsStatic { get; set; } = false;
-    public bool IsKinematic { get; set; } = true;
     public Vector2 Offset { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
     public object Tag { get; set; }

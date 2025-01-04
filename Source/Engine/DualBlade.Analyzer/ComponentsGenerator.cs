@@ -13,22 +13,40 @@ public class ComponentsGenerator : IIncrementalGenerator
     {
         var componentProvider = context.SyntaxProvider.CreateSyntaxProvider(IsComponent, GetECInfo);
 
-        context.RegisterSourceOutput(componentProvider, (spc, tuple) =>
+        context.RegisterSourceOutput(componentProvider, (spc, info) =>
         {
-            var (structName, ns, hasDefaultCtor) = tuple;
-            var code = GenerateComponentCode(structName, ns, hasDefaultCtor);
+            var code = GenerateComponentCode(info);
             code = FormatSource(code);
-            spc.AddSource($"{structName}.generated.cs", code);
+            spc.AddSource($"{info.StructName}.generated.cs", code);
         });
     }
 
-    private string GenerateComponentCode(string structName, string ns, bool hasDefaultCtor)
+    private string GenerateComponentCode(ComponentInfo info)
     {
+        var (structName, ns, usings, hasDefaultCtor, fields) = info;
+
         var ctor = !hasDefaultCtor ? $"public {structName}() {{ }}" : "";
+        var usingBlock = string.Join("\n", usings);
+
+        var fieldSetters = fields.Select(f =>
+        {
+            var fieldName = f.Declaration.Variables.First().Identifier.Text;
+            var type = f.Declaration.Type.ToString();
+            return $$"""
+                public {{structName}} Set{{fieldName}}({{type}} newValue)
+                {
+                    this.{{fieldName}} = newValue;
+                    return this;
+                }
+            """;
+        });
+
+        var fieldBlock = string.Join("\n", fieldSetters);
 
         return $$"""
             using DualBlade.Core.Components;
             using System.Runtime.InteropServices;
+            {{usingBlock}}
 
             namespace {{ns}};
 
@@ -39,6 +57,8 @@ public class ComponentsGenerator : IIncrementalGenerator
 
                 public int Id { get; set; }
                 public int EntityId { get; set; }
+
+                {{fieldBlock}}
             }
             """;
     }

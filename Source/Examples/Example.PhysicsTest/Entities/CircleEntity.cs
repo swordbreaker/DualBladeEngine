@@ -3,6 +3,7 @@ using DualBlade._2D.BladePhysics.Models;
 using DualBlade._2D.Rendering.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
+using Example.PhysicsTest.Components;
 
 namespace Example.PhysicsTest.Entities;
 
@@ -34,5 +35,6 @@ public partial struct CircleEntity : IEntity
         AddComponent(renderer);
         AddComponent(collider);
         AddComponent(rigidBody);
+        AddComponent(new ConstantVelocityComponent { Velocity = velocity });
     }
 }

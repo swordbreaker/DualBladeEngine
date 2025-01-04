@@ -7,7 +7,7 @@ namespace DualBlade._2D.BladePhysics.Services;
 
 public class UniformGrid
 {
-    private List<ICollider>[,] grid = new List<ICollider>[0, 0];
+    internal List<ICollider>[,] grid = new List<ICollider>[0, 0];
 
     private Dictionary<Guid, (Vector2i min, Vector2i max)> colliderToMinMax = [];
 

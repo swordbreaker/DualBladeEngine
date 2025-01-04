@@ -76,6 +76,16 @@ public struct Entity : IEntity
     }
 
     /// <inheritdoc />
+    public readonly void UpdateComponent<TComponent>(Func<TComponent, TComponent> update) where TComponent : IComponent
+    {
+        if (InternalComponents.TryFind(x => x is TComponent, out var comp))
+        {
+            var updated = update((TComponent)comp);
+            InternalComponents[comp.Id] = updated;
+        }
+    }
+
+    /// <inheritdoc />
     public ComponentProxy<TComponent> AddComponent<TComponent>(TComponent component) where TComponent : IComponent
     {
         if (ComponentTypes.Span.Contains(typeof(TComponent)))

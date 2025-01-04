@@ -6,14 +6,13 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MonoGame.Extended.Tweening;
 
 namespace DualBlade._2D.BladePhysics.Systems;
 
 public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBody, TransformComponent>(gameContext)
 {
     private readonly IPhysicsManager physicsManager = gameContext.ServiceProvider.GetRequiredService<IPhysicsManager>();
+    private readonly IPhysicsSettings physicsSettings = gameContext.ServiceProvider.GetRequiredService<IPhysicsSettings>();
 
     protected override void OnAdded(ref IEntity entity, ref RigidBody body, ref TransformComponent transform)
     {
@@ -37,9 +36,10 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
 
     protected override void Update(ref RigidBody body, ref TransformComponent transform, ref IEntity entity, GameTime gameTime)
     {
+        if (body.IsStatic) return;
+
         var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        body.Velocity += body.Acceleration * dt;
         var newPos = transform.Position + body.Velocity * dt;
 
         if (entity.TryGetComponent<ColliderComponent>(out var collider))
@@ -51,36 +51,45 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         }
 
         transform.Position = newPos + body.CorrectionVector;
+        body.CorrectionVector = Vector2.Zero;
     }
 
     protected override void FixedUpdate(ref RigidBody body, ref TransformComponent transform, ref IEntity entity,
         GameTime gameTime)
     {
-        //var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        //body.Velocity += body.Acceleration * dt;
-        //var newPos = transform.Position + body.Velocity * dt;
-
-        if (entity.TryGetComponent<ColliderComponent>(out var collider))
+        if (body.IsStatic)
         {
-            var collisions = GetCollisions(collider).ToArray();
-
-            var correctionVector = Vector2.Zero;
-
-            foreach (var info in collisions)
+            if (entity.TryGetComponent<ColliderComponent>(out var staticCollider))
             {
-                var impulse = CalculateImpulse(body, info);
-                body.Velocity += impulse / body.Mass;
-
-                correctionVector += info.Normal * info.PenetrationDepth;
+                var collisions = GetCollisions(staticCollider).ToArray();
+                physicsManager.SetCollisions(body, collisions);
             }
-
-            body.CorrectionVector = correctionVector;
-            physicsManager.SetCollisions(body, collisions);
         }
+        else
+        {
+            var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            body.Velocity += body.Acceleration * physicsSettings.Gravity * dt;
 
-        //transform.Position = newPos;
+            if (entity.TryGetComponent<ColliderComponent>(out var collider))
+            {
+                var collisions = GetCollisions(collider).ToArray();
+                var correctionVector = Vector2.Zero;
+
+                foreach (var info in collisions)
+                {
+                    var impulse = CalculateImpulse(body, info);
+                    body.Velocity += impulse / body.Mass;
+
+                    correctionVector += info.Normal * info.PenetrationDepth;
+                }
+
+                body.CorrectionVector = correctionVector;
+                physicsManager.SetCollisions(body, collisions);
+            }
+        }
     }
+
+
 
     private IEnumerable<CollisionInfo> GetCollisions(ColliderComponent collider)
     {

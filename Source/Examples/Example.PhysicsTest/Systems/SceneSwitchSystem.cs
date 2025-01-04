@@ -24,5 +24,9 @@ public class SceneSwitchSystem(IGameContext gameContext) : BaseSystem(gameContex
         {
             sceneManager.AddSceneExclusively(new CircleAndSquareScene(GameContext));
         }
+        else if (inputManager.IsKeyJustPressed(Keys.D4))
+        {
+            sceneManager.AddSceneExclusively(new GravityScene(GameContext));
+        }
     }
 }

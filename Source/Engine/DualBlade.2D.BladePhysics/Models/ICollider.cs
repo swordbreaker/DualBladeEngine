@@ -16,9 +16,5 @@ public interface ICollider
 
     bool IsTrigger { get; set; }
 
-    bool IsStatic { get; set; }
-
-    bool IsKinematic { get; set; }
-
     bool HitTest(ICollider collider, out CollisionInfo info);
 }

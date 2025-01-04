@@ -32,7 +32,7 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
             drawActions.Add(() => Draw(collider));
         }
 
-        //drawActions.Add(DrawGrid);
+        drawActions.Add(DrawGrid);
     }
 
     public override void Draw(GameTime gameTime)
@@ -51,16 +51,27 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
     {
         var p = (PhysicsManager)physicsManager;
 
-        for (var y = 0; y <= p.uniformGrid.rows; y++)
+        for (var y = 0; y < p.uniformGrid.rows; y++)
         {
-            for (var x = 0; x <= p.uniformGrid.cols; x++)
+            for (var x = 0; x < p.uniformGrid.cols; x++)
             {
                 var pos = new Vector2(x, y) * p.uniformGrid.cellSize - p.uniformGrid.offset;
 
                 var pixelPos = worldToPixelConverter.WorldPointToPixel(pos);
                 var scale = worldToPixelConverter.WorldSizeToPixel(new Vector2(p.uniformGrid.cellSize));
 
-                spriteBatch.DrawRectangle(new RectangleF(pixelPos, scale), Color.Azure);
+                var l = p.uniformGrid.grid[y, x].Count;
+
+                var color = l switch
+                {
+                    0 => Color.Green,
+                    1 => Color.Yellow,
+                    2 => Color.Orange,
+                    3 => Color.Red,
+                    _ => Color.Purple
+                };
+
+                spriteBatch.DrawRectangle(new RectangleF(pixelPos, scale), color);
             }
         }
     }

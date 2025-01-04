@@ -16,12 +16,14 @@ public static class GeneratorUtils
             .GetText(Encoding.UTF8)
             .ToString();
 
-    public static (string structName, string ns, bool hasDefaultCtor) GetECInfo(GeneratorSyntaxContext context, CancellationToken token)
+    public static ComponentInfo GetECInfo(GeneratorSyntaxContext context, CancellationToken token)
     {
         var structDeclaration = (StructDeclarationSyntax)context.Node;
         var symbol = context.SemanticModel.GetDeclaredSymbol(structDeclaration);
         var ns = symbol.ContainingNamespace.ToString();
+        var usings = context.Node.SyntaxTree.GetRoot().DescendantNodes().OfType<UsingDirectiveSyntax>().Select(x => x.ToString());
         var hasDefaultCtor = structDeclaration.Members.OfType<ConstructorDeclarationSyntax>().Any(x => x.ParameterList.Parameters.Count == 0);
-        return (structName: structDeclaration.Identifier.Text, ns, hasDefaultCtor);
+        var fields = structDeclaration.Members.OfType<FieldDeclarationSyntax>();
+        return new(structDeclaration.Identifier.Text, ns, usings, hasDefaultCtor, fields);
     }
 }

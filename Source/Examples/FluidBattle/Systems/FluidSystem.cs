@@ -43,12 +43,12 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
         }
     }
 
-    private bool OnCollision(FluidEntity thisEntity, FluidComponent thisFluidComp, RigidBody thisBody,
+    private void OnCollision(FluidEntity thisEntity, FluidComponent thisFluidComp, RigidBody thisBody,
         CollisionInfo info)
     {
         if (info.Collider.Tag is not FluidEntity otherEntity)
         {
-            return true;
+            return;
         }
 
         var otherFluidComp = otherEntity.FluidComponentCopy;
@@ -58,8 +58,16 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
 
         if (thisFluidComp.Player == otherFluidComp.Player)
         {
-            return true;
+            return;
         }
+
+        if (thisFluidComp.isDirty || otherFluidComp.isDirty)
+        {
+            return;
+        }
+
+        thisFluidComp.isDirty = true;
+        otherFluidComp.isDirty = true;
 
         float thisP;
         if (thisFluidComp.Player < 0)
@@ -91,8 +99,6 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
         {
             TransformOther(otherFluidComp, thisFluidComp, thisEntity);
         }
-
-        return true;
     }
 
     private static (float, float) Softmax(float a, float b)
@@ -123,7 +129,12 @@ public class FluidSystem : ComponentSystem<RigidBody, FluidComponent>
         Ecs.UpdateComponent(otherEntity, otherFluid);
     }
 
-    protected override void Update(ref RigidBody body, ref FluidComponent fluid, ref IEntity entity, GameTime gameTime)
+    protected override void Update(ref RigidBody component1, ref FluidComponent component2, ref IEntity entity, GameTime gameTime)
+    {
+
+    }
+
+    protected override void FixedUpdate(ref RigidBody body, ref FluidComponent fluid, ref IEntity entity, GameTime gameTime)
     {
         if (fluid.Player < 0)
         {

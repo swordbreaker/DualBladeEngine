@@ -29,6 +29,7 @@ public class MainGame : BaseGame
         World.AddSystem<ColliderSystem>();
         World.AddSystem<RigidBodySystem>();
         World.AddSystem<DebugColliderSystem>();
+        World.AddSystem(new ConstantVelocitySystem(this.Context));
     }
 
     protected override void Initialize()

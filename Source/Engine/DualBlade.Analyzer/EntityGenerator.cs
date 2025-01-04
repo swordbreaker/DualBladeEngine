@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace DualBlade.Analyzer;
 
-public record struct ComponentInfo(
+public record struct EntityInfo(
     string StructName,
     string Namespace,
     bool HasDefaultCtor,
@@ -21,7 +21,7 @@ public class EntityGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var componentProvider = context.SyntaxProvider.CreateSyntaxProvider(IsEntity, (context, token) =>
+        var componentProvider = context.SyntaxProvider.CreateSyntaxProvider(IsEntity, (System.Func<GeneratorSyntaxContext, CancellationToken, EntityInfo>)((context, token) =>
         {
             var structDeclaration = (StructDeclarationSyntax)context.Node;
             var symbol = context.SemanticModel.GetDeclaredSymbol(structDeclaration);
@@ -45,8 +45,8 @@ public class EntityGenerator : IIncrementalGenerator
                 // get full name
                 .Select(x => x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
-            return new ComponentInfo(structDeclaration.Identifier.Text, ns, hasDefaultCtor, componentsToAdd, requireComponents);
-        });
+            return new EntityInfo(structDeclaration.Identifier.Text, ns, hasDefaultCtor, componentsToAdd, requireComponents);
+        }));
 
         context.RegisterSourceOutput(componentProvider, (spc, info) =>
         {
@@ -166,6 +166,15 @@ public class EntityGenerator : IIncrementalGenerator
                 {
                     component.EntityId = this.Id;
                     InternalComponents[component.Id] = component;
+                }
+
+                /// <inheritdoc />
+                public readonly void UpdateComponent<TComponent>(Func<TComponent, TComponent> update) where TComponent : IComponent
+                {
+                    if(this.TryGetComponent<TComponent>(out var comp))
+                    {
+                        InternalComponents[comp.Id] = update(comp);
+                    }
                 }
 
                 /// <inheritdoc />

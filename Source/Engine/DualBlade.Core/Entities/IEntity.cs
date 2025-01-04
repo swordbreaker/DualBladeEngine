@@ -63,6 +63,11 @@ public interface IEntity
     void UpdateComponent<TComponent>(TComponent component) where TComponent : IComponent;
 
     /// <summary>
+    /// Update a component on the entity.
+    /// </summary>
+    void UpdateComponent<TComponent>(Func<TComponent, TComponent> update) where TComponent : IComponent;
+
+    /// <summary>
     /// Internal components collection, do not use this directly.
     /// </summary>
     GrowableMemory<IComponent> InternalComponents { get; }

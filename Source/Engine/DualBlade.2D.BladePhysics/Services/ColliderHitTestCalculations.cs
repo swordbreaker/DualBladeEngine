@@ -35,42 +35,11 @@ public static class ColliderHitTestCalculations
         return distance <= radiusSum;
     }
 
-    public static bool HitTest(RectangleCollider rectangle, CircleCollider circle, out CollisionInfo info)
-    {
-        return HitTest(circle, rectangle, false, out info);
-    }
+    public static bool HitTest(RectangleCollider rectangle, CircleCollider circle, out CollisionInfo info) =>
+        HitTest(circle, rectangle, false, out info);
 
-    public static bool HitTest(CircleCollider circle, RectangleCollider rectangle, out CollisionInfo info)
-    {
-        return HitTest(circle, rectangle, true, out info);
-
-
-        var circleCenter = circle.Center + circle.Offset;
-        var radius = circle.Radius * circle.Scale.X;
-
-        var rectBounds = rectangle.AbsoluteBounds();
-
-        var closestX = Math.Max(rectBounds.Left, Math.Min(circleCenter.X, rectBounds.Right));
-        var closestY = Math.Max(rectBounds.Top, Math.Min(circleCenter.Y, rectBounds.Bottom));
-        var distanceX = circleCenter.X - closestX;
-        var distanceY = circleCenter.Y - closestY;
-        var distance = MathF.Sqrt(distanceX * distanceX + distanceY * distanceY);
-
-        var normal = Vector2.Normalize(new Vector2(distanceX, distanceY));
-        var penetrationDepth = radius - distance;
-        var contactPoint = circleCenter - new Vector2(distanceX, distanceY);
-
-        info = new CollisionInfo
-        {
-            Collider = circle,
-            OtherCollider = rectangle,
-            Normal = normal,
-            PenetrationDepth = penetrationDepth,
-            ContactPoint = contactPoint
-        };
-
-        return distance < radius;
-    }
+    public static bool HitTest(CircleCollider circle, RectangleCollider rectangle, out CollisionInfo info) =>
+        HitTest(circle, rectangle, true, out info);
 
     private static bool HitTest(CircleCollider circle, RectangleCollider rectangle, bool isCirclePrimary, out CollisionInfo info)
     {
@@ -157,5 +126,61 @@ public static class ColliderHitTestCalculations
         info.ContactPoint = new Vector2(contactX, contactY);
 
         return true;
+    }
+
+    public static bool HitTest(PolygonCollider a, PolygonCollider b, out CollisionInfo info)
+    {
+        info = new CollisionInfo(a, b, Vector2.Zero, 0, Vector2.Zero);
+
+        // Implement Separating Axis Theorem (SAT) for polygon-polygon collision
+        var axes = a.Axes.Concat(b.Axes);
+
+        float minOverlap = float.MaxValue;
+        Vector2 minAxis = Vector2.Zero;
+
+        foreach (var axis in axes)
+        {
+            var projectionA = Project(a, axis);
+            var projectionB = Project(b, axis);
+
+            if (!projectionA.Overlaps(projectionB))
+            {
+                return false;
+            }
+
+            float overlap = projectionA.GetOverlap(projectionB);
+            if (overlap < minOverlap)
+            {
+                minOverlap = overlap;
+                minAxis = axis;
+            }
+        }
+
+        // Calculate collision normal and penetration depth
+        var normal = minAxis;
+        if (Vector2.Dot(b.Center - a.Center, normal) < 0)
+        {
+            normal = -normal;
+        }
+
+        var contactPoint = 
+
+        info = new CollisionInfo(a, b, normal, minOverlap, CalculateContactPoint(a, b, normal));
+        return true;
+    }
+
+    private static (float Min, float Max) Project(PolygonCollider polygon, Vector2 axis)
+    {
+        float min = float.MaxValue;
+        float max = float.MinValue;
+
+        foreach (var vertex in polygon.Vertices)
+        {
+            float projection = Vector2.Dot(vertex, axis);
+            min = Math.Min(min, projection);
+            max = Math.Max(max, projection);
+        }
+
+        return (min, max);
     }
 }
