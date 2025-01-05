@@ -6,6 +6,7 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Scenes;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
+using Example.PhysicsTest.Components;
 using Example.PhysicsTest.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -34,8 +35,9 @@ public class GravityScene : GameScene
 
     protected override IEnumerable<EntityBuilder> SetupEntities()
     {
-        var leftSquare = new SquareEntity(GameContext, new Vector2(-2, 0), Vector2.Zero);
-        var rightSquare = new SquareEntity(GameContext, new Vector2(2, 0), Vector2.Zero);
+        var leftSquare = new PolySquareEntity(GameContext, new Vector2(-2, 0), Vector2.Zero);
+        var rightSquare = new PolySquareEntity(GameContext, new Vector2(2, 0), Vector2.Zero);
+        var ball = new CircleEntity(GameContext, new Vector2(-1, 0), new Vector2(0, 0));
 
         leftSquare.UpdateComponent<RigidBody>(r => r.SetIsStatic(true));
         leftSquare.UpdateComponent<TransformComponent>(t =>
@@ -52,7 +54,10 @@ public class GravityScene : GameScene
             return t;
         });
 
+        ball.RemoveComponent<ConstantVelocityComponent>();
+
         yield return CreateEntity(leftSquare);
         yield return CreateEntity(rightSquare);
+        yield return CreateEntity(ball);
     }
 }

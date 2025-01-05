@@ -20,8 +20,11 @@ public class ColliderSystem(IGameContext gameContext) : ComponentSystem<Collider
 
         foreach (var collider in colliderComponent.Colliders)
         {
-            collider.Offset = Ecs.AbsolutePosition(entity);
-            collider.Scale = Ecs.AbsoluteScale(entity);
+            collider.Update(
+                Ecs.AbsolutePosition(entity),
+                Ecs.AbsoluteScale(entity),
+                Ecs.AbsoluteRotation(entity)
+            );
 
             _physicsManager.Add(collider);
         }
@@ -40,15 +43,20 @@ public class ColliderSystem(IGameContext gameContext) : ComponentSystem<Collider
 
     protected override void Update(ref ColliderComponent component, ref IEntity entity, GameTime gameTime)
     {
-        if (!entity.TryGetComponent<TransformComponent>(out var transform))
+        if (!entity.HasComponent<TransformComponent>())
         {
             return;
         }
 
         foreach (var collider in component.Colliders)
         {
-            collider.Offset = Ecs.AbsolutePosition(entity);
-            collider.Scale = Ecs.AbsoluteScale(entity);
+            if (collider.Update(
+                Ecs.AbsolutePosition(entity),
+                Ecs.AbsoluteScale(entity),
+                Ecs.AbsoluteRotation(entity)))
+            {
+                _physicsManager.Update(collider);
+            }
         }
     }
 }

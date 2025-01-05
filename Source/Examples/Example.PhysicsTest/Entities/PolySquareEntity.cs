@@ -11,9 +11,10 @@ namespace Example.PhysicsTest.Entities;
 [RequiredComponent<RenderComponent>]
 [RequiredComponent<ColliderComponent>]
 [RequiredComponent<RigidBody>]
-public partial struct SquareEntity : IEntity
+public partial struct PolySquareEntity : IEntity
 {
-    public SquareEntity(IGameContext context, Vector2 position, Vector2 velocity)
+
+    public PolySquareEntity(IGameContext context, Vector2 position, Vector2 velocity)
     {
         InitComponents();
 
@@ -23,7 +24,13 @@ public partial struct SquareEntity : IEntity
         var renderer = new RenderComponent();
         renderer.SetSprite(sprite);
 
-        var collider = new ColliderComponent(new RectangleCollider(Vector2.Zero, new Vector2(sprite.Width, sprite.Height)));
+        var collider = new ColliderComponent(
+            new PolygonCollider([
+                new Vector2(-sprite.Width / 2, -sprite.Height / 2),
+                new Vector2(sprite.Width / 2, -sprite.Height / 2),
+                new Vector2(sprite.Width / 2, sprite.Height / 2),
+                new Vector2(-sprite.Width / 2, sprite.Height / 2)
+            ]));
 
         var rigidBody = new RigidBody()
         {

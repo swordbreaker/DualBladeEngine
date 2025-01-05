@@ -1,5 +1,9 @@
 ﻿using DualBlade._2D.BladePhysics.Extensions;
 using DualBlade._2D.BladePhysics.Models;
+using Microsoft.VisualBasic;
+using System.Threading.Tasks.Sources;
+using System.Xml.Xsl;
+using static DualBlade._2D.BladePhysics.Services.Polygon.PolygonHelperFunctions;
 
 namespace DualBlade._2D.BladePhysics.Services;
 
@@ -163,24 +167,72 @@ public static class ColliderHitTestCalculations
             normal = -normal;
         }
 
-        var contactPoint = 
+        var contactPoint = GetCollisionPoint(a, b, normal, minOverlap);
 
-        info = new CollisionInfo(a, b, normal, minOverlap, CalculateContactPoint(a, b, normal));
+        info = new CollisionInfo(a, b, normal, minOverlap, contactPoint);
         return true;
     }
 
-    private static (float Min, float Max) Project(PolygonCollider polygon, Vector2 axis)
+    public static bool HitTest(PolygonCollider a, RectangleCollider b, out CollisionInfo info)
     {
-        float min = float.MaxValue;
-        float max = float.MinValue;
+        var bounds = b.AbsoluteBounds();
 
-        foreach (var vertex in polygon.Vertices)
+        var polyB = new PolygonCollider(
+        [
+            new Vector2(bounds.Left, bounds.Top),
+            new Vector2(bounds.Right, bounds.Top),
+            new Vector2(bounds.Right, bounds.Bottom),
+            new Vector2(bounds.Left, bounds.Bottom)
+        ]);
+
+        return HitTest(a, polyB, out info);
+    }
+
+    public static bool HitTest(RectangleCollider a, PolygonCollider b, out CollisionInfo info)
+    {
+        var bounds = a.AbsoluteBounds();
+        var polyA = new PolygonCollider(
+        [
+            new Vector2(bounds.Left, bounds.Top),
+            new Vector2(bounds.Right, bounds.Top),
+            new Vector2(bounds.Right, bounds.Bottom),
+            new Vector2(bounds.Left, bounds.Bottom)
+        ]);
+
+        return HitTest(polyA, b, out info);
+    }
+
+    public static bool HitTest(PolygonCollider a, CircleCollider b, out CollisionInfo info)
+    {
+        info = new CollisionInfo(a, b, Vector2.Zero, 0, Vector2.Zero);
+
+        var circleCenter = b.Center + b.Offset;
+        var radius = b.Radius * b.Scale.X;
+
+        for (int i = 0; i < a.AbsoluteVertices.Length; i++)
         {
-            float projection = Vector2.Dot(vertex, axis);
-            min = Math.Min(min, projection);
-            max = Math.Max(max, projection);
+            var vertexA = a.AbsoluteVertices[i];
+            var vertexB = a.AbsoluteVertices[(i + 1) % a.AbsoluteVertices.Length];
+            if (Physics.LineCircleCollision(vertexA, vertexB, circleCenter, radius, out var collisionPoint))
+            {
+                var direction = collisionPoint - circleCenter;
+                var normal = Vector2.Normalize(direction);
+                var penetrationDepth = radius - Vector2.Distance(collisionPoint, circleCenter);
+                var contactPoint = collisionPoint;
+                info = new CollisionInfo(b, a, normal, penetrationDepth, contactPoint);
+                return true;
+            }
         }
 
-        return (min, max);
+        return false;
+    }
+
+    public static bool HitTest(CircleCollider a, PolygonCollider b, out CollisionInfo info)
+    {
+        var result = HitTest(b, a, out info);
+        info.Collider = a;
+        info.OtherCollider = b;
+        info.Normal = -info.Normal;
+        return result;
     }
 }

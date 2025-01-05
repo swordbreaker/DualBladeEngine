@@ -9,7 +9,7 @@ public class UniformGrid
 {
     internal List<ICollider>[,] grid = new List<ICollider>[0, 0];
 
-    private Dictionary<Guid, (Vector2i min, Vector2i max)> colliderToMinMax = [];
+    private readonly Dictionary<Guid, (Vector2i min, Vector2i max)> colliderToMinMax = [];
 
     internal readonly float cellSize;
     internal readonly int rows;
@@ -65,6 +65,11 @@ public class UniformGrid
 
     public void Insert(ICollider collider)
     {
+        if (colliderToMinMax.ContainsKey(collider.Id))
+        {
+            throw new InvalidOperationException("Collider already exists in the grid.");
+        }
+
         var (minX, minY, maxX, maxY) = GetMinMax(collider.AbsoluteBounds());
         colliderToMinMax[collider.Id] = (new Vector2(minX, minY), new Vector2(maxX, maxY));
 
@@ -77,19 +82,17 @@ public class UniformGrid
         colliderToMinMax.Remove(collider.Id);
     }
 
-    public void Update(ICollider collider, Vector2 oldPos, Vector2 newPos)
+    public void Update(ICollider collider)
     {
-        var bounds = collider.AbsoluteBounds();
         var (oldMin, oldMax) = colliderToMinMax[collider.Id];
-
-        var newBound = bounds with { X = newPos.X, Y = newPos.Y };
+        var newBound = collider.AbsoluteBounds();
         var (newMinX, newMinY, newMaxX, newMaxY) = GetMinMax(newBound);
 
         if (oldMin.X != newMinX || oldMin.Y != newMinY || oldMax.X != newMaxX || oldMax.Y != newMaxY)
         {
             Remove(collider);
             colliderToMinMax.Remove(collider.Id);
-            colliderToMinMax.Add(collider.Id, (new(newMinX, newMinY), new(newMaxX, newMaxY)));
+            //colliderToMinMax.Add(collider.Id, (new(newMinX, newMinY), new(newMaxX, newMaxY)));
 
             Insert(collider);
         }
@@ -101,15 +104,7 @@ public class UniformGrid
         return Query(min.X, min.Y, max.X, max.Y).Where(c => c.Id != collider.Id);
     }
 
-    private IEnumerable<ICollider> Query(RectangleF bounds)
-    {
-        HashSet<ICollider> result = [];
-        var (minX, minY, maxX, maxY) = GetMinMax(bounds);
-
-        return Query(minX, minY, maxX, maxY);
-    }
-
-    private IEnumerable<ICollider> Query(int minX, int minY, int maxX, int maxY)
+    private HashSet<ICollider> Query(int minX, int minY, int maxX, int maxY)
     {
         HashSet<ICollider> result = [];
         for (var y = minY; y <= maxY; y++)

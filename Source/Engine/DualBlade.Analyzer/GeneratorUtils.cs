@@ -16,7 +16,7 @@ public static class GeneratorUtils
             .GetText(Encoding.UTF8)
             .ToString();
 
-    public static ComponentInfo GetECInfo(GeneratorSyntaxContext context, CancellationToken token)
+    public static ComponentInfo GetECInfo(GeneratorSyntaxContext context, CancellationToken _)
     {
         var structDeclaration = (StructDeclarationSyntax)context.Node;
         var symbol = context.SemanticModel.GetDeclaredSymbol(structDeclaration);
@@ -24,6 +24,7 @@ public static class GeneratorUtils
         var usings = context.Node.SyntaxTree.GetRoot().DescendantNodes().OfType<UsingDirectiveSyntax>().Select(x => x.ToString());
         var hasDefaultCtor = structDeclaration.Members.OfType<ConstructorDeclarationSyntax>().Any(x => x.ParameterList.Parameters.Count == 0);
         var fields = structDeclaration.Members.OfType<FieldDeclarationSyntax>();
-        return new(structDeclaration.Identifier.Text, ns, usings, hasDefaultCtor, fields);
+        var methods = structDeclaration.Members.OfType<MethodDeclarationSyntax>();
+        return new(structDeclaration.Identifier.Text, ns, usings, hasDefaultCtor, fields, methods);
     }
 }

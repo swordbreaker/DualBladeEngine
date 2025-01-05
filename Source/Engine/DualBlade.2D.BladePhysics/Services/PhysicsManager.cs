@@ -26,8 +26,8 @@ public class PhysicsManager : IPhysicsManager
 
     public void Remove(ICollider collider) => uniformGrid.Remove(collider);
 
-    public void Update(ICollider collider, Vector2 oldPos, Vector2 newPos) =>
-        uniformGrid.Update(collider, oldPos, newPos);
+    public void Update(ICollider collider) =>
+        uniformGrid.Update(collider);
 
     public IEnumerable<CollisionInfo> CalculateCollisions(ICollider collider)
     {

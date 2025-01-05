@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using static DualBlade.Analyzer.GeneratorUtils;
@@ -23,14 +24,21 @@ public class ComponentsGenerator : IIncrementalGenerator
 
     private string GenerateComponentCode(ComponentInfo info)
     {
-        var (structName, ns, usings, hasDefaultCtor, fields) = info;
+        var (structName, ns, usings, hasDefaultCtor, fields, methods) = info;
 
         var ctor = !hasDefaultCtor ? $"public {structName}() {{ }}" : "";
         var usingBlock = string.Join("\n", usings);
+        var allMethods = methods.Select(m => m.Identifier.ToString()).ToImmutableHashSet();
 
         var fieldSetters = fields.Select(f =>
         {
             var fieldName = f.Declaration.Variables.First().Identifier.Text;
+
+            if (allMethods.Contains($"Set{fieldName}"))
+            {
+                return string.Empty;
+            }
+
             var type = f.Declaration.Type.ToString();
             return $$"""
                 public {{structName}} Set{{fieldName}}({{type}} newValue)

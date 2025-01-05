@@ -12,5 +12,5 @@ public interface IPhysicsManager
     IEnumerable<CollisionInfo> GetRemovedCollisions(RigidBody rigidBody);
     void Remove(ICollider collider);
     void SetCollisions(RigidBody rigidBody, IEnumerable<CollisionInfo> collisions);
-    void Update(ICollider collider, Vector2 oldPos, Vector2 newPos);
+    void Update(ICollider collider);
 }

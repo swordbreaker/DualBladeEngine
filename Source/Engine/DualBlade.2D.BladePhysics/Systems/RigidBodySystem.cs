@@ -14,15 +14,15 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
     private readonly IPhysicsManager physicsManager = gameContext.ServiceProvider.GetRequiredService<IPhysicsManager>();
     private readonly IPhysicsSettings physicsSettings = gameContext.ServiceProvider.GetRequiredService<IPhysicsSettings>();
 
-    protected override void OnAdded(ref IEntity entity, ref RigidBody body, ref TransformComponent transform)
-    {
-        if (!entity.TryGetComponent<ColliderComponent>(out var colliderComponent)) return;
+    //protected override void OnAdded(ref IEntity entity, ref RigidBody body, ref TransformComponent transform)
+    //{
+    //    if (!entity.TryGetComponent<ColliderComponent>(out var colliderComponent)) return;
 
-        foreach (var collider in colliderComponent.Colliders)
-        {
-            physicsManager.Add(collider);
-        }
-    }
+    //    foreach (var collider in colliderComponent.Colliders)
+    //    {
+    //        physicsManager.Add(collider);
+    //    }
+    //}
 
     protected override void OnDestroy(RigidBody body, TransformComponent transform, IEntity entity)
     {
@@ -39,16 +39,7 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         if (body.IsStatic) return;
 
         var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
         var newPos = transform.Position + body.Velocity * dt;
-
-        if (entity.TryGetComponent<ColliderComponent>(out var collider))
-        {
-            foreach (var c in collider.Colliders)
-            {
-                physicsManager.Update(c, transform.Position, newPos);
-            }
-        }
 
         transform.Position = newPos + body.CorrectionVector;
         body.CorrectionVector = Vector2.Zero;
@@ -68,7 +59,7 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         else
         {
             var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            body.Velocity += body.Acceleration * physicsSettings.Gravity * dt;
+            body.Velocity += (body.Acceleration + physicsSettings.Gravity) * dt;
 
             if (entity.TryGetComponent<ColliderComponent>(out var collider))
             {
@@ -89,13 +80,11 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         }
     }
 
-
-
     private IEnumerable<CollisionInfo> GetCollisions(ColliderComponent collider)
     {
         foreach (var c in collider.Colliders)
         {
-            if (physicsManager.CalculateCollisions(c).FirstOrDefault() is { Collider: not null } info)
+            foreach (var info in physicsManager.CalculateCollisions(c))
             {
                 yield return info;
             }

@@ -14,7 +14,7 @@ public record struct EntityInfo(
     string Namespace,
     bool HasDefaultCtor,
     IEnumerable<string> ComponentsToAdd,
-    IEnumerable<string> requiredComponents);
+    IEnumerable<string> RequiredComponents);
 
 [Generator]
 public class EntityGenerator : IIncrementalGenerator

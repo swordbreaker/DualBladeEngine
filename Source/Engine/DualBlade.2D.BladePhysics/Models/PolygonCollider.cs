@@ -1,24 +1,39 @@
-﻿using System.Drawing;
+﻿using DualBlade._2D.BladePhysics.Services;
+using System.Drawing;
 
 namespace DualBlade._2D.BladePhysics.Models;
-internal class PolygonCollider : ICollider
+
+public struct PolygonCollider : IColliderWithAbsoluteBounds
 {
     public Guid Id { get; } = Guid.NewGuid();
-    public object Tag { get; set; }
-    public Vector2 Offset { get; set; }
-    public Vector2 Scale { get; set; } = Vector2.One;
+    public object Tag { get; set; } = new object();
+    public Vector2 Offset { readonly get; private set; } = Vector2.Zero;
+    public Vector2 Scale { readonly get; private set; } = Vector2.One;
+    public float Rotation { readonly get; private set; } = 0f;
+
     public Vector2 Center { get; set; } = Vector2.Zero;
     public RectangleF Bounds { get; private set; }
     public bool IsTrigger { get; set; }
 
     public Vector2[] Vertices { get; private set; }
 
-    public Vector2[] Axes { get; private set; }
+    public Vector2[] AbsoluteVertices { get; private set; } = [];
+
+    public Vector2[] Axes { get; private set; } = [];
+    public RectangleF AbsoluteBounds { get; private set; }
 
     public PolygonCollider(Vector2[] points)
     {
         Vertices = points;
+        OnVerticesChanged();
+    }
+
+    private void OnVerticesChanged()
+    {
+        UpdateAbsoluteVertices();
         UpdateBounds();
+        UpdateAbsoluteBounds();
+        UpdateAxes();
     }
 
     private void UpdateBounds()
@@ -38,93 +53,73 @@ internal class PolygonCollider : ICollider
         Center = new Vector2((minX + maxX) / 2, (minY + maxY) / 2);
     }
 
+    private void UpdateAbsoluteBounds()
+    {
+        float minX = float.MaxValue, minY = float.MaxValue;
+        float maxX = float.MinValue, maxY = float.MinValue;
+
+        foreach (var point in AbsoluteVertices)
+        {
+            minX = Math.Min(minX, point.X);
+            minY = Math.Min(minY, point.Y);
+            maxX = Math.Max(maxX, point.X);
+            maxY = Math.Max(maxY, point.Y);
+        }
+
+        AbsoluteBounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+    }
+
+    private readonly Matrix TransformMatrix =>
+        Matrix.CreateTranslation(Offset.X, Offset.Y, 0) *
+        Matrix.CreateScale(Scale.X, Scale.Y, 1) *
+        Matrix.CreateRotationZ(-MathHelper.ToRadians(Rotation));
+
     private void UpdateAxes()
     {
         Axes = GetAxes(this).ToArray();
     }
 
-    public bool HitTest(ICollider collider, out CollisionInfo info) => throw new NotImplementedException();
-
-    private static bool PolygonPolygonCollision(PolygonCollider a, PolygonCollider b, out CollisionInfo info)
+    private void UpdateAbsoluteVertices()
     {
-        info = new CollisionInfo(a, b, Vector2.Zero, 0, Vector2.Zero);
-
-        // Implement Separating Axis Theorem (SAT) for polygon-polygon collision
-        var axes = GetAxes(a).Concat(GetAxes(b));
-
-        float minOverlap = float.MaxValue;
-        Vector2 minAxis = Vector2.Zero;
-
-        foreach (var axis in axes)
-        {
-            var projectionA = Project(a, axis);
-            var projectionB = Project(b, axis);
-
-            if (!projectionA.Overlaps(projectionB))
-            {
-                return false;
-            }
-
-            float overlap = projectionA.GetOverlap(projectionB);
-            if (overlap < minOverlap)
-            {
-                minOverlap = overlap;
-                minAxis = axis;
-            }
-        }
-
-        // Calculate collision normal and penetration depth
-        Vector2 normal = minAxis;
-        if (Vector2.Dot(b.Center - a.Center, normal) < 0)
-        {
-            normal = -normal;
-        }
-
-        info = new CollisionInfo(a, b, normal, minOverlap, CalculateContactPoint(a, b, normal));
-        return true;
+        var m = TransformMatrix;
+        AbsoluteVertices = Vertices.Select(v => Vector2.Transform(v, m)).ToArray();
     }
+
+    public readonly bool HitTest(ICollider collider, out CollisionInfo info) =>
+        collider switch
+        {
+            CircleCollider circle => ColliderHitTestCalculations.HitTest(this, circle, out info),
+            RectangleCollider rectangle => ColliderHitTestCalculations.HitTest(this, rectangle, out info),
+            PolygonCollider polygon => ColliderHitTestCalculations.HitTest(this, polygon, out info),
+            _ => throw new NotImplementedException()
+        };
 
     private static IEnumerable<Vector2> GetAxes(PolygonCollider polygon)
     {
-        for (int i = 0; i < polygon.Vertices.Length; i++)
+        for (int i = 0; i < polygon.AbsoluteVertices.Length; i++)
         {
-            var edge = polygon.Vertices[(i + 1) % polygon.Vertices.Length] - polygon.Vertices[i];
+            var edge = polygon.AbsoluteVertices[(i + 1) % polygon.AbsoluteVertices.Length] - polygon.AbsoluteVertices[i];
             yield return Vector2.Normalize(new Vector2(-edge.Y, edge.X));
         }
     }
 
-    private static (float Min, float Max) Project(PolygonCollider polygon, Vector2 axis)
+    public bool Update(Vector2 offset, Vector2 scale, float rotation)
     {
-        float min = float.MaxValue;
-        float max = float.MinValue;
+        var offsetChanged = offset != this.Offset;
+        var scaleChanged = scale != this.Scale;
+        var rotationChanged = rotation != this.Rotation;
 
-        foreach (var vertex in polygon.Vertices)
+        this.Offset = offset;
+        this.Scale = scale;
+        this.Rotation = rotation;
+
+        var hasChanged = offsetChanged || scaleChanged || rotationChanged;
+
+        if (hasChanged)
         {
-            float projection = Vector2.Dot(vertex, axis);
-            min = Math.Min(min, projection);
-            max = Math.Max(max, projection);
+            OnVerticesChanged();
         }
 
-        return (min, max);
-    }
-
-    private static Vector2 CalculateContactPoint(PolygonCollider a, PolygonCollider b, Vector2 normal)
-    {
-        // Implement contact point calculation (e.g., using closest points or clipping)
-        // This is a simplified version
-        return (a.Center + b.Center) / 2;
-    }
-}
-
-public static class ProjectionExtensions
-{
-    public static bool Overlaps(this (float Min, float Max) a, (float Min, float Max) b)
-    {
-        return a.Max >= b.Min && b.Max >= a.Min;
-    }
-
-    public static float GetOverlap(this (float Min, float Max) a, (float Min, float Max) b)
-    {
-        return Math.Min(a.Max, b.Max) - Math.Max(a.Min, b.Min);
+        return hasChanged;
     }
 }
