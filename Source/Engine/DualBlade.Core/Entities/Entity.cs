@@ -6,6 +6,7 @@ using DualBlade.Core.Extensions;
 
 namespace DualBlade.Core.Entities;
 
+/// <inheritdoc />
 public struct Entity : IEntity
 {
     /// <inheritdoc />
@@ -13,7 +14,6 @@ public struct Entity : IEntity
 
     public Entity()
     {
-
     }
 
     /// <inheritdoc />
@@ -64,6 +64,7 @@ public struct Entity : IEntity
             componentProxy = (TComponent)comp;
             return true;
         }
+
         componentProxy = default;
         return false;
     }

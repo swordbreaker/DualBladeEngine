@@ -1,5 +1,8 @@
 ﻿namespace DualBlade.Core.Models;
 
+/// <summary>
+/// Represents a 2D vector with integer components.
+/// </summary>
 public struct Vector2i
 {
     public int X;

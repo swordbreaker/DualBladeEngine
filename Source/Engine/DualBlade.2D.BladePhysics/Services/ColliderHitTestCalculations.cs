@@ -45,7 +45,8 @@ public static class ColliderHitTestCalculations
     public static bool HitTest(CircleCollider circle, RectangleCollider rectangle, out CollisionInfo info) =>
         HitTest(circle, rectangle, true, out info);
 
-    private static bool HitTest(CircleCollider circle, RectangleCollider rectangle, bool isCirclePrimary, out CollisionInfo info)
+    private static bool HitTest(CircleCollider circle, RectangleCollider rectangle, bool isCirclePrimary,
+        out CollisionInfo info)
     {
         var circleCenter = circle.Center + circle.Offset;
         var radius = circle.Radius * circle.Scale.X;
@@ -217,7 +218,8 @@ public static class ColliderHitTestCalculations
             {
                 var direction = collisionPoint - circleCenter;
                 var normal = Vector2.Normalize(direction);
-                var penetrationDepth = radius - Vector2.Distance(collisionPoint, circleCenter);
+                var distanceToCircleCenter = Vector2.Distance(collisionPoint, circleCenter);
+                var penetrationDepth = radius - distanceToCircleCenter;
                 var contactPoint = collisionPoint;
                 info = new CollisionInfo(b, a, normal, penetrationDepth, contactPoint);
                 return true;

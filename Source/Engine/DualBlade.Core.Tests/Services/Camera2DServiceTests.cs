@@ -1,6 +1,6 @@
 ﻿namespace DualBlade.Core.Tests.Services;
 
-public class CameraServiceTests
+public class Camera2DServiceTests
 {
     [Fact()]
     public void CameraServiceTest()

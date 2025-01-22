@@ -2,9 +2,9 @@
 
 namespace DualBlade.Core.Services;
 
-internal sealed class CameraService(
+internal sealed class Camera2DService(
     GraphicsDeviceManager graphicsDeviceManager,
-    IWorldToPixelConverter worldToPixelConverter) : ICameraService
+    IWorldToPixelConverter worldToPixelConverter) : ICamera2DService
 {
     private Vector2 GameSize => new(graphicsDeviceManager.PreferredBackBufferWidth,
         graphicsDeviceManager.PreferredBackBufferHeight);

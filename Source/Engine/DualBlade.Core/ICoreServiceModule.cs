@@ -15,7 +15,7 @@ namespace DualBlade.Core;
 [Singleton<IJobQueue, JobQueue>]
 [Singleton<IGameContext, GameContext>]
 [Singleton<IGameCreationContext, GameCreationContext>]
-[Singleton<ICameraServiceFactory, CameraServiceFactory>]
+[Singleton<ICameraServiceFactory, Camera2DServiceFactory>]
 [Singleton<IWorldToPixelConverterFactory, WorldToPixelConverterFactory>]
 [Singleton<ContentManager>]
 [Transient<InputSystem>]

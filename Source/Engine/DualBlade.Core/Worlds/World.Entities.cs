@@ -28,7 +28,8 @@ public partial class World
 
         foreach (var (system, _, start, end) in CollectComponentSystem(entity))
         {
-            system.OnAdded(entity, entity.InternalComponents.ToSpan()[start..end], out var outEntity, out var outComponents);
+            system.OnAdded(entity, entity.InternalComponents.ToSpan()[start..end], out var outEntity,
+                out var outComponents);
             _entities[entity.Id] = outEntity;
             SyncEntityComponents(entity, outEntity, outComponents);
         }

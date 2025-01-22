@@ -24,7 +24,7 @@ public partial struct WallEntity : IEntity
         var sprite = context.GameEngine.SpriteFactory.CreateWhitePixelSprite();
         render.SetSprite(sprite);
 
-        var collider = new RectangleCollider(Zero, context.GameEngine.WorldToPixelConverter.PixelSizeToWorld(Vector2.One));
+        var collider = new RectangleCollider(Zero, render.Sprite.Size);
 
         AddComponent(transform);
         AddComponent(render);

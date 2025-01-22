@@ -7,6 +7,7 @@ using DualBlade.Core.Systems;
 
 namespace DualBlade.Core.Worlds;
 
+/// <inheritdoc cref="IWorld"/>
 public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQueue) : IWorld
 {
     public delegate ComponentRef<IComponent> AddComponentDelegate(IComponent component, int entityId);
@@ -17,7 +18,6 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
 
     private readonly SparseCollection<IEntity> _entities = new(100);
     private readonly List<ISystem> _systems = new(100);
-    private readonly List<FixedSystem> _fixedSystems = new();
     private readonly Dictionary<Type, List<IComponentSystem>> _componentSystems = [];
     private readonly Dictionary<Type, List<IEntitySystem>> _entitySystems = [];
 
@@ -56,7 +56,7 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         CollectComponentSystems();
         CollectEntitySystems();
 
-        foreach (var system in _activeComponentSystems)
+        foreach (var system in activeComponentSystems)
         {
             system.Update(gameTime);
         }
@@ -72,15 +72,7 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
             _entities[entity.Id] = system.Update(entity, gameTime);
         }
 
-        //Parallel.ForEach(_componentSystemData.ToSpan().ToArray(), (tuple, state, count) =>
-        //{
-        //    var (system, entity, start, end) = tuple;
-        //    system.Update(entity, entity.InternalComponents.ToSpan()[start..end], gameTime, out var outEntity, out var outComponents);
-        //    _entities[entity.Id] = outEntity;
-        //    SyncEntityComponents(entity, outEntity, outComponents);
-        //});
-
-        foreach (var (system, entity, start, end) in _componentSystemData.ToSpan())
+        foreach (var (system, entity, start, end) in componentSystemData.ToSpan())
         {
             system.Update(entity, entity.InternalComponents.ToSpan()[start..end], gameTime, out var outEntity,
                 out var outComponents);
@@ -94,26 +86,20 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
             system.LateUpdate(gameTime);
         }
 
-        foreach (var system in _activeComponentSystems)
+        foreach (var system in activeComponentSystems)
         {
             system.LateUpdate(gameTime);
         }
 
-        // 15 FPS
-        if (gameTime.TotalGameTime.Subtract(lastFixedUpdate).TotalMilliseconds > 66)
+        // 30 FPS
+        if (gameTime.TotalGameTime.Subtract(lastFixedUpdate).TotalMilliseconds > 33)
         {
-            foreach (var (system, entity, start, end) in _componentSystemData.ToSpan())
+            foreach (var (system, entity, start, end) in componentSystemData.ToSpan())
             {
                 system.FixedUpdate(entity, entity.InternalComponents.ToSpan()[start..end], gameTime, out var outEntity,
                     out var outComponents);
                 _entities[entity.Id] = outEntity;
                 SyncEntityComponents(entity, outEntity, outComponents);
-            }
-
-            foreach (var fixedSystem in _fixedSystems)
-            {
-                fixedSystem.Update(new GameTime(gameTime.TotalGameTime,
-                    gameTime.TotalGameTime.Subtract(lastFixedUpdate)));
             }
 
             lastFixedUpdate = gameTime.TotalGameTime;
@@ -132,7 +118,7 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         CollectEntitySystems();
 
         // draw foreach system
-        foreach (var system in _activeComponentSystems)
+        foreach (var system in activeComponentSystems)
         {
             system.Draw(gameTime);
         }
@@ -149,13 +135,13 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
         }
 
         // draw foreach component in component system
-        foreach (var (system, entity, start, end) in _componentSystemData.ToSpan())
+        foreach (var (system, entity, start, end) in componentSystemData.ToSpan())
         {
             system.Draw(entity, entity.InternalComponents.ToSpan()[start..end], gameTime);
         }
 
         // Late draw
-        foreach (var system in _activeComponentSystems)
+        foreach (var system in activeComponentSystems)
         {
             system.LateDraw(gameTime);
         }

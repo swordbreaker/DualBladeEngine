@@ -4,19 +4,6 @@ using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Services;
 
-public interface IEcsManager
-{
-    EntityProxy<IEntity> GetEntity(IComponent component);
-    void DestroyEntity(IEntity entity);
-    void TraverseToParent(IEntity node, Action<IEntity> action);
-    void AddParent(IEntity child, IEntity parent);
-    void AddChild(IEntity parent, IEntity child);
-    public EntityProxy<IEntity> GetParent(IEntity entity);
-    public IEnumerable<EntityRef<IEntity>> GetChildren(IEntity entity);
-    void UpdateComponent(IEntity entity, IComponent component);
-    void UpdateEntity(IEntity entity);
-}
-
 public class EcsManager(IWorld world) : IEcsManager
 {
     public EntityProxy<IEntity> GetEntity(IComponent component)
@@ -37,6 +24,12 @@ public class EcsManager(IWorld world) : IEcsManager
 
     public void AddParent(IEntity child, IEntity parent)
     {
+        if (child.Parent >= 0)
+        {
+            using var proxy = world.GetEntityProxy<IEntity>(child.Parent);
+            proxy.Value.Children.Remove(child.Id);
+        }
+
         child.Parent = parent.Id;
         parent.Children.Add(child.Id);
     }
@@ -57,11 +50,6 @@ public class EcsManager(IWorld world) : IEcsManager
     {
         world.UpdateEntity(entity);
     }
-
-    //public IEnumerable<ComponentRef<TComponent>> GetComponentsOfChildren<TComponent>(IEntity entity) where TComponent : IComponent
-    //{
-    //    return GetChildren(entity).Select(x => x.GetProxy().Value.Component<TComponent>());
-    //}
 
     public void TraverseToParent(IEntity node, Action<IEntity> action)
     {

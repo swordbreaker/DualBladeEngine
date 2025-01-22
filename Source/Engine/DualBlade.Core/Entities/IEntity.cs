@@ -4,6 +4,9 @@ using DualBlade.Core.Worlds;
 
 namespace DualBlade.Core.Entities;
 
+/// <summary>
+/// The entity is a container for components. It is used to logically group components together.
+/// </summary>
 public interface IEntity
 {
     public delegate void UpdateComponentDelegate<TComponent>(ref TComponent component) where TComponent : IComponent;
@@ -35,7 +38,7 @@ public interface IEntity
     /// Get a component from the entity. This will throw an exception if the component does not exist.
     /// </summary>
     /// <exception cref="InvalidOperationException">When the component does not exist.</exception>
-    /// <returns>An proxy to the component <see cref="ComponentProxy{T}"/> </returns>
+    /// <returns>A proxy to the component <see cref="ComponentProxy{T}"/> </returns>
     TComponent Component<TComponent>() where TComponent : IComponent;
 
     /// <summary>

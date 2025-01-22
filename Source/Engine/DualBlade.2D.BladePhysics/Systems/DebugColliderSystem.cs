@@ -88,7 +88,7 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
             var pos = worldToPixelConverter.WorldPointToPixel(collision.ContactPoint);
             spriteBatch.DrawCircle(pos, 5, 10, Color.Red);
 
-            spriteBatch.DrawLine(pos, pos + collision.Normal * collision.PenetrationDepth, Color.Black, 3);
+            spriteBatch.DrawLine(pos, pos + collision.Normal * collision.PenetrationDepth * 1000, Color.GreenYellow, 1);
         }
     }
 
@@ -97,31 +97,32 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
         switch (collider)
         {
             case CircleCollider circle:
-                {
-                    var pos = worldToPixelConverter.WorldPointToPixel(circle.Center + circle.Offset);
-                    var radius = worldToPixelConverter.WorldSizeToPixel(new Vector2(circle.Radius * circle.Scale.X));
+            {
+                var pos = worldToPixelConverter.WorldPointToPixel(circle.Center + circle.Offset);
+                var radius = worldToPixelConverter.WorldSizeToPixel(new Vector2(circle.Radius * circle.Scale.X));
 
-                    spriteBatch.DrawCircle(pos, radius.X, 10, Color.Yellow);
-                }
+                spriteBatch.DrawCircle(pos, radius.X, 10, Color.Yellow);
+            }
                 break;
             case RectangleCollider box:
-                {
-                    var bounds = box.AbsoluteBounds();
-                    var pos = worldToPixelConverter.WorldPointToPixel(bounds.Location.ToVector2());
-                    var scale = worldToPixelConverter.WorldSizeToPixel(bounds.Size.ToVector2());
+            {
+                var bounds = box.AbsoluteBounds();
+                var pos = worldToPixelConverter.WorldPointToPixel(bounds.Location.ToVector2());
+                var scale = worldToPixelConverter.WorldSizeToPixel(bounds.Size.ToVector2());
 
-                    pos -= new Vector2(0, scale.Y);
-                    spriteBatch.DrawRectangle(new RectangleF(pos.X, pos.Y, scale.X, scale.Y),
-                        Color.Purple);
-                }
+                pos -= new Vector2(0, scale.Y);
+                spriteBatch.DrawRectangle(new RectangleF(pos.X, pos.Y, scale.X, scale.Y),
+                    Color.Purple);
+            }
                 break;
             case PolygonCollider polygon:
-                {
-                    var vertices = polygon.AbsoluteVertices.Select(x => worldToPixelConverter.WorldPointToPixel(x)).ToArray();
+            {
+                var vertices = polygon.AbsoluteVertices.Select(x => worldToPixelConverter.WorldPointToPixel(x))
+                    .ToArray();
 
-                    var poly = new Polygon(vertices);
-                    spriteBatch.DrawPolygon(Vector2.Zero, poly, Color.Purple);
-                }
+                var poly = new Polygon(vertices);
+                spriteBatch.DrawPolygon(Vector2.Zero, poly, Color.Purple);
+            }
                 break;
         }
     }

@@ -2,6 +2,9 @@
 
 namespace DualBlade.Core.Components;
 
+/// <summary>
+/// Component to display the frame per seconds.
+/// </summary>
 public partial struct FpsDisplayComponent : IComponent
 {
     public int FrameCounter;

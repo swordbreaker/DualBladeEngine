@@ -9,7 +9,10 @@ public static class ColliderExtensions
         collider switch
         {
             IColliderWithAbsoluteBounds x => x.AbsoluteBounds,
-            _ => new(collider.Bounds.X + collider.Offset.X, collider.Bounds.Y + collider.Offset.Y,
-                collider.Bounds.Width * collider.Scale.X, collider.Bounds.Height * collider.Scale.Y)
+            _ => new(
+                collider.Bounds.X * collider.Scale.X + collider.Offset.X,
+                collider.Bounds.Y * collider.Scale.Y + collider.Offset.Y,
+                collider.Bounds.Width * collider.Scale.X,
+                collider.Bounds.Height * collider.Scale.Y)
         };
 }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Example.PhysicsTest.Scences;
+
 public class GravityScene : GameScene
 {
     private readonly PhysicsSettings physicsSettings;
@@ -39,14 +40,14 @@ public class GravityScene : GameScene
         var rightSquare = new PolySquareEntity(GameContext, new Vector2(2, 0), Vector2.Zero);
         var ball = new CircleEntity(GameContext, new Vector2(-1, 0), new Vector2(0, 0));
 
-        leftSquare.UpdateComponent<RigidBody>(r => r.SetIsStatic(true));
+        leftSquare.UpdateComponent<RigidBody>(r => r.SetIsStatic(true).SetCollectCollisionEvents(false));
         leftSquare.UpdateComponent<TransformComponent>(t =>
         {
             t.Rotation = -45;
             t.Scale = new(1, 3f);
             return t;
         });
-        rightSquare.UpdateComponent<RigidBody>(r => r.SetIsStatic(true));
+        rightSquare.UpdateComponent<RigidBody>(r => r.SetIsStatic(true).SetCollectCollisionEvents(false));
         rightSquare.UpdateComponent<TransformComponent>(t =>
         {
             t.Rotation = 45;

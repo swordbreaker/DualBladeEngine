@@ -12,17 +12,9 @@ namespace DualBlade._2D.BladePhysics.Systems;
 public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBody, TransformComponent>(gameContext)
 {
     private readonly IPhysicsManager physicsManager = gameContext.ServiceProvider.GetRequiredService<IPhysicsManager>();
-    private readonly IPhysicsSettings physicsSettings = gameContext.ServiceProvider.GetRequiredService<IPhysicsSettings>();
 
-    //protected override void OnAdded(ref IEntity entity, ref RigidBody body, ref TransformComponent transform)
-    //{
-    //    if (!entity.TryGetComponent<ColliderComponent>(out var colliderComponent)) return;
-
-    //    foreach (var collider in colliderComponent.Colliders)
-    //    {
-    //        physicsManager.Add(collider);
-    //    }
-    //}
+    private readonly IPhysicsSettings physicsSettings =
+        gameContext.ServiceProvider.GetRequiredService<IPhysicsSettings>();
 
     protected override void OnDestroy(RigidBody body, TransformComponent transform, IEntity entity)
     {
@@ -34,7 +26,8 @@ public class RigidBodySystem(IGameContext gameContext) : ComponentSystem<RigidBo
         }
     }
 
-    protected override void Update(ref RigidBody body, ref TransformComponent transform, ref IEntity entity, GameTime gameTime)
+    protected override void Update(ref RigidBody body, ref TransformComponent transform, ref IEntity entity,
+        GameTime gameTime)
     {
         if (body.IsStatic) return;
 
