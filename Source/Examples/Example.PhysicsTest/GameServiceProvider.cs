@@ -11,6 +11,7 @@ namespace Example.PhysicsTest;
 
 [ServiceProvider(RootServices = [typeof(IEnumerable<IStartupService>)])]
 [Import<ICoreServiceModule>]
+[Import<ICamera2DServiceModule>]
 [Import<I2DRenderingServiceModule>]
 [Import<IMyraUiServiceModule>]
 [Import<I2DBladePhysicsServiceModule>]

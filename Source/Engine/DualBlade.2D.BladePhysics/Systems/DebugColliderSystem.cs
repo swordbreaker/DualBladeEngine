@@ -43,7 +43,9 @@ public class DebugColliderSystem(IGameContext context) : ComponentSystem<Collide
 
     public override void LateDraw(GameTime gameTime)
     {
-        spriteBatch.Begin(SpriteSortMode.Deferred, transformMatrix: gameEngine.CameraService.PixelTransformMatrix);
+        var pm = gameEngine.CameraService.ProjectionMatrix * gameEngine.CameraService.ViewMatrix;
+
+        spriteBatch.Begin(SpriteSortMode.Deferred, transformMatrix: pm);
         drawActions.ForEach(x => x());
         spriteBatch.End();
     }

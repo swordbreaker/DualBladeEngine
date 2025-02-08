@@ -23,3 +23,15 @@ namespace DualBlade.Core;
 public interface ICoreServiceModule
 {
 }
+
+[ServiceProviderModule]
+[Singleton<ICameraServiceFactory, Camera2DServiceFactory>]
+public interface ICamera2DServiceModule
+{
+}
+
+[ServiceProviderModule]
+[Singleton<ICameraServiceFactory, TargetCamera3DServiceFactory>]
+public interface ITargetCamera3DServiceModule
+{
+}

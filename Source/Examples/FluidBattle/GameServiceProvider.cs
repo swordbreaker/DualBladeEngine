@@ -10,11 +10,13 @@ using FluidBattle.Factories;
 using DualBlade._2D.BladePhysics;
 using DualBlade._2D.BladePhysics.Services;
 using DualBlade._2D.BladePhysics.Systems;
+using DualBlade.Core.Factories;
 
 namespace FluidBattle;
 
 [ServiceProvider(RootServices = [typeof(IEnumerable<IStartupService>)])]
 [Import<ICoreServiceModule>]
+[Import<ICamera2DServiceModule>]
 [Import<I2DRenderingServiceModule>]
 [Import<IMyraUiServiceModule>]
 [Import<I2DBladePhysicsServiceModule>]

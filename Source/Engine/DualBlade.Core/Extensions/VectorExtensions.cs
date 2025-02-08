@@ -19,4 +19,22 @@ public static class VectorExtensions
     /// <returns></returns>
     public static PointF ToPointF(this Vector2 vector) =>
         new(vector.X, vector.Y);
+
+    /// <summary>
+    /// Converts a Vector3 to a Vector2 taking the X and Y dimensions.
+    /// </summary>
+    public static Vector2 XY(this Vector3 vector) =>
+        new(vector.X, vector.Y);
+
+    /// <summary>
+    /// Converts a Vector3 to a Vector2 taking the X and Y dimensions.
+    /// </summary>
+    public static Vector2 XZ(this Vector3 vector) =>
+        new(vector.X, vector.Z);
+
+    /// <summary>
+    /// Converts a Vector3 to a Vector2 taking the Y and Z dimensions.
+    /// </summary>
+    public static Vector2 YZ(this Vector3 vector) =>
+        new(vector.Y, vector.Z);
 }

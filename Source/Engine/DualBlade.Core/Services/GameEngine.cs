@@ -11,7 +11,6 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
     public required IInputManager InputManager { get; init; }
     public required ContentManager Content { get; init; }
     public SpriteBatch? SpriteBatch { get; private set; }
-
     public required ICameraService CameraService { get; init; }
 
     public Vector2 GameSize =>
@@ -28,8 +27,8 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
         if (SpriteBatch is null)
             throw new InvalidOperationException("SpriteBatch is not initialized");
 
-        var transform = CameraService.PixelTransformMatrix;
-        SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: transform);
+        var pm = CameraService.ProjectionMatrix * CameraService.ViewMatrix;
+        SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: pm);
     }
 
     public void Draw(
