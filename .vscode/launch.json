@@ -31,6 +31,13 @@
             "request": "launch",
             "preLaunchTask": "Debug WindowsDX Build",
             "program": "${workspaceFolder}/FuelCell.WindowsDX/bin/Debug/net8.0-windows/FuelCell.WindowsDX.exe",
+        },
+        {
+            "name": "AOT Release Build",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "AOT Release Build",
+            "program": "${workspaceFolder}/FuelCell.WindowsDX/bin/Release/net8.0-windows/win-x64/publish/FuelCell.WindowsDX.exe",
         }
     ]
 }

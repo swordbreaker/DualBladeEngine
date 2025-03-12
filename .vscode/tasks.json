@@ -6,5 +6,26 @@
             "type": "shell",
             "command": "dotnet build -p:Configuration=Debug ${workspaceFolder}/ExampleAndroid/ExampleAndroid.csproj \"/t:Install;_Run\" /p:AndroidAttachDebugger=true /p:AndroidSdbHostPort=10000",
         },
+        {
+            "label": "AOT Release Build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/Source/DualBladeEngine.sln",
+                "-c",
+                "Release",
+                "-r",
+                "win-x64",
+                "/p:PublishReadyToRun=false",
+                "/p:TieredCompilation=false",
+                "--self-contained"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        }
     ]
 }

@@ -9,7 +9,7 @@ namespace Example.PhysicsTest;
 
 [ServiceProvider(RootServices = [typeof(IEnumerable<IStartupService>)])]
 [Import<ICoreServiceModule>]
-[Import<ICamera2DServiceModule>]
+[Import<ICamera3DServiceModule>]
 [Import<I3DRenderingServiceModule>]
 [Import<IMyraUiServiceModule>]
 [Singleton<MainGame>]

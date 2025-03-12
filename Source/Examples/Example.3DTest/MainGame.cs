@@ -10,6 +10,7 @@ using DualBlade._2D.BladePhysics.Systems;
 using DualBlade._3D.Rendering.Systems;
 using Example.PhysicsTest.Scences;
 using Example.PhysicsTest.Systems;
+using Example.PhysicsTest.Scenes;
 
 namespace Example.PhysicsTest;
 
@@ -37,8 +38,6 @@ public class MainGame : BaseGame
 
         World.AddEntities(e);
 
-        SceneManager.AddSceneExclusively<TwoCirclesScene>();
-        // this.SceneManager.AddSceneExclusively<MainMenuScene>();
-        //this.SceneManager.AddSceneExclusively<MainScene>();
+        SceneManager.AddSceneExclusively<ModelScene>();
     }
 }

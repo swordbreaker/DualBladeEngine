@@ -16,11 +16,6 @@ internal sealed class Camera2DService(
     public float Zoom { get; set; } = 1.0f;
     public float Rotation { get; set; } = 0.0f;
 
-    // public Matrix TransformMatrix =>
-    //     Matrix.CreateTranslation(new Vector3(-Position.X, -Position.Y, 0)) *
-    //     Matrix.CreateRotationZ(Rotation) *
-    //     Matrix.CreateScale(Zoom);
-
     public Matrix ViewMatrix =>
         Matrix.CreateTranslation(worldToPixelConverter.WorldPointToPixel(-Position).ToVector3()) *
         Matrix.CreateTranslation(new Vector3(-PixelGameSize / 2, 0)) *
@@ -29,10 +24,4 @@ internal sealed class Camera2DService(
 
     public Matrix ProjectionMatrix =>
         Matrix.Identity;
-
-    // public Matrix PixelTransformMatrix =>
-    //     Matrix.CreateTranslation(worldToPixelConverter.WorldPointToPixel(-Position).ToVector3()) *
-    //     Matrix.CreateTranslation(new Vector3(-GameSize / 2, 0)) *
-    //     Matrix.CreateRotationZ(Rotation) *
-    //     Matrix.CreateScale(Zoom);
 }

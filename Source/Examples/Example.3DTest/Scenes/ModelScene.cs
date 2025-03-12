@@ -13,7 +13,7 @@ public class ModelScene : GameScene
 
     protected override IEnumerable<EntityBuilder> SetupEntities()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public override IEnumerable<ISystem> SetupSystems()
