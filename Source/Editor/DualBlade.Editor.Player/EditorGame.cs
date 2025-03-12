@@ -19,13 +19,13 @@ using System.IO;
 namespace Editor;
 public class EditorGame : BaseGame
 {
-    private SceneGenerator sceneGenerator;
-    private SceneRoot sceneRoot;
+    private SceneGenerator? sceneGenerator;
+    private SceneRoot? sceneRoot;
 
-    private FileSystemWatcher watcher;
+    private FileSystemWatcher? watcher;
     private readonly IJobQueue jobQueue;
     private readonly SystemProvider systemProvider;
-    private FileStream fileStream;
+    private FileStream? fileStream;
 
     public EditorGame(IGameCreationContext context, IJobQueue jobQueue, SystemProvider systemProvider) : base(context)
     {

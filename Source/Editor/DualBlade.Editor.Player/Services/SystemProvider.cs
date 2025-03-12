@@ -9,7 +9,7 @@ namespace DualBlade.Editor.Player.Services;
 public class SystemProvider(IGameContext gameContext, IPhysicsManager physicsManager)
 {
     private readonly Lazy<List<ISystem>> _systems = new(() => [
-            new PhysicSystem(physicsManager),
+            new PhysicSystem(gameContext, physicsManager),
             new KinematicSystem(gameContext),
         ]);
 
