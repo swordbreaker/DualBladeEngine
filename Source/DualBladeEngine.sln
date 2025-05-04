@@ -55,6 +55,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dualblade.Editor.Ui", "Edit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualBlade.Editor.Player", "Editor\DualBlade.Editor.Player\DualBlade.Editor.Player.csproj", "{A9D9B3F9-500E-4A88-B5F4-48370F054933}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BulletHell", "BulletHell", "{A4F9558F-054D-AE43-1F33-5DAB47E3F397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulletHell.Desktop", "BulletHell\BulletHell.Desktop\BulletHell.Desktop.csproj", "{DC272CB9-257F-4C84-9360-E8E0CFA57A38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
