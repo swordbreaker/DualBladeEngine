@@ -10,4 +10,6 @@ public partial struct MusicComponent : IComponent
     public int SamplingRate;
 
     public FMOD.Channel Channel;
+
+    public float[][] Features;
 }
