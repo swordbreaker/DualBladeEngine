@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <TargetFramework>net8.0-windows</TargetFramework>
         <RollForward>Major</RollForward>
         <PublishReadyToRun>false</PublishReadyToRun>
@@ -18,12 +19,9 @@
         <PackageReference Include="Jab" Version="0.10.2" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference
-            Include="..\..\Engine\DualBlade.2D.BladePhysics\DualBlade.2D.BladePhysics.csproj" />
-        <ProjectReference
-            Include="..\..\Engine\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" />
-        <ProjectReference Include="..\..\Engine\DualBlade.Analyzer\DualBlade.Analyzer.csproj"
-            OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\..\Engine\DualBlade.2D.BladePhysics\DualBlade.2D.BladePhysics.csproj" />
+        <ProjectReference Include="..\..\Engine\DualBlade.2D.Rendering\DualBlade.2D.Rendering.csproj" />
+        <ProjectReference Include="..\..\Engine\DualBlade.Analyzer\DualBlade.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <ProjectReference Include="..\..\Engine\DualBlade.Core\DualBlade.Core.csproj" />
         <ProjectReference Include="..\..\Engine\DualBlade.MyraUi\DualBlade.MyraUi.csproj" />
     </ItemGroup>

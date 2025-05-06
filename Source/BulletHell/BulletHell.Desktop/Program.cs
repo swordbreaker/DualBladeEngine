@@ -1,2 +1,5 @@
-﻿using var game = new BulletHell.Desktop.Game1();
-game.Run();
+﻿using ExampleGame;
+using Microsoft.Extensions.DependencyInjection;
+
+var serviceProvider = new GameServiceProvider();
+serviceProvider.GetRequiredService<MainGame>().Run();

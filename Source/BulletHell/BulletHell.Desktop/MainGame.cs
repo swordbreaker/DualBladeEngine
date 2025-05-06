@@ -1,11 +1,10 @@
-using DualBlade._2D.Physics.Systems;
+using BulletHell.Desktop.Scences;
 using DualBlade._2D.Rendering.Systems;
 using DualBlade.Core;
 using DualBlade.Core.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
-using ExampleGame.Scenes;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ExampleGame;
@@ -30,15 +29,13 @@ public class MainGame : BaseGame
         });
         World.AddEntity(fpsEntity);
 
-        SceneManager.AddSceneExclusively<MainMenuScene>();
+        SceneManager.AddSceneExclusively<MainScene>();
     }
 
     protected override void InitializeGlobalSystems()
     {
         base.InitializeGlobalSystems();
         World.AddSystem<RenderSystem>();
-        World.AddSystem<PhysicSystem>();
-        World.AddSystem<KinematicSystem>();
         World.AddSystem<FpsDisplaySystem>();
     }
 }

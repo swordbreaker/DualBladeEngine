@@ -16,7 +16,6 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.2.1105" />
-    <!--<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="4.0.0" />-->
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExampleGame\ExampleGame.csproj" />
