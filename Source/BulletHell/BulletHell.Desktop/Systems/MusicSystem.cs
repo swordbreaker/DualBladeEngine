@@ -1,8 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 using BulletHell.Desktop.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
@@ -10,8 +7,6 @@ using DualBlade.Core.Systems;
 using FmodForFoxes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
-using OpenTK.Graphics.OpenGL;
 
 namespace BulletHell.Desktop.Services;
 
@@ -31,7 +26,7 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
 
 
         _pixel = new(gameEngine.SpriteBatch.GraphicsDevice, 1, 1);
-        _pixel.SetData([Color.Black]);
+        _pixel.SetData([Color.White]);
         // var result = FMOD.Debug.Initialize(
         //     FMOD.DEBUG_FLAGS.LOG | FMOD.DEBUG_FLAGS.TYPE_TRACE,
         //     FMOD.DEBUG_MODE.FILE,
@@ -89,21 +84,21 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
             throw new ArgumentOutOfRangeException(nameof(miliseconds));
         if (hopDuration <= 0)
             throw new ArgumentOutOfRangeException(nameof(hopDuration));
-        if (features[featureIndex].Length == 0)
+        if (features.Length == 0)
             throw new ArgumentException("Feature array is empty", nameof(features));
 
         // Calculate the time index based on the hop duration
         int timeIndex = (int)(miliseconds / hopDuration);
-        if (timeIndex < 0 || timeIndex >= features[featureIndex].Length)
+        if (timeIndex < 0 || timeIndex >= features.Length)
             throw new ArgumentOutOfRangeException(nameof(timeIndex));
 
         // Ensure the time index is within the bounds of the feature array
-        if (timeIndex >= features[featureIndex].Length)
-            timeIndex = features[featureIndex].Length - 1;
+        if (timeIndex >= features.Length)
+            timeIndex = features.Length - 1;
         if (timeIndex < 0)
             timeIndex = 0;
 
-        return features[featureIndex][timeIndex];
+        return features[timeIndex][featureIndex];
     }
 
     public override void Update(GameTime gameTime)
@@ -123,9 +118,8 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         base.Update(ref component, ref entity, gameTime);
 
         component.Channel.getPosition(out var ms, FMOD.TIMEUNIT.MS);
-        float seconds = ms / 1000f;
 
-        var lastFeatureValue = GetFeatureValue(
+        lastFeatureValue = GetFeatureValue(
             component.Features,
             0,
             ms,

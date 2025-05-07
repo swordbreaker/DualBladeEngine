@@ -12,7 +12,7 @@ public class MainScene(IGameContext context) : GameScene(context)
 {
     public override IEnumerable<ISystem> SetupSystems()
     {
-        yield return new TestSystem(GameContext);
+        // yield return new TestSystem(GameContext);
         yield return new MusicSystem(GameContext);
     }
 
