@@ -75,6 +75,14 @@ public class AudioService
             // Read all PCM samples
             while ((read = mp3Reader.ReadSamples(buffer, 0, buffer.Length)) > 0)
             {
+                // Check if we need to resize the samples array
+                if (sampleIndex + read > samples.Length)
+                {
+                    // Expand the array by doubling its size or just enough to fit the new data
+                    int newSize = Math.Max(samples.Length * 2, sampleIndex + read);
+                    Array.Resize(ref samples, newSize);
+                }
+                
                 Array.Copy(buffer, 0, samples, sampleIndex, read);
                 sampleIndex += read;
             }

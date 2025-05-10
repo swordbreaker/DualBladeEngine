@@ -8,7 +8,6 @@ using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using FmodForFoxes;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BulletHell.Desktop.Services;

@@ -9,7 +9,7 @@ public class MusicFeatureConverter(Vector2 GameSize)
     private const int HopDuration = 250;
     private float[] lastFeatureValues = [];
 
-    private List<float> lastSpecPoints = new();
+    private List<float> lastSpecPoints = [];
 
     public void Update(MusicComponent musicComponent)
     {

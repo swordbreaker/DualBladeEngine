@@ -18,7 +18,7 @@ public class MainScene(IGameContext context) : GameScene(context)
 
     protected override IEnumerable<EntityBuilder> SetupEntities()
     {
-        var musicEntity = new MusicEntity("./necrodancer_bonus_Old1-4.mp3");
+        var musicEntity = new MusicEntity("./fighter-269805.mp3");
 
         yield return new EntityBuilder(musicEntity);
     }
