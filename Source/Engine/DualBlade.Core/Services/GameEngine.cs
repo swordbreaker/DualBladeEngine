@@ -52,6 +52,14 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
         position = WorldToPixelConverter.WorldPointToPixel(position);
         origin = WorldToPixelConverter.WorldSizeToPixel(origin.Value);
 
+        // Convert sourceRectangle from world to pixel space if provided
+        if (sourceRectangle.HasValue && sourceRectangle.Value is Rectangle rect)
+        {
+            var location = WorldToPixelConverter.WorldPointToPixel(new Vector2(rect.X, rect.Y));
+            var size = WorldToPixelConverter.WorldSizeToPixel(new Vector2(rect.Width, rect.Height));
+            sourceRectangle = new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y);
+        }
+
         SpriteBatch.Draw(
             texture,
             position,
@@ -62,6 +70,43 @@ public sealed record GameEngine(ISpriteFactory SpriteFactory) : IGameEngine
             scale: scale.Value,
             effects: effects,
             layerDepth: layerDepth);
+    }
+
+    public void DrawString(
+        SpriteFont spriteFont,
+        string text,
+        Vector2 position,
+        Color color,
+        float rotation = 0f,
+        Vector2? origin = null,
+        Vector2? scale = null,
+        SpriteEffects effects = SpriteEffects.None,
+        float layerDepth = 0f,
+        bool rtl = false
+    )
+    {
+        if (SpriteBatch is null)
+            throw new InvalidOperationException("SpriteBatch is not initialized");
+
+        origin ??= new Vector2(spriteFont.MeasureString(text).X / 2f, spriteFont.MeasureString(text).Y / 2f);
+        scale ??= Vector2.One;
+
+        position = WorldToPixelConverter.WorldPointToPixel(position);
+        origin = WorldToPixelConverter.WorldSizeToPixel(origin.Value);
+
+        SpriteBatch.DrawString(spriteFont, text, position, color);
+
+        // SpriteBatch.DrawString(
+        //     spriteFont,
+        //     text,
+        //     position,
+        //     color,
+        //     rotation,
+        //     origin.Value,
+        //     scale.Value,
+        //     effects,
+        //     layerDepth,
+        //     rtl);
     }
 
     public void EndDraw()

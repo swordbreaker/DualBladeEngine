@@ -1,4 +1,4 @@
-﻿using ExampleGame;
+﻿using BulletHell.Desktop;
 using Microsoft.Extensions.DependencyInjection;
 
 var serviceProvider = new GameServiceProvider();

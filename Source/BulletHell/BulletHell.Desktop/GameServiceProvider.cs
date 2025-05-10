@@ -6,10 +6,10 @@ using DualBlade.MyraUi;
 using DualBlade._2D.BladePhysics;
 using System.Collections.Generic;
 using DualBlade._2D.BladePhysics.Services;
-using BulletHell.Desktop;
 using BulletHell.Desktop.Scences;
+using BulletHell.Desktop.Systems;
 
-namespace ExampleGame;
+namespace BulletHell.Desktop;
 
 [ServiceProvider(RootServices = [typeof(IEnumerable<IStartupService>)])]
 [Import<ICoreServiceModule>]
@@ -19,6 +19,8 @@ namespace ExampleGame;
 [Singleton<MainGame>]
 [Singleton<IPhysicsSettings, PhysicSettings>]
 [Transient<MainScene>]
+[Transient<MoveSystem>]
+[Transient<DestroyOnScreenBoundSystem>]
 public partial class GameServiceProvider
 {
 }

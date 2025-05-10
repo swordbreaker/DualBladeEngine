@@ -1,6 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using BulletHell.Desktop.Components;
+using BulletHell.Desktop.Entities;
+using BulletHell.Desktop.Helpers;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
@@ -16,6 +19,8 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
     private readonly FeatureExtraction featureExtraction = new FeatureExtraction();
     private readonly IGameEngine gameEngine = context.GameEngine;
 
+    private readonly MusicFeatureConverter musicFeatureConverter = new(context.GameEngine.GameSize);
+
     private Texture2D _pixel;
     private float lastFeatureValue = 0f;
 
@@ -27,24 +32,15 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
 
         _pixel = new(gameEngine.SpriteBatch.GraphicsDevice, 1, 1);
         _pixel.SetData([Color.White]);
-        // var result = FMOD.Debug.Initialize(
-        //     FMOD.DEBUG_FLAGS.LOG | FMOD.DEBUG_FLAGS.TYPE_TRACE,
-        //     FMOD.DEBUG_MODE.FILE,
-        //     null,
-        //     "fmod.log"
-        // );
-
-        // if (result != FMOD.RESULT.OK)
-        // {
-        //     throw new Exception($"FMOD error: {result}");
-        // }
-        // MediaPlayer.Play()
     }
 
     protected override void OnAdded(ref IEntity entity, ref MusicComponent component)
     {
         var features = featureExtraction.Extract(component.Signal);
+        var points = featureExtraction.GenerateSpecPoint(component.Signal, 10);
+        
         component.Features = features;
+        component.SpectrogramPoints = points;
 
         var absolutePath = Path.GetFullPath(component.FilePath);
 
@@ -62,43 +58,10 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         CoreSystem.Native.getMasterChannelGroup(out var masterGroup);
         CoreSystem.Native.playSound(sound, masterGroup, false, out var channel);
 
+        sound.getLength(out var length, FMOD.TIMEUNIT.MS);
+
         component.Channel = channel;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="features"></param>
-    /// <param name="featureIndex"></param>
-    /// <param name="miliseconds"></param>
-    /// <param name="hopDuration">In miliseconds</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    private float GetFeatureValue(float[][] features, int featureIndex, float miliseconds, float hopDuration)
-    {
-        if (featureIndex < 0 || featureIndex >= features.Length)
-            throw new ArgumentOutOfRangeException(nameof(featureIndex));
-
-        if (miliseconds < 0)
-            throw new ArgumentOutOfRangeException(nameof(miliseconds));
-        if (hopDuration <= 0)
-            throw new ArgumentOutOfRangeException(nameof(hopDuration));
-        if (features.Length == 0)
-            throw new ArgumentException("Feature array is empty", nameof(features));
-
-        // Calculate the time index based on the hop duration
-        int timeIndex = (int)(miliseconds / hopDuration);
-        if (timeIndex < 0 || timeIndex >= features.Length)
-            throw new ArgumentOutOfRangeException(nameof(timeIndex));
-
-        // Ensure the time index is within the bounds of the feature array
-        if (timeIndex >= features.Length)
-            timeIndex = features.Length - 1;
-        if (timeIndex < 0)
-            timeIndex = 0;
-
-        return features[timeIndex][featureIndex];
+        component.Length = length;
     }
 
     public override void Update(GameTime gameTime)
@@ -113,38 +76,55 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         FmodManager.Unload();
     }
 
+    private void SpanwBullet(float x)
+    {
+        var cirlceProps = new CircleProperties
+        {
+            Radius = 20,
+            StrokeColor = Color.Black,
+            FillColor = Color.Red,
+        };
+
+        var pos = new Vector2(x, gameEngine.GameSize.Y / 2);
+        var velocity = new Vector2(0, -1);
+
+        World.AddEntity(new BulletEntity(pos, velocity, cirlceProps, GameContext));
+    }
+
     protected override void Update(ref MusicComponent component, ref IEntity entity, GameTime gameTime)
     {
         base.Update(ref component, ref entity, gameTime);
+        musicFeatureConverter.Update(component);
 
-        component.Channel.getPosition(out var ms, FMOD.TIMEUNIT.MS);
-
-        lastFeatureValue = GetFeatureValue(
-            component.Features,
-            0,
-            ms,
-            250
-        );
-    }
-
-    private Color CentroidToColor(float centroid)
-    {
-        // range is eta 1000 to 7000 
-
-        // Normalize the centroid value to a range of 0-1
-        float normalizedCentroid = Math.Clamp(centroid/7000, 0f, 1f);
-
-        // Map the normalized value to a color (e.g., grayscale)
-        byte colorValue = (byte)(normalizedCentroid * 255);
-        return new Color(colorValue, colorValue, colorValue);
+        foreach (var point in musicFeatureConverter.GetCurrentSpectrogramBullets())
+        {
+            SpanwBullet(point.X);
+        }
     }
 
     public override void Draw(GameTime gameTime)
     {
-        var color = CentroidToColor(lastFeatureValue);
+        var centroidColor = musicFeatureConverter.CurrentCentriodColor;
+        var spreadColor = musicFeatureConverter.CurrentSpreadColor;
+        var decreaseColor = musicFeatureConverter.CurrentDecreaseColor;
+        var rmsColor = musicFeatureConverter.CurrentRMSColor;
+        var zcrColor = musicFeatureConverter.CurrentZCRolor;
+
+        var spriteFont = gameEngine.Load<SpriteFont>("DefaultFont");
 
         gameEngine.BeginDraw();
-        gameEngine.Draw(_pixel, Vector2.Zero, color, sourceRectangle: new Rectangle(0, 0, 200, 200));
+
+        gameEngine.DrawString(spriteFont, "Centroid", new Vector2(-5, 3.2f), Color.Black);
+        gameEngine.DrawString(spriteFont, "Spread", new Vector2(0, 3.2f), Color.Black);
+        gameEngine.DrawString(spriteFont, "Decrease", new Vector2(5, 3.2f), Color.Black);
+        gameEngine.DrawString(spriteFont, "RMS", new Vector2(-5, -3.4f), Color.Black);
+        gameEngine.DrawString(spriteFont, "ZCR", new Vector2(0, -3.4f), Color.Black);
+        
+        gameEngine.Draw(_pixel, new Vector2(-4, 2), centroidColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
+        gameEngine.Draw(_pixel, new Vector2(0, 2), spreadColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
+        gameEngine.Draw(_pixel, new Vector2(4, 2), decreaseColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
+        gameEngine.Draw(_pixel, new Vector2(-4, -2), rmsColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
+        gameEngine.Draw(_pixel, new Vector2(0, -2), zcrColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
 
         gameEngine.EndDraw();
     }

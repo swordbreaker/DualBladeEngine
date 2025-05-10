@@ -57,6 +57,32 @@ public interface IGameEngine
         float layerDepth = 0f);
 
     /// <summary>
+    /// Draw a text.
+    /// </summary>
+    /// <param name="spriteFont"></param>
+    /// <param name="text"></param>
+    /// <param name="position"></param>
+    /// <param name="color"></param>
+    /// <param name="rotation"></param>
+    /// <param name="origin"></param>
+    /// <param name="scale"></param>
+    /// <param name="effects"></param>
+    /// <param name="layerDepth"></param>
+    /// <param name="rtl"></param>
+    void DrawString(
+        SpriteFont spriteFont,
+        string text,
+        Vector2 position,
+        Color color,
+        float rotation = 0f,
+        Vector2? origin = null,
+        Vector2? scale = null,
+        SpriteEffects effects = SpriteEffects.None,
+        float layerDepth = 0f,
+        bool rtl = false
+    );
+
+    /// <summary>
     /// Load content.
     /// </summary>
     /// <typeparam name="T">The type of the content.</typeparam>

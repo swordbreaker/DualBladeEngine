@@ -1,4 +1,5 @@
 using BulletHell.Desktop.Scences;
+using BulletHell.Desktop.Systems;
 using DualBlade._2D.Rendering.Systems;
 using DualBlade.Core;
 using DualBlade.Core.Components;
@@ -7,7 +8,7 @@ using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ExampleGame;
+namespace BulletHell.Desktop;
 
 public class MainGame : BaseGame
 {
@@ -35,7 +36,9 @@ public class MainGame : BaseGame
     protected override void InitializeGlobalSystems()
     {
         base.InitializeGlobalSystems();
-        World.AddSystem<RenderSystem>();
         World.AddSystem<FpsDisplaySystem>();
+        World.AddSystem<RenderSystem>();
+        World.AddSystem<MoveSystem>();
+        World.AddSystem<DestroyOnScreenBoundSystem>();
     }
 }

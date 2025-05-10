@@ -58,7 +58,7 @@ public partial class World
             }
         }
 
-        _entities.Remove(entity.Id);
+        _entitiesMarkedForDeletion.Add(entity.Id);
 
         if (_entitySystems.TryGetValue(entity.GetType(), out var systems))
         {

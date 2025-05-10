@@ -20,6 +20,7 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
     private readonly List<ISystem> _systems = new(100);
     private readonly Dictionary<Type, List<IComponentSystem>> _componentSystems = [];
     private readonly Dictionary<Type, List<IEntitySystem>> _entitySystems = [];
+    private readonly List<int> _entitiesMarkedForDeletion = new(100);
 
     private bool isInitialized = false;
 
@@ -104,6 +105,14 @@ public sealed partial class World(ISystemFactory systemFactory, IJobQueue jobQue
 
             lastFixedUpdate = gameTime.TotalGameTime;
         }
+
+        // destroy entities
+        foreach (var id in _entitiesMarkedForDeletion)
+        {
+            _entities.Remove(id);
+        }
+
+        _entitiesMarkedForDeletion.Clear();
     }
 
     public void Draw(GameTime gameTime)
