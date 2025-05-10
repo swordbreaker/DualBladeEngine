@@ -46,7 +46,7 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
 
         var result = CoreSystem.Native.createSound(
             absolutePath,
-            FMOD.MODE.CREATESTREAM | FMOD.MODE.ACCURATETIME,
+            FMOD.MODE.CREATESTREAM | FMOD.MODE.ACCURATETIME | FMOD.MODE.LOOP_NORMAL,
             out var sound
         );
 

@@ -116,11 +116,11 @@ public class FeatureExtraction
         var min = result.SelectMany(x => x).Min();
 
         // Normalize the points to a range of 0 to 1
-        return result.Select(p =>
+        return [.. result.Select(p =>
         {
             var normalized = p.Select(x => (x - min) / (max - min)).ToList();
             return normalized;
-        }).ToList();
+        })];
     }
 
     public List<float[]> GenerateSpectogram(
