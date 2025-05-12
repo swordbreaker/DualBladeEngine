@@ -15,10 +15,10 @@ namespace BulletHell.Desktop.Services;
 /*
 Features
 
-Centroid
+-Centroid
 Indicates perceived brightness of a sound (e.g., a violin has a higher centroid than a bass drum)
 
-Spread
+-Spread
 Measures how concentrated or dispersed the spectrum is
 
 Flatness
@@ -33,16 +33,16 @@ Indicates dynamic range (higher values = more transient peaks)
 Entropy
 Noise detection (higher entropy ≈ more noise-like)
 
-Decreaase
+-Decreaase
 Useful in timbre analysis (e.g., distinguishing instruments)
 
 Energy
 Detecting silence/activity in audio.
 
-Root Mean Square (RMS)
+-Root Mean Square (RMS)
 Loudness estimation.
 
-Zero Crossing Rate (ZCR)
+-Zero Crossing Rate (ZCR)
 Discriminating noise (high ZCR) from pitched sounds (low ZCR).
 
 */
@@ -91,34 +91,42 @@ public class FeatureExtraction
     public List<List<float>> GenerateSpecPoint(DiscreteSignal signal, float dbThreshold = 20)
     {
         var spec = GenerateSpectogram(signal);
-        var result = new List<List<float>>();
-        
+        var result = new List<List<(float freq, float db)>>();
+
         for (int i = 0; i < spec.Count; i++)
         {
-            var points = new List<float>();
+            var points = new List<(float freq, float db)>();
             for (int j = 0; j < spec[i].Length; j++)
             {
-                var db = Math.Log10(spec[i][j] + 0.0001) * 10;
+                var db = MathF.Log10(spec[i][j] + 0.0001f) * 10;
 
                 if (db > dbThreshold)
                 {
                     // Normalize the frequency bin to a value between 0 and 1
-                    float normalizedFrequency = j;
-                    points.Add(normalizedFrequency);
+                    float normalizedFrequency = MathF.Log10(j + 1);
+                    points.Add((normalizedFrequency, db));
                 }
             }
-            
+
             // Add this timestep's points to the result
             result.Add(points);
         }
-        
-        var max = result.SelectMany(x => x).Max();
-        var min = result.SelectMany(x => x).Min();
+
+        var maxFreq = result.SelectMany(x1 => x1.Select(x2 => x2.freq)).Max();
+        var minFreq = result.SelectMany(x1 => x1.Select(x2 => x2.freq)).Min();
+        var maxDb = result.SelectMany(x1 => x1.Select(x2 => x2.db)).Max();
+        var minDb = result.SelectMany(x1 => x1.Select(x2 => x2.db)).Min();
 
         // Normalize the points to a range of 0 to 1
         return [.. result.Select(p =>
         {
-            var normalized = p.Select(x => (x - min) / (max - min)).ToList();
+            var normalized = p.Select(x =>
+            {
+                var freqNormalized = (x.freq - minFreq) / (maxFreq - minFreq);
+                var dbNormalized = (x.db - minDb) / (maxDb - minDb);
+                var dbLog = MathF.Log10(dbNormalized + 1);
+                return freqNormalized + dbLog;
+            }).ToList();
             return normalized;
         })];
     }

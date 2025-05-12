@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using BulletHell.Desktop.Components;
 using BulletHell.Desktop.Entities;
@@ -17,11 +16,10 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
 {
     private readonly FeatureExtraction featureExtraction = new FeatureExtraction();
     private readonly IGameEngine gameEngine = context.GameEngine;
-
     private readonly MusicFeatureConverter musicFeatureConverter = new(context.GameEngine.GameSize);
-
     private Texture2D _pixel;
-    private float lastFeatureValue = 0f;
+
+    private IntervalHelper bulletSpawnInterval = new(0.1f);
 
     public override void Initialize()
     {
@@ -37,7 +35,7 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
     {
         var features = featureExtraction.Extract(component.Signal);
         var points = featureExtraction.GenerateSpecPoint(component.Signal, 10);
-        
+
         component.Features = features;
         component.SpectrogramPoints = points;
 
@@ -75,11 +73,27 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         FmodManager.Unload();
     }
 
+    protected override void Update(ref MusicComponent component, ref IEntity entity, GameTime gameTime)
+    {
+        base.Update(ref component, ref entity, gameTime);
+        musicFeatureConverter.Update(component);
+
+
+        foreach (var point in musicFeatureConverter.GetCurrentSpectrogramBullets())
+        {
+            SpanwBullet(point.X);
+        }
+        // if (bulletSpawnInterval.Update(gameTime))
+        // {
+
+        // }
+    }
+
     private void SpanwBullet(float x)
     {
         var cirlceProps = new CircleProperties
         {
-            Radius = 20,
+            Radius = 10,
             StrokeColor = Color.Black,
             FillColor = Color.Red,
         };
@@ -88,17 +102,6 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         var velocity = new Vector2(0, -1);
 
         World.AddEntity(new BulletEntity(pos, velocity, cirlceProps, GameContext));
-    }
-
-    protected override void Update(ref MusicComponent component, ref IEntity entity, GameTime gameTime)
-    {
-        base.Update(ref component, ref entity, gameTime);
-        musicFeatureConverter.Update(component);
-
-        foreach (var point in musicFeatureConverter.GetCurrentSpectrogramBullets())
-        {
-            SpanwBullet(point.X);
-        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -118,7 +121,7 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         gameEngine.DrawString(spriteFont, "Decrease", new Vector2(5, 3.2f), Color.Black);
         gameEngine.DrawString(spriteFont, "RMS", new Vector2(-5, -3.4f), Color.Black);
         gameEngine.DrawString(spriteFont, "ZCR", new Vector2(0, -3.4f), Color.Black);
-        
+
         gameEngine.Draw(_pixel, new Vector2(-4, 2), centroidColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
         gameEngine.Draw(_pixel, new Vector2(0, 2), spreadColor, sourceRectangle: new Rectangle(0, 0, 2, 2));
         gameEngine.Draw(_pixel, new Vector2(4, 2), decreaseColor, sourceRectangle: new Rectangle(0, 0, 2, 2));

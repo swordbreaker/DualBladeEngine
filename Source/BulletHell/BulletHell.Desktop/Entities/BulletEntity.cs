@@ -8,6 +8,7 @@ namespace BulletHell.Desktop.Entities;
 
 
 [AddComponent<DestroyOnScreenBoundsComponent>]
+[AddComponent<FrequencyMovementComponent>]
 [RequiredComponent<TransformComponent>]
 [RequiredComponent<MoveComponent>]
 [RequiredComponent<RenderComponent>]

@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using BulletHell.Desktop.Components;
+using BulletHell.Desktop.Helpers;
 
 public class MusicFeatureConverter(Vector2 GameSize)
 {
     private const int HopDuration = 250;
     private float[] lastFeatureValues = [];
-
     private List<float> lastSpecPoints = [];
 
     public void Update(MusicComponent musicComponent)
