@@ -15,7 +15,7 @@ public class FrequencyMovementSystem(IGameContext context) : ComponentSystem<Tra
 
         // Calculate the new position based on frequency and decibel
         var frequency = frequencyMovement.Frequency;
-        var decibel = frequencyMovement.Decibel;
+        var decibel = frequencyMovement.Decibel / 10f;
 
         // Example calculation: adjust position based on frequency and decibel
         transform.Position.X += (float)(Math.Sin(frequency * gameTime.TotalGameTime.TotalSeconds) * decibel * deltaTime);

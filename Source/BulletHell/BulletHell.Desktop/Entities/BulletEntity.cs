@@ -1,5 +1,7 @@
+using System.IO.Pipes;
 using BulletHell.Desktop.Components;
 using BulletHell.Desktop.Helpers;
+using BulletHell.Desktop.Models;
 using DualBlade._2D.Rendering.Components;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
@@ -8,20 +10,24 @@ namespace BulletHell.Desktop.Entities;
 
 
 [AddComponent<DestroyOnScreenBoundsComponent>]
-[AddComponent<FrequencyMovementComponent>]
+// [RequiredComponent<FrequencyMovementComponent>]
 [RequiredComponent<TransformComponent>]
 [RequiredComponent<MoveComponent>]
 [RequiredComponent<RenderComponent>]
 public partial struct BulletEntity : IEntity
 {
-    public BulletEntity(Vector2 position, Vector2 velocity, CircleProperties circleProperties, IGameContext gameContext)
+    public BulletEntity(
+        SpectogramPoint spectogramPoint,
+        Vector2 velocity,
+        CircleProperties circleProperties,
+        IGameContext gameContext)
     {
         var spriteFactory = gameContext.GameEngine.SpriteFactory;
         var graphicDevice = gameContext.GameEngine.GraphicsDeviceManager.GraphicsDevice;
 
         var transform = new TransformComponent
         {
-            Position = position
+            Position = spectogramPoint.Point
         };
 
         var moveComponent = new MoveComponent
@@ -34,8 +40,15 @@ public partial struct BulletEntity : IEntity
             Sprite = spriteFactory.CreateSprite(new CircleTexture(graphicDevice, circleProperties))
         };
 
+        // var frequencyMovement = new FrequencyMovementComponent
+        // {
+        //     Frequency = spectogramPoint.Frequency,
+        //     Decibel = spectogramPoint.Decibel,
+        // };
+
         AddComponent(transform);
         AddComponent(moveComponent);
         AddComponent(spriteRender);
+        // AddComponent(frequencyMovement);
     }
 }

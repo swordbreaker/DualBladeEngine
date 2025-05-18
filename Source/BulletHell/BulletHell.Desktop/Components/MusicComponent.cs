@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BulletHell.Desktop.Models;
 using DualBlade.Core.Components;
 using NWaves.Signals;
 
@@ -19,5 +20,7 @@ public partial struct MusicComponent : IComponent
 
     public float[][] Features;
 
-    public List<List<float>> SpectrogramPoints;
+    public List<List<SpectogramFeature>> SpectrogramPoints;
+
+    public List<float>[] Beats;
 }

@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using BulletHell.Desktop.Components;
 using BulletHell.Desktop.Entities;
 using BulletHell.Desktop.Helpers;
+using BulletHell.Desktop.Models;
+using BulletHell.Desktop.Models.FeatureExtraction;
 using DualBlade.Core.Entities;
 using DualBlade.Core.Services;
 using DualBlade.Core.Systems;
 using FmodForFoxes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BulletHell.Desktop.Services;
@@ -14,7 +18,7 @@ namespace BulletHell.Desktop.Services;
 
 public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>(context)
 {
-    private readonly FeatureExtraction featureExtraction = new FeatureExtraction();
+    private readonly FeatureExtraction featureExtraction = new();
     private readonly IGameEngine gameEngine = context.GameEngine;
     private readonly MusicFeatureConverter musicFeatureConverter = new(context.GameEngine.GameSize);
     private Texture2D _pixel;
@@ -26,18 +30,31 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
         var nativeLibrary = new DesktopNativeFmodLibrary();
         FmodManager.Init(nativeLibrary, FmodInitMode.CoreAndStudio, "./");
 
-
         _pixel = new(gameEngine.SpriteBatch.GraphicsDevice, 1, 1);
         _pixel.SetData([Color.White]);
+
+        var mContext = GameContext.ServiceProvider.GetRequiredService<MusicContext>();
+        mContext.FeatureConverter = musicFeatureConverter;
     }
 
     protected override void OnAdded(ref IEntity entity, ref MusicComponent component)
     {
         var features = featureExtraction.Extract(component.Signal);
         var points = featureExtraction.GenerateSpecPoint(component.Signal, 10);
+        var beats = featureExtraction.ExtractBeats(new BeatExtractionProperties
+        {
+            Signal = component.Signal,
+        });
 
         component.Features = features;
         component.SpectrogramPoints = points;
+        component.Beats = beats;
+
+        if (entity.TryGetComponent<FrequencyMovementComponent>(out var frequencyMovement))
+        {
+            frequencyMovement.Frequency = features[0][0];
+            frequencyMovement.Decibel = features[1][0];
+        }
 
         var absolutePath = Path.GetFullPath(component.FilePath);
 
@@ -81,15 +98,11 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
 
         foreach (var point in musicFeatureConverter.GetCurrentSpectrogramBullets())
         {
-            SpanwBullet(point.X);
+            // SpanwBullet(point);
         }
-        // if (bulletSpawnInterval.Update(gameTime))
-        // {
-
-        // }
     }
 
-    private void SpanwBullet(float x)
+    private void SpanwBullet(SpectogramPoint spectogramPoint)
     {
         var cirlceProps = new CircleProperties
         {
@@ -98,10 +111,11 @@ public class MusicSystem(IGameContext context) : ComponentSystem<MusicComponent>
             FillColor = Color.Red,
         };
 
-        var pos = new Vector2(x, gameEngine.GameSize.Y / 2);
         var velocity = new Vector2(0, -1);
 
-        World.AddEntity(new BulletEntity(pos, velocity, cirlceProps, GameContext));
+        var bullet = new BulletEntity(spectogramPoint, velocity, cirlceProps, GameContext);
+
+        World.AddEntity(bullet);
     }
 
     public override void Draw(GameTime gameTime)

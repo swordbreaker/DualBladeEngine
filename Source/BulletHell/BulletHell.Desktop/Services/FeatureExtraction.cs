@@ -9,6 +9,8 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using BulletHell.Desktop.Models;
+using BulletHell.Desktop.Models.FeatureExtraction;
 
 namespace BulletHell.Desktop.Services;
 
@@ -33,7 +35,7 @@ Indicates dynamic range (higher values = more transient peaks)
 Entropy
 Noise detection (higher entropy ≈ more noise-like)
 
--Decreaase
+-Decrease
 Useful in timbre analysis (e.g., distinguishing instruments)
 
 Energy
@@ -44,7 +46,6 @@ Loudness estimation.
 
 -Zero Crossing Rate (ZCR)
 Discriminating noise (high ZCR) from pitched sounds (low ZCR).
-
 */
 
 
@@ -82,29 +83,125 @@ public class FeatureExtraction
         return vectors;
     }
 
+    public List<float> SimpleExtractBeats(DiscreteSignal signal)
+    {
+        int windowSize = 1024;
+        var energyHistory = new List<float>();
+
+        var beats = new List<float>();
+
+        for (int i = 0; i < signal.Length - windowSize; i += windowSize)
+        {
+            float instantEnergy = signal.Samples.Skip(i).Take(windowSize)
+                                             .Sum(s => s * s);
+            energyHistory.Add(instantEnergy);
+
+            // Calculate local average (e.g., last 10 windows)
+            float localAverage = energyHistory.TakeLast(10).Average();
+
+            if (instantEnergy > 1.3 * localAverage)  // Threshold adjustment
+            {
+                beats.Add(i / (float)signal.SamplingRate);  // Store beat time in seconds
+            }
+        }
+
+        return beats;
+    }
+
+    public List<float>[] ExtractBeats(BeatExtractionProperties props)
+    {
+        var spectrogram = GenerateSpectogram(
+            props.Signal, props.FrameSize, props.HopSize);
+
+        // 3. Define frequency bands (adjust based on your needs)
+        var bands = props.BandProperties;
+
+        var frameTimeInSeconds = (float)props.HopSize / props.Signal.SamplingRate;
+
+        var bandsBeats = new List<float>[bands.Length];
+        for (int i = 0; i < bands.Length; i++)
+        {
+            bandsBeats[i] = [];
+        }
+
+        // 4. Initialize energy history buffers
+        float[][] energyHistory = new float[bands.Length][];
+        for (int i = 0; i < bands.Length; i++)
+        {
+            energyHistory[i] = new float[43]; // ~1 second history
+        }
+
+        // 5. Process each STFT frame
+        for (int frameIdx = 0; frameIdx < spectrogram.Count; frameIdx++)
+        {
+            var spectrum = spectrogram[frameIdx];
+
+            // Calculate energy per band
+            float[] bandEnergies = new float[bands.Length];
+            for (int bandIdx = 0; bandIdx < bands.Length; bandIdx++)
+            {
+                int binStart = (int)(bands[bandIdx].Low * props.FrameSize / props.Signal.SamplingRate);
+                int binEnd = (int)(bands[bandIdx].High * props.FrameSize / props.Signal.SamplingRate);
+
+                float energy = 0;
+                for (int bin = binStart; bin <= binEnd; bin++)
+                {
+                    energy += spectrum[bin];
+                }
+                bandEnergies[bandIdx] = energy;
+            }
+
+            // Detect beats in each band
+            for (int bandIdx = 0; bandIdx < bands.Length; bandIdx++)
+            {
+                // Update energy history
+                energyHistory[bandIdx][frameIdx % 43] = bandEnergies[bandIdx];
+
+                // Calculate local average and variance
+                float avg = energyHistory[bandIdx].Average();
+                float variance = energyHistory[bandIdx].Select(e => (e - avg) * (e - avg)).Average();
+
+                // Adaptive sensitivity (from MeloDash documentation [4])
+                float C = (-0.0025714f * variance) + 1.5142857f;
+
+                // Beat detection condition
+                if (bandEnergies[bandIdx] > C * avg)
+                {
+                    bandsBeats[bandIdx].Add(frameIdx * frameTimeInSeconds); // Store beat time in seconds
+                    Console.WriteLine($"{bands[bandIdx].Name} beat at {frameIdx * frameTimeInSeconds:F2}s");
+                }
+            }
+        }
+
+        return bandsBeats;
+    }
+
     /// <summary>
     /// Generates points representing prominent frequencies from a spectrogram.
     /// </summary>
     /// <param name="signal">The audio signal to analyze</param>
     /// <param name="dbThreshold">The decibel threshold above which frequencies are considered prominent (default: 20)</param>
     /// <returns>A collection where each entry represents a timestep containing normalized frequency points (0-1 scale)</returns>
-    public List<List<float>> GenerateSpecPoint(DiscreteSignal signal, float dbThreshold = 20)
+    public List<List<SpectogramFeature>> GenerateSpecPoint(DiscreteSignal signal, float dbThreshold = 20)
     {
         var spec = GenerateSpectogram(signal);
-        var result = new List<List<(float freq, float db)>>();
+        var result = new List<List<SpectogramFeature>>();
 
         for (int i = 0; i < spec.Count; i++)
         {
-            var points = new List<(float freq, float db)>();
+            var points = new List<SpectogramFeature>();
             for (int j = 0; j < spec[i].Length; j++)
             {
                 var db = MathF.Log10(spec[i][j] + 0.0001f) * 10;
 
                 if (db > dbThreshold)
                 {
-                    // Normalize the frequency bin to a value between 0 and 1
                     float normalizedFrequency = MathF.Log10(j + 1);
-                    points.Add((normalizedFrequency, db));
+                    points.Add(new SpectogramFeature
+                    {
+                        Frequency = j,
+                        Decibel = db
+                    });
                 }
             }
 
@@ -112,20 +209,20 @@ public class FeatureExtraction
             result.Add(points);
         }
 
-        var maxFreq = result.SelectMany(x1 => x1.Select(x2 => x2.freq)).Max();
-        var minFreq = result.SelectMany(x1 => x1.Select(x2 => x2.freq)).Min();
-        var maxDb = result.SelectMany(x1 => x1.Select(x2 => x2.db)).Max();
-        var minDb = result.SelectMany(x1 => x1.Select(x2 => x2.db)).Min();
+        var maxFreq = result.SelectMany(x1 => x1.Select(x2 => x2.Frequency)).Max();
+        var minFreq = result.SelectMany(x1 => x1.Select(x2 => x2.Frequency)).Min();
+        var maxDb = result.SelectMany(x1 => x1.Select(x2 => x2.Decibel)).Max();
+        var minDb = result.SelectMany(x1 => x1.Select(x2 => x2.Decibel)).Min();
 
         // Normalize the points to a range of 0 to 1
         return [.. result.Select(p =>
         {
             var normalized = p.Select(x =>
             {
-                var freqNormalized = (x.freq - minFreq) / (maxFreq - minFreq);
-                var dbNormalized = (x.db - minDb) / (maxDb - minDb);
+                var freqNormalized = (x.Frequency - minFreq) / (maxFreq - minFreq);
+                var dbNormalized = (x.Decibel - minDb) / (maxDb - minDb);
                 var dbLog = MathF.Log10(dbNormalized + 1);
-                return freqNormalized + dbLog;
+                return x with { RelativeValue = freqNormalized + dbLog };
             }).ToList();
             return normalized;
         })];

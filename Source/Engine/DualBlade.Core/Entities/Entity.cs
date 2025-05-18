@@ -117,6 +117,8 @@ public struct Entity : IEntity
     /// <inheritdoc />
     public void RemoveComponent<TComponent>() where TComponent : IComponent
     {
+        // TODO remove component afeter update
+
         var comps = this.Components.Where(x => x.GetType() != typeof(TComponent)).ToArray();
         var types = comps.Select(x => x.GetType()).ToArray();
         this.InternalComponents.Clear();

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using DualBlade._2D.BladePhysics.Services;
 using BulletHell.Desktop.Scences;
 using BulletHell.Desktop.Systems;
+using System.ComponentModel;
+using BulletHell.Desktop.Services;
 
 namespace BulletHell.Desktop;
 
@@ -18,6 +20,7 @@ namespace BulletHell.Desktop;
 [Import<IMyraUiServiceModule>]
 [Singleton<MainGame>]
 [Singleton<IPhysicsSettings, PhysicSettings>]
+[Singleton<MusicContext, MusicContext>]
 [Transient<MainScene>]
 [Transient<MoveSystem>]
 [Transient<DestroyOnScreenBoundSystem>]

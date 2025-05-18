@@ -9,6 +9,5 @@ public interface ISceneManager
     T AddSceneExclusively<T>() where T : IGameScene;
     void AddSceneExclusively(IGameScene gameScene);
     T CreateScene<T>() where T : IGameScene;
-
     void RemoveScene(IGameScene gameScene);
 }
