@@ -1,4 +1,3 @@
-using System.IO.Pipes;
 using BulletHell.Desktop.Components;
 using BulletHell.Desktop.Helpers;
 using BulletHell.Desktop.Models;

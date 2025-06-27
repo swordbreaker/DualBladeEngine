@@ -168,7 +168,6 @@ public class FeatureExtraction
                 if (bandEnergies[bandIdx] > C * avg)
                 {
                     bandsBeats[bandIdx].Add(frameIdx * frameTimeInSeconds); // Store beat time in seconds
-                    Console.WriteLine($"{bands[bandIdx].Name} beat at {frameIdx * frameTimeInSeconds:F2}s");
                 }
             }
         }

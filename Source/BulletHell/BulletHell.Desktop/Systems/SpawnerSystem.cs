@@ -48,11 +48,12 @@ public class SpawnerSystem(IGameContext context) : EntitySystem<SpawnerEntity>(c
 
         entity.UpdateComponent<RenderComponent>((c) =>
         {
-            if (musicContext.FeatureConverter.IsBeat(1))
+            if (musicContext.FeatureConverter.IsBeat(0))
             {
                 var decrease = musicContext.FeatureConverter.CurrentNormalizedDecrease;
+                var rms = musicContext.FeatureConverter.CurrentRMS;
 
-                SpawnBullentInACirlce(pos, 20, (float)gameTime.TotalGameTime.TotalSeconds, decrease);
+                SpawnBullentInACirlce(pos, 20, (float)gameTime.TotalGameTime.TotalSeconds, decrease, (int)((rms + 1) * 10));
                 c.Color = Color.White;
             }
             else
@@ -68,26 +69,29 @@ public class SpawnerSystem(IGameContext context) : EntitySystem<SpawnerEntity>(c
         Vector2 position,
         int count,
         float offset,
-        float horizontalVelocity = 0)
+        float horizontalVelocity = 0,
+        int radius = 10)
     {
         var angleStep = MathHelper.TwoPi / count;
 
         for (int i = 0; i < count; i++)
         {
             var angle = i * angleStep;
-            var velocity = new Vector2(MathF.Cos(angle + offset), MathF.Sin(angle + offset)) * 10f;
+            var velocity = new Vector2(MathF.Cos(angle + offset), MathF.Sin(angle + offset));
+            velocity *= MathF.Max(horizontalVelocity * 10f, 1f);
+
             var normal = Vector2.Normalize(new Vector2(-velocity.X, velocity.Y));
-            velocity += normal * (1 - horizontalVelocity);
+            // velocity += normal * (1 - horizontalVelocity);
 
             SpanwBullet(position, velocity);
         }
     }
 
-    private void SpanwBullet(Vector2 position, Vector2 velocity)
+    private void SpanwBullet(Vector2 position, Vector2 velocity, int radius = 10)
     {
         var cirlceProps = new CircleProperties
         {
-            Radius = 10,
+            Radius = radius,
             StrokeColor = Color.Black,
             FillColor = Color.Red,
         };

@@ -13,6 +13,9 @@ internal sealed class SceneManager(IGameContext gameContext, IServiceProvider se
     private readonly IWorld world = gameContext.World;
     private readonly Dictionary<IGameScene, SceneData> _activeScenes = [];
 
+    public T? GetActiveScene<T>() where T : class, IGameScene =>
+        _activeScenes.Keys.FirstOrDefault(scene => scene is T) as T;
+
     public T CreateScene<T>() where T : IGameScene =>
         serviceProvider.GetRequiredService<T>();
 

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using DualBlade._2D.BladePhysics.Services;
 using BulletHell.Desktop.Scences;
 using BulletHell.Desktop.Systems;
-using System.ComponentModel;
 using BulletHell.Desktop.Services;
 
 namespace BulletHell.Desktop;

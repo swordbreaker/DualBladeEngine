@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using BulletHell.Desktop.Components;
 using BulletHell.Desktop.Models;
-using ScottPlot.Plottables;
 
 public class MusicFeatureConverter(Vector2 GameSize)
 {
@@ -66,6 +65,9 @@ public class MusicFeatureConverter(Vector2 GameSize)
 
     public Color CurrentDecreaseColor =>
         DecreaseToColor(lastFeatureValues[2]);
+
+    public float CurrentRMS =>
+        lastFeatureValues[3];
 
     public Color CurrentRMSColor =>
         RMSColor(lastFeatureValues[3]);

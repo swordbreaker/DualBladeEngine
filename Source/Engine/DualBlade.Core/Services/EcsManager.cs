@@ -6,10 +6,8 @@ namespace DualBlade.Core.Services;
 
 public class EcsManager(IWorld world) : IEcsManager
 {
-    public EntityProxy<IEntity> GetEntity(IComponent component)
-    {
-        return world.GetEntityProxy<IEntity>(component.EntityId);
-    }
+    public EntityProxy<IEntity> GetEntity(IComponent component) =>
+        world.GetEntityProxy<IEntity>(component.EntityId);
 
     public void DestroyEntity(IEntity entity)
     {
@@ -60,4 +58,17 @@ public class EcsManager(IWorld world) : IEcsManager
             TraverseToParent(p.Value, action);
         }
     }
+
+    public T SingelEntity<T>() where T : IEntity =>
+        world.Entities.OfType<T>().SingleOrDefault()
+            ?? throw new InvalidOperationException($"No entity of type {typeof(T).Name} found.");
+
+    public IEnumerable<T> GetEntities<T>() where T : IEntity => world.Entities.OfType<T>();
+
+    public T SignelComponent<T>() where T : IComponent =>
+        GetComponents<T>().OfType<T>().SingleOrDefault()
+            ?? throw new InvalidOperationException($"No component of type {typeof(T).Name} found.");
+
+    public IEnumerable<T> GetComponents<T>() where T : IComponent =>
+        world.Entities.SelectMany(e => e.Components).OfType<T>();
 }
